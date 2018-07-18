@@ -1,0 +1,81 @@
+{
+    "name": "stamp-imageparsing",
+    "productName": "Stamp Image Bursting Application",
+    "description": "Next-Generation Image Bursting Application",
+    "version": "3.0.0",
+    "repository": {
+        "type": "???",
+        "url": "???"
+    },
+    "license": "Apache 2.0",
+    "main": "main.js",
+    "scripts": {
+        "build": "au build",
+        "watch": "au run --watch",
+        "start": "electron .",
+        "rebuild-modules": "electron-rebuild && node node_modules/java/postInstall.js",
+        "package-win": "electron-packager . stamp-imageparsing --overwrite --asar --platform=win32 --arch=x64 --icon=assets/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Stamp Image Bursting Application\""
+    },
+    "build": {
+        "appId": "com.drakeserver.stamp-imageparsing",
+        "extraFiles": [
+            "dist/**"
+        ]
+    },
+    "dependencies": {
+        "aurelia-animator-css": "^1.0.1",
+        "aurelia-bootstrapper": "^2.1.0",
+        "aurelia-i18n": "2.3.1",
+        "bluebird": "^3.4.1",
+        "i18next": "11.3.3",
+        "i18next-xhr-backend": "1.5.1",
+        "java": "^0.10.0",
+        "lodash": "4.17.10",
+        "requirejs": "^2.3.2",
+        "text": "github:requirejs/text#latest"
+    },
+    "peerDependencies": {},
+    "devDependencies": {
+        "aurelia-cli": "^0.33.1",
+        "aurelia-testing": "^1.0.0-beta.2.0.1",
+        "aurelia-tools": "^1.0.0",
+        "babel-eslint": "^6.0.4",
+        "babel-plugin-syntax-flow": "^6.8.0",
+        "babel-plugin-transform-decorators-legacy": "^1.3.4",
+        "babel-plugin-transform-es2015-modules-amd": "^6.8.0",
+        "babel-plugin-transform-es2015-modules-commonjs": "^6.10.3",
+        "babel-plugin-transform-flow-strip-types": "^6.8.0",
+        "babel-polyfill": "^6.9.1",
+        "babel-preset-es2015": "^6.13.2",
+        "babel-preset-stage-1": "^6.5.0",
+        "babel-register": "^6.9.0",
+        "browser-sync": "^2.13.0",
+        "connect-history-api-fallback": "^1.2.0",
+        "electron": "3.0.0-beta.1",
+        "electron-packager": "^12.1.0",
+        "electron-rebuild": "^1.8.1",
+        "electron-winstaller": "^2.6.4",
+        "gulp": "github:gulpjs/gulp#4.0",
+        "gulp-babel": "^6.1.2",
+        "gulp-changed-in-place": "^2.0.3",
+        "gulp-eslint": "^2.0.0",
+        "gulp-htmlmin": "^3.0.0",
+        "gulp-notify": "^2.2.0",
+        "gulp-plumber": "^1.1.0",
+        "gulp-rename": "^1.2.2",
+        "gulp-sass": "3.1.0",
+        "gulp-shell": "^0.6.5",
+        "gulp-sourcemaps": "^2.0.0-alpha",
+        "html-minifier": "^3.2.3",
+        "jasmine-core": "^2.4.1",
+        "karma": "^0.13.22",
+        "karma-babel-preprocessor": "^6.0.1",
+        "karma-chrome-launcher": "^1.0.1",
+        "karma-jasmine": "^1.0.2",
+        "minimatch": "^3.0.2",
+        "require-dir": "^1.0.0",
+        "through2": "^2.0.1",
+        "uglify-js": "^2.6.3",
+        "vinyl-fs": "^2.4.3"
+    }
+}
