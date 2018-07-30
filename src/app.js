@@ -13,14 +13,32 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
+import {inject} from 'aurelia-framework';
 import {remote} from 'electron';
+import {ImageHandler} from 'processing/image/image-handler';
 
+@inject(ImageHandler)
 export class App {
-  constructor() {
+
+    boxes = [];
+    chosenFile;
+    handler;
+    processing;
+
+  constructor(imageHandler) {
     this.message = 'Hello World!';
-      let processing = remote.require('./platform/image-processing')();
-      let result = processing.process();
-      console.log(result);
-        this.message = result.width;
+    this.handler  = imageHandler;
+      this.message = "test"; //imageResult.width;
+
+  }
+
+  process() {
+        this.handler.readImage(this.chosenFile[0]).then((result) => {
+            this.handler.process(result.data, {}).then(data => {
+                this.boxes = data.boxes;
+            });
+
+        });
+
   }
 }

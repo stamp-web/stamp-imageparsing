@@ -57,7 +57,10 @@
             <classpath>
                 <fileset refid="dependency.fileset"/>
             </classpath>
-        </javac>   
+        </javac>
+        <copy todir="${dist.dir}" overwrite="true" includeEmptyDirs="false">
+            <fileset dir="${src.dir}" excludes="**/*.java" />
+        </copy>  
     </target>
 	
     <target name="clean">

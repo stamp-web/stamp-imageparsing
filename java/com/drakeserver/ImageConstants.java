@@ -13,6 +13,19 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-export function configure(config) {
-  //config.globalResources([]);
+package com.drakeserver;
+
+/**
+ * Constants for Image Processing
+ */
+public interface ImageConstants {
+
+    public static final float AVAILABLE_MEMORY_RATIO = 2.5f;
+    public static final int PADDING_DEFAULT = 20;
+    public static final int MINIMUM_AREA_DEFAULT = 10000;
+    public static final float MAXIMUM_AREA_PERCENTAGE = 0.85f;
+    public static final float MINIMUM_OVERLAP_PERCENTAGE = 0.25f;
+
+    // Preference Keys
+    public static final String MIN_INTERCEPTING_AREA = "minimumInterceptingArea";
 }

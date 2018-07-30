@@ -8,16 +8,37 @@
         "url": "???"
     },
     "license": "Apache 2.0",
+    "author": "Jason Drake (jadrake75@gmail.com)",
     "main": "main.js",
     "scripts": {
+        "dist": "build --x64 --prepackaged release-builds/stamp-imageparsing-win32-x64",
+        "win32": "build --x64",
         "build": "au build",
         "watch": "au run --watch",
         "start": "electron .",
+        "postinstall": "electron-builder install-app-deps",
         "rebuild-modules": "electron-rebuild && node node_modules/java/postInstall.js",
-        "package-win": "electron-packager . stamp-imageparsing --overwrite --asar --platform=win32 --arch=x64 --icon=assets/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Stamp Image Bursting Application\""
+        "package-win": "electron-packager . stamp-imageparsing --overwrite --platform=win32 --arch=x64 --icon=assets/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Stamp Image Bursting Application\""
     },
     "build": {
         "appId": "com.drakeserver.stamp-imageparsing",
+        "copyright": "Copyright © 2018 ${author}",
+        "win": {
+            "icon": "assets/icons/win/icon.ico",
+            "target": "nsis"
+        },
+        "asar": false,
+        "asarUnpack": [
+            "dist/**"
+        ],
+        "icon": "assets/win/icon.ico",
+        "nsis": {
+            "artifactName": "stamp-imageparsing-install.${ext}"
+        },
+        "directories": {
+            "output": "release-builds",
+            "buildResources": "assets"
+        },
         "extraFiles": [
             "dist/**"
         ]
@@ -52,6 +73,7 @@
         "browser-sync": "^2.13.0",
         "connect-history-api-fallback": "^1.2.0",
         "electron": "3.0.0-beta.1",
+        "electron-builder": "^20.22.0",
         "electron-packager": "^12.1.0",
         "electron-rebuild": "^1.8.1",
         "electron-winstaller": "^2.6.4",
@@ -66,7 +88,7 @@
         "gulp-sass": "3.1.0",
         "gulp-shell": "^0.6.5",
         "gulp-sourcemaps": "^2.0.0-alpha",
-        "html-minifier": "^3.2.3",
+        "html-minifier": "^3.5.19",
         "jasmine-core": "^2.4.1",
         "karma": "^0.13.22",
         "karma-babel-preprocessor": "^6.0.1",

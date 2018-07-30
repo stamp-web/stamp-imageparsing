@@ -3,4 +3,9 @@
   <h1>${message}</h1>
     <h3>VERY GOOD</h3>
     <span t="title" class="some-class">some title</span>
+
+    <input type="file" files.bind="chosenFile">
+    <button click.trigger="process()">Process It</button>
+
+    <div repeat.for="box of boxes">${box.width} x ${box.height}</div>
 </template>
