@@ -26,11 +26,24 @@ java.options.push('-Djava.util.logging.config.file=dist/logging.properties');
 module.exports = function () {
     "use strict";
 
+    let imageProcessor;
+
     return {
 
         getImageProcessor: function () {
+            if (imageProcessor) {
+                return imageProcessor;
+            }
             try {
-                return java.newInstanceSync("com.drakeserver.processing.ImageProcessor");
+                java.asyncOptions = {
+                    asyncSuffix:   "",
+                    syncSuffix:    "Sync",
+                    promiseSuffix: "Promise",
+                    promisify:     require("when/node").lift
+                };
+                java.import('com.drakeserver.processing.ImageProcessor');
+                imageProcessor = java.newInstancePromise("com.drakeserver.processing.ImageProcessor");
+                return imageProcessor;
             } catch (e) {
                 throw new Error(e);
             }
@@ -48,16 +61,32 @@ module.exports = function () {
         },
 
         process: function (dataArray, options) {
-            let imageProcessor = this.getImageProcessor();
-            let t = (new Date()).getTime();
-            let byteArray = java.newArray('byte', _.flatten(dataArray));
-            console.log('time to flatten: ', (new Date().getTime() - t), 'ms');
-            let javaOptions = java.newInstanceSync('java.util.Properties');
-            //options.setPropertySync('minimumInterceptingArea', '0.25');
+            let q = new Promise((resolve, reject) => {
+                let imageProcessor = this.getImageProcessor();
+                let t = (new Date()).getTime();
+                let byteArray = java.newArray('byte', _.flatten(dataArray));
+                console.log('time to flatten: ', (new Date().getTime() - t), 'ms');
+                let javaOptions = java.newInstanceSync('java.util.Properties');
+                // javaOptions.setPropertySync('minimumInterceptingArea', '0.25');
 
-            let result = imageProcessor.processSync(byteArray, javaOptions);
-            console.log(result);
-            return result;
+                let lastMsg;
+                setInterval(() => {
+                    let msg = javaOptions.getPropertySync('msg');
+                    if (lastMsg !== msg) {
+                        console.log(msg);
+                        lastMsg = msg;
+                    }
+                }, 150);
+
+                imageProcessor.then(ip => {
+                    ip.processPromise(byteArray, javaOptions).then(result => {
+                        resolve(result);
+                    });
+                });
+
+            });
+            return q;
+
         }
 
 

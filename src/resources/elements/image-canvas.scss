@@ -13,6 +13,18 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-$color-gray: #ccc;
+@import '../themes/variables';
 
-$image-background: #232323;
+image-canvas {
+    display: flex;
+
+    > div {
+        background-color: $image-background;
+        flex:             1 1 auto;
+        height:           100%;
+        overflow-y:       auto;
+        overflow-x:       auto;
+        width:            100%;
+    }
+
+}

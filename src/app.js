@@ -13,14 +13,19 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-import {inject} from 'aurelia-framework';
+import {inject, LogManager} from 'aurelia-framework';
 import {remote} from 'electron';
 import {ImageHandler} from 'processing/image/image-handler';
+import {StringUtilities} from 'util/string-utilities';
 
 @inject(ImageHandler)
 export class App {
 
     boxes = [];
+    scalingFactor=1.0;
+    image;
+
+    data;
     chosenFile;
     handler;
     processing;
@@ -29,16 +34,35 @@ export class App {
     this.message = 'Hello World!';
     this.handler  = imageHandler;
       this.message = "test"; //imageResult.width;
+      this.logger = LogManager.getLogger('app');
 
   }
 
-  process() {
-        this.handler.readImage(this.chosenFile[0]).then((result) => {
-            this.handler.process(result.data, {}).then(data => {
-                this.boxes = data.boxes;
-            });
+  fileSelected() {
+      if(this.chosenFile.length > 0 ) {
+          let f = this.chosenFile[0];
+          this.data = undefined;
+          this.boxes.splice(0, this.boxes.length);
+          this.handler.readImage(f).then((result) => {
+              this.data = result.data;
+              this.image = this.handler.asDataUrl(this.data);
+          });
+      }
+  }
 
-        });
+  zoom(factor) {
+      if(factor > 0 ) {
+          this.scalingFactor = this.scalingFactor * 2.0;
+      } else {
+          this.scalingFactor = this.scalingFactor / 2.0;
+      }
+  }
 
+  process(f) {
+      if( this.data ) {
+          this.handler.process(this.data, {}).then(info => {
+              this.boxes = info.boxes;
+          });
+      }
   }
 }

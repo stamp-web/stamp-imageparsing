@@ -13,6 +13,6 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-$color-gray: #ccc;
 
-$image-background: #232323;
+import {LogManager} from "aurelia-framework";
+export var log = LogManager.getLogger('image-parsing');

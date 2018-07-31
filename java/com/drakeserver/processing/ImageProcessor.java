@@ -70,14 +70,16 @@ public class ImageProcessor {
         BufferedImage image = getBufferedImage(imgBytes);
 
         ImagePlus the_image = new ImagePlus("imported image...", image);
-
+        options.setProperty("msg", "test it now");
         ArrayList<Rectangle> rectangles = new ArrayList<Rectangle>();
         try {
-
+options.setProperty("msg", "smoothing");
             IJ.run(the_image, "Smooth", ""); //$NON-NLS-1$
+            options.setProperty("msg", "enhance constrast");
             IJ.run(the_image, "Enhance Contrast", "saturated=0.4"); //$NON-NLS-1$
             IJ.run(the_image, "8-bit", ""); //$NON-NLS-1$
             //handleLightBackground(the_image);
+            options.setProperty("msg", "despeckle");
             IJ.run(the_image, "Despeckle", ""); //$NON-NLS-1$
             IJ.run(the_image, "Remove Outliers...", "radius=5 threshold=50 which=Bright"); //$NON-NLS-1$
             IJ.run(the_image, "Make Binary", ""); //$NON-NLS-1$
@@ -100,7 +102,7 @@ public class ImageProcessor {
             ParticleAnalyzer partAnalyzer = new ParticleAnalyzer(ParticleAnalyzer.EXCLUDE_EDGE_PARTICLES + ParticleAnalyzer.SHOW_NONE,
                     Measurements.AREA + Measurements.RECT, table, (1.0 * minimum_size), maximum_area, 0.0, 1.0);
             partAnalyzer.analyze(the_image, the_image.getProcessor());
-
+partAnalyzer = null;
             int total = table.getCounter();
             int h = image.getHeight();
             int w = image.getWidth();
@@ -122,6 +124,7 @@ public class ImageProcessor {
         } finally {
             the_image.flush();
             the_image.close();
+            imgBytes = null;
         }
 
         Rectangle[] rects = new Rectangle[0];

@@ -14,6 +14,9 @@
  limitations under the License.
  */
 import {remote} from 'electron';
+import {log} from '../../util/log';
+import _ from 'lodash';
+
 
 export class ImageHandler {
 
@@ -23,27 +26,40 @@ export class ImageHandler {
             try {
                 let reader = new FileReader();
                 reader.onload = () => {
-                    var array = new Int8Array(reader.result);
-                    console.log('Time to read image: ', (new Date().getTime() - t), 'ms');
+                    log.info('Time to read image: ', (new Date().getTime() - t), 'ms');
                     resolve({
-                        data: array
+                        data: new Int8Array(reader.result)
                     });
                 };
                 reader.readAsArrayBuffer(fileBlob);
-            } catch(e) {
+            } catch (e) {
                 reject(e);
             }
         });
         return q;
     }
 
+    asDataUrl(imageArr, options = {}) {
+        let mimeType = options.mimeType || 'image/jpeg';
+        let blob = new Blob([Uint8Array.from(imageArr)], {type: mimeType});
+        let urlCreator = window.URL || window.webkitURL || {}.createObjectURL;
+        return urlCreator.createObjectURL(blob);
+
+    }
+
     process(dataArray, options) {
-        let q = new Promise((resolve,reject) => {
+        let q = new Promise((resolve, reject) => {
             let imageProcessor = remote.require('./platform/image-processing');
-            let result = imageProcessor.process(dataArray, options);
-            resolve({
-                boxes: result
+            imageProcessor.process(dataArray, options).then(result => {
+
+                resolve({
+                    boxes: result
+                });
+
+            }).catch(err => {
+                reject(err);
             });
+
         });
         return q;
     }

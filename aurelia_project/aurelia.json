@@ -92,7 +92,8 @@
                 "prepend": [
                     "node_modules/bluebird/js/browser/bluebird.core.js",
                     "node_modules/aurelia-cli/lib/resources/scripts/configure-bluebird.js",
-                    "node_modules/requirejs/require.js"
+                    "node_modules/requirejs/require.js",
+                    "node_modules/jquery/dist/jquery.js"
                 ],
                 "dependencies": [
                     "aurelia-binding",
@@ -116,6 +117,8 @@
                     "aurelia-task-queue",
                     "aurelia-templating",
                     "aurelia-templating-binding",
+                    "lodash",
+                    "jquery",
                     "text",
                     {
                         "name": "aurelia-templating-resources",

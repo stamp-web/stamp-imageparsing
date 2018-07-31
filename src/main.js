@@ -16,6 +16,11 @@
 import environment from './environment';
 import {I18N, TCustomAttribute} from 'aurelia-i18n';
 import Backend from 'i18next-xhr-backend';
+import {LogManager} from 'aurelia-framework';
+import {ConsoleAppender} from 'aurelia-logging-console';
+
+LogManager.addAppender(new ConsoleAppender());
+LogManager.setLevel(LogManager.logLevel.debug);
 
 //Configure Bluebird Promises.
 Promise.config({
