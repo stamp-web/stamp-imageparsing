@@ -3,10 +3,10 @@
     "productName": "Stamp Image Bursting Application",
     "description": "Next-Generation Image Bursting Application",
     "version": "3.0.0",
-    "repository": {
-        "type": "???",
-        "url": "???"
+    "bugs": {
+        "url" : "https://github.com/jadrake75/stamp-imageparsing/issues"
     },
+    "repository": "github:jadrake75/stamp-imageparsing",
     "license": "Apache 2.0",
     "author": "Jason Drake (jadrake75@gmail.com)",
     "main": "main.js",
@@ -24,7 +24,25 @@
         "copyright": "Copyright © 2018 ${author}",
         "win": {
             "icon": "assets/icons/win/icon.ico",
-            "target": "nsis"
+            "target": "nsis",
+            "files": [
+                "!assets/sketches",
+                "!build${/*}",
+                "!test${/*}",
+                "!target${/*}",
+                "!nbproject${/*}",
+                "!aurelia_project${/*}",
+                "!java${/*}",
+                "!build.xml",
+                "!pom.xml",
+                "!gulpfile.js",
+                "!karma.conf.js",
+                "!.babelrc",
+                "!.editorconfig",
+                "!.eslintrc.json",
+                "!.gitignore",
+                "!src${/*}"
+            ]
         },
         "asar": false,
         "asarUnpack": [
@@ -38,6 +56,7 @@
             "output": "release-builds",
             "buildResources": "assets"
         },
+
         "extraFiles": [
             "dist/**"
         ]

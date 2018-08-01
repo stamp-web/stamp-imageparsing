@@ -89,11 +89,9 @@ export class ImageCanvas {
 
     scalingFactorChanged(newFactor) {
         this.paint(this.image);
-        this.imageBoundsChanged(this.imageBounds);
         _.defer(() => {
-
+            this.imageBoundsChanged(this.imageBounds);
         });
-
     }
 
     imageBoundsChanged(newRects) {
