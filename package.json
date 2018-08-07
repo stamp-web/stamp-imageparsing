@@ -26,6 +26,15 @@
             "icon": "assets/icons/win/icon.ico",
             "target": "nsis",
             "files": [
+                "assets/fonts/stamp-web/css/stamp-web-embedded.css",
+                "LICENSE",
+                "main.js",
+                "index.html",
+                "scripts${/*}",
+                "dist${/*}",
+                "platform${/*}",
+                "locales${/*}",
+                
                 "!assets/sketches",
                 "!build${/*}",
                 "!test${/*}",

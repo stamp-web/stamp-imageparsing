@@ -13,18 +13,30 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-@import '../themes/variables';
+@import '../../themes/variables';
 
-image-canvas {
-    display: flex;
+$header-height: 3.0rem;
+$footer-height: 3.0rem;
 
-    > div {
-        background-color: $image-background;
-        flex:             1 1 auto;
-        height:           100%;
-        overflow-y:       auto;
-        overflow-x:       auto;
-        width:            100%;
+main-panel {
+    display:        flex;
+    flex-direction: column;
+    height:         100%;
+    width:          100%;
+
+    .header-pane {
+        flex:   0 0 auto;
+        height: 30px;
+    }
+
+    .content-pane {
+        flex:   1 0 auto;
+        height: calc(100% - #{$footer-height + $header-height});
+    }
+
+    .footer-pane {
+        flex:   0 0 auto;
+        height: 30px;
     }
 
 }

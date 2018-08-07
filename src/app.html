@@ -1,12 +1,6 @@
 <template>
-   <require from="app.css"></require>
-    <require from="resources/elements/image-canvas"></require>
-    <div t="title" class="some-class">some title</div>
+    <require from="app.css"></require>
+    <require from="resources/elements/panels/main-panel"></require>
 
-    <input type="file" files.bind="chosenFile" change.delegate="fileSelected($event)">
-    <button click.trigger="process()">Process It</button>
-    <button click.trigger="zoom(1)">+</button>
-    <button click.trigger="zoom(-1)">-</button>
-    <image-canvas image.bind="image" image-bounds.bind="boxes" scaling-factor.bind="scalingFactor"></image-canvas>
-    <div repeat.for="box of boxes">${box.width} x ${box.height}</div>
+    <main-panel></main-panel>
 </template>

@@ -13,31 +13,19 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-@import 'resources/themes/variables';
+@import '../../themes/variables';
 
-html {
-    font-size: 10px;
-    font-family: Bookman, Helvetica, Arial;
-}
+image-canvas {
+    display: flex;
+    height:  100%;
 
-body {
-    bottom: 0;
-    font-size: 1.2rem;
-    height: 100%;
-    margin: 0;
-    position: absolute;
-    right: 0;
-    width: 100%;
-
-    main-panel {
-        bottom: 0;
-        height:   100%;
-        left:     0;
-        position: absolute;
-        right:    0;
-        top:      0;
-        width:    100%;
-
+    .canvas-wrapper {
+        background-color: $image-background;
+        flex:             1 1 auto;
+        height:           100%;
+        overflow-y:       auto;
+        overflow-x:       auto;
+        width:            100%;
     }
 
 }

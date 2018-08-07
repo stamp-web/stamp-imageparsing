@@ -1,5 +1,5 @@
-/*
- Copyright 2018 Jason Drake (jadrake75@gmail.com)
+/**
+ Copyright 2018 Jason Drake
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -13,31 +13,16 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-@import 'resources/themes/variables';
+import {valueConverter} from 'aurelia-framework';
 
-html {
-    font-size: 10px;
-    font-family: Bookman, Helvetica, Arial;
-}
+@valueConverter("asPercentage")
+export class percentageValueConverter {
 
-body {
-    bottom: 0;
-    font-size: 1.2rem;
-    height: 100%;
-    margin: 0;
-    position: absolute;
-    right: 0;
-    width: 100%;
-
-    main-panel {
-        bottom: 0;
-        height:   100%;
-        left:     0;
-        position: absolute;
-        right:    0;
-        top:      0;
-        width:    100%;
-
+    toView(value) {
+        if (typeof value !== 'undefined') {
+            value = (100.0 * value).toFixed(2) + '%';
+        }
+        return value;
     }
 
 }
