@@ -1,0 +1,68 @@
+/*
+ Copyright 2018 Jason Drake (jadrake75@gmail.com)
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
+@import '../../themes/variables';
+
+side-panel {
+    display:    flex;
+    height:     100%;
+    overflow-y: auto;
+
+    .section-list {
+        flex:   1 0 auto;
+        height: 100%;
+        width:  100%;
+
+        section {
+            border-bottom: 0.1rem solid $color-gray-dark;
+            border-top:    0;
+
+            &.selected {
+                bottom-bottom: 0.1rem solid $color-blue;
+                border-top:    0.1rem solid $color-blue;
+
+                h3 {
+                    background-color: $color-blue;
+                    color:            $color-white;
+                }
+            }
+        }
+    }
+    form {
+        padding: $padding-thick;
+
+        label, input {
+            display:       block;
+            margin-bottom: $input-margin;
+        }
+    }
+
+    h3 {
+        background-color: #dcdcdc;
+        cursor:           pointer;
+        margin:           0;
+        padding:          $padding-thick $padding-med;
+    }
+
+    .image-preview {
+        img {
+            left:      50%;
+            max-width: 28rem;
+            position:  relative;
+            transform: translate(-50%, 0);
+        }
+
+    }
+}

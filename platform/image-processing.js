@@ -15,7 +15,7 @@
  */
 const java = require('java');
 const path = require('path');
-
+const jimp = require('jimp');
 const _ = require('lodash');
 
 java.classpath.push('dist/stamp-imageparsing.jar');
@@ -83,6 +83,38 @@ module.exports = function () {
                         resolve(result);
                     });
                 });
+
+            });
+            return q;
+        },
+
+        extractRegion: function(region, buffer, options) {
+            console.log("ok here we go", region);
+            let q = new Promise((resolve,reject) => {
+
+
+
+                jimp.read(buffer).then(img => {
+                    console.log(img);
+                    resolve('tada');
+                }).catch(function(err) {
+                    console.error(err);
+                });
+
+                /*var fileReader = new FileReader();
+                fileReader.onload = function(event) {
+                    let arrayBuffer = event.target.result;
+                    jimp.read(arrayBuffer).then(img => {
+                        console.log("got image");
+                        img.crop(region.x, region.y, region.w, region.h);
+                        resolve(img);
+                    }).catch(err => {
+                        console.log(err);
+                        reject(err);
+                    });
+                };
+                fileReader.readAsArrayBuffer(image);*/
+
 
             });
             return q;

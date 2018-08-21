@@ -17,6 +17,7 @@
 
 $header-height: 3.0rem;
 $footer-height: 3.0rem;
+$side-panel-width: 30rem;
 
 main-panel {
     display:        flex;
@@ -30,8 +31,24 @@ main-panel {
     }
 
     .content-pane {
-        flex:   1 0 auto;
-        height: calc(100% - #{$footer-height + $header-height});
+        display:        flex;
+        flex:           1 0 auto;
+        flex-direction: row;
+        height:         calc(100% - #{$footer-height + $header-height});
+
+        > * {
+
+        }
+
+        image-canvas {
+            flex:      1 0 auto;
+            max-width: calc(100% - #{$side-panel-width});
+        }
+
+        side-panel {
+            flex:  0 0 auto;
+            width: $side-panel-width;
+        }
     }
 
     .footer-pane {

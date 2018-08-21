@@ -4,7 +4,7 @@
     "description": "Next-Generation Image Bursting Application",
     "version": "3.0.0",
     "bugs": {
-        "url" : "https://github.com/jadrake75/stamp-imageparsing/issues"
+        "url": "https://github.com/jadrake75/stamp-imageparsing/issues"
     },
     "repository": "github:jadrake75/stamp-imageparsing",
     "license": "Apache 2.0",
@@ -34,7 +34,6 @@
                 "dist${/*}",
                 "platform${/*}",
                 "locales${/*}",
-                
                 "!assets/sketches",
                 "!build${/*}",
                 "!test${/*}",
@@ -65,7 +64,6 @@
             "output": "release-builds",
             "buildResources": "assets"
         },
-
         "extraFiles": [
             "dist/**"
         ]
@@ -78,6 +76,7 @@
         "i18next": "11.3.3",
         "i18next-xhr-backend": "1.5.1",
         "java": "^0.10.0",
+        "jimp": "^0.3.5",
         "jquery": "^3.3.1",
         "lodash": "4.17.10",
         "requirejs": "^2.3.2",

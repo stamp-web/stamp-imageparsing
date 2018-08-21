@@ -20,6 +20,8 @@ import _ from 'lodash';
 
 export class ImageHandler {
 
+    imageProcessor = remote.require('./platform/image-processing');
+
     readImage(fileBlob) {
         let t = new Date().getTime();
         let q = new Promise((resolve, reject) => {
@@ -47,10 +49,27 @@ export class ImageHandler {
 
     }
 
+    extractRegion(region, options = {}) {
+
+      //  let data = new File(imageArr);
+        let q = new Promise((resolve, reject) => {
+
+            let url = region.image.replace(/^data:image\/\w+;base64,/, '');
+            let buffer = Buffer.from(url, 'base64');
+
+            this.imageProcessor.extractRegion(region, buffer, options).then(result => {
+                resolve(result);
+            }).catch(err => {
+                reject(err);
+            });
+        });
+        return q;
+    }
+
     process(dataArray, options) {
         let q = new Promise((resolve, reject) => {
-            let imageProcessor = remote.require('./platform/image-processing');
-            imageProcessor.process(dataArray, options).then(result => {
+            //let imageProcessor = remote.require('./platform/image-processing');
+            this.imageProcessor.process(dataArray, options).then(result => {
 
                 resolve({
                     boxes: result
@@ -63,4 +82,6 @@ export class ImageHandler {
         });
         return q;
     }
+
+
 }

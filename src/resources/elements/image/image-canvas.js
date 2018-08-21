@@ -33,6 +33,7 @@ export class ImageCanvas {
     @bindable({defaultBindingMode: bindingMode.twoWay}) selectedBox;
 
     _boxStart;
+    _offscreenBuffer;
     _clickMode = ClickMode.select;
     _ctx;   // 2d canvas context
     _image; // HTMLImageElement
@@ -59,6 +60,7 @@ export class ImageCanvas {
         this._subscribers.push(this.eventAggregator.subscribe('add-bounding-box', () => {
             this._clickMode = ClickMode.box;
         }));
+        this._subscribers.push(this.eventAggregator.subscribe('selection-changed', this._handleSelectionChange.bind(this)));
         this._subscribers.push(this.eventAggregator.subscribe('delete-selected', this.deleteSelected.bind(this)));
     }
 
@@ -68,6 +70,10 @@ export class ImageCanvas {
             this.selectedBox = undefined;
             this.repaint();
         }
+    }
+
+    _handleSelectionChange(box) {
+        this.paintImageBounds();
     }
 
     clickCanvas(evt) {
@@ -97,7 +103,7 @@ export class ImageCanvas {
                 y: evt.offsetY
             };
         } else if (this._clickMode == ClickMode.select && this.selectedBox) {
-         //   console.log("near?", this._isNearSelectionEdge(this.selectedBox, evt.offsetX, evt.offsetY));
+            //   console.log("near?", this._isNearSelectionEdge(this.selectedBox, evt.offsetX, evt.offsetY));
             if (this._isNearSelectionEdge(this.selectedBox, evt.offsetX, evt.offsetY)) {
                 this._clickMode == ClickMode.resize;
             }
@@ -116,7 +122,7 @@ export class ImageCanvas {
                     evt.offsetX - this._boxStart.x, evt.offsetY - this._boxStart.y);
             });
         } else if (this._clickMode === ClickMode.resize) {
-          //  console.log('resizing');
+            //  console.log('resizing');
         }
     }
 
@@ -139,8 +145,10 @@ export class ImageCanvas {
                 width:  Math.abs(w) / this.scalingFactor,
                 height: Math.abs(h) / this.scalingFactor
             };
+            this._generateCropImage(box);
             this.imageBounds.push(box);
-            this.selectedBox = box;
+            this.eventAggregator.publish('new-box', box);
+            //this.selectedBox = box;
             this._boxStart = undefined;
             _.defer(() => { // the click event will activate with select so defer
                 this._clickMode = ClickMode.select;
@@ -206,6 +214,30 @@ export class ImageCanvas {
         }
     }
 
+    generateOffScreenCanvas(newImage) {
+        if (newImage) {
+            let img = new Image();
+            img.onload = () => {
+                this._offscreenBuffer = document.createElement('canvas');
+                this._offscreenBuffer.width = img.width;
+                this._offscreenBuffer.height = img.height;
+                let context = this._offscreenBuffer.getContext('2d');
+                context.drawImage(img, 0, 0, img.width, img.height);
+            }
+            img.src = newImage;
+        }
+    }
+
+    crop(canvas, offsetX, offsetY, width, height, callback) {
+        var buffer = document.createElement('canvas');
+        var b_ctx = buffer.getContext('2d');
+        buffer.width = width;
+        buffer.height = height;
+        b_ctx.drawImage(canvas, offsetX, offsetY, width, height, 0, 0, buffer.width, buffer.height);
+        return buffer.toDataURL();
+    };
+
+
     repaint() {
         this.paint(this.image);
         _.defer(() => {
@@ -217,11 +249,18 @@ export class ImageCanvas {
         this.repaint();
     }
 
-    imageBoundsChanged(newRects) {
-        if (newRects) {
-            this.imageBounds = newRects;
+    imageBoundsChanged() {
+        if (this.imageBounds) {
             this.paintImageBounds();
+            _.forEach(this.imageBounds, imageBox => {
+                this._generateCropImage(imageBox);
+                console.log('...', imageBox);
+            });
         }
+    }
+
+    _generateCropImage(imageBoundary) {
+        imageBoundary.image = this.crop(this._offscreenBuffer, imageBoundary.x, imageBoundary.y, imageBoundary.width, imageBoundary.height);
     }
 
     paintImageBounds() {
@@ -243,6 +282,7 @@ export class ImageCanvas {
         this._cleanupImage();
         this.clear();
         this.paint(newImage);
+        this.generateOffScreenCanvas(newImage);
     }
 
 }
