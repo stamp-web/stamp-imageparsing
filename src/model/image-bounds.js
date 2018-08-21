@@ -13,16 +13,21 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-$color-gray: #ccc;
-$color-gray-dark: #777;
-$color-blue: #005580;
-$color-blue-bright: #0088f0;
-$color-white: #fefefe;
+import _ from 'lodash';
 
-$image-background: #232323;
+var lastCount = 0;
+
+export class ImageBounds {
+
+    rectangle;
+    name;
+    image;
+
+    constructor(opts = {}) {
+        this.name = 'Region-' + (++lastCount);
+        this.rectangle = opts.rectangle || undefined;
+        this.image = opts.image || undefined;
+    }
 
 
-$padding-thick: 0.5rem;
-$padding-med: 0.25rem;
-
-$input-margin: 0.25rem;
+}

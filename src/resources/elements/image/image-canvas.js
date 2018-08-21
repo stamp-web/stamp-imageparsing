@@ -13,22 +13,23 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-import {customElement, bindable, inject} from 'aurelia-framework';
+import {customElement, bindable, inject, BindingEngine} from 'aurelia-framework';
 import {bindingMode} from 'aurelia-binding';
 import {EventAggregator} from 'aurelia-event-aggregator';
+import {ImageBounds} from 'model/image-bounds';
 
 import $ from 'jquery';
 import _ from 'lodash';
 
 @customElement('image-canvas')
-@inject(Element, EventAggregator)
+@inject(Element, EventAggregator, BindingEngine)
 export class ImageCanvas {
 
 
     LINE_WIDTH = 2;
 
     @bindable image;
-    @bindable({defaultBindingMode: bindingMode.twoWay}) imageBounds = [];
+    @bindable boundRegions = [];
     @bindable scalingFactor = 1.0;
     @bindable({defaultBindingMode: bindingMode.twoWay}) selectedBox;
 
@@ -39,9 +40,10 @@ export class ImageCanvas {
     _image; // HTMLImageElement
     _subscribers = [];
 
-    constructor(element, eventAggregator) {
+    constructor(element, eventAggregator, bindingEngine) {
         this.element = element;
         this.eventAggregator = eventAggregator;
+        this.bindingEngine = bindingEngine;
     }
 
     attached() {
@@ -57,35 +59,33 @@ export class ImageCanvas {
     }
 
     _setupListeners() {
-        this._subscribers.push(this.eventAggregator.subscribe('add-bounding-box', () => {
+        this._subscribers.push(this.eventAggregator.subscribe('add-rectangle', () => {
             this._clickMode = ClickMode.box;
         }));
         this._subscribers.push(this.eventAggregator.subscribe('selection-changed', this._handleSelectionChange.bind(this)));
         this._subscribers.push(this.eventAggregator.subscribe('delete-selected', this.deleteSelected.bind(this)));
+        this._subscribers.push(this.bindingEngine.collectionObserver(this.boundRegions).subscribe(this.regionsChanged.bind(this)));
     }
 
     deleteSelected() {
-        if (this.selectedBox) {
-            _.pull(this.imageBounds, this.selectedBox);
-            this.selectedBox = undefined;
-            this.repaint();
-        }
+        this.repaint();
     }
 
-    _handleSelectionChange(box) {
-        this.paintImageBounds();
+    _handleSelectionChange(rectangle) {
+        this.paintBoundRegions();
     }
 
     clickCanvas(evt) {
         if (this._clickMode === ClickMode.select) {
             let previousBox = this.selectedBox;
             this.selectedBox = undefined;
-            _.forEachRight(this.imageBounds, box => {
-                if (this._isSelectionWithinBox(box, evt.offsetX / this.scalingFactor, evt.offsetY / this.scalingFactor)) {
-                    if (previousBox === box) {
+            _.forEachRight(this.boundRegions, region => {
+                let rectangle = region.rectangle;
+                if (this._isSelectionWithinBox(rectangle, evt.offsetX / this.scalingFactor, evt.offsetY / this.scalingFactor)) {
+                    if (previousBox === rectangle) {
                         return true;
                     }
-                    this.selectedBox = box;
+                    this.selectedBox = rectangle;
                     this.repaint();
                     return false;
                 }
@@ -139,16 +139,18 @@ export class ImageCanvas {
             if (h < 0) {
                 y = y + h;
             }
-            let box = {
+            let rectangle = {
                 x:      x / this.scalingFactor,
                 y:      y / this.scalingFactor,
                 width:  Math.abs(w) / this.scalingFactor,
                 height: Math.abs(h) / this.scalingFactor
             };
-            this._generateCropImage(box);
-            this.imageBounds.push(box);
-            this.eventAggregator.publish('new-box', box);
-            //this.selectedBox = box;
+
+            let imageBounds = new ImageBounds({
+                image:     this._generateCropImage(rectangle),
+                rectangle: rectangle
+            });
+            this.eventAggregator.publish('new-image-bounds', imageBounds);
             this._boxStart = undefined;
             _.defer(() => { // the click event will activate with select so defer
                 this._clickMode = ClickMode.select;
@@ -157,14 +159,14 @@ export class ImageCanvas {
         }
     }
 
-    _isSelectionWithinBox(box, x, y) {
-        return ( box.x < x && box.x + box.width > x && box.y < y && box.y + box.height > y);
+    _isSelectionWithinBox(rectangle, x, y) {
+        return ( rectangle.x < x && rectangle.x + rectangle.width > x && rectangle.y < y && rectangle.y + rectangle.height > y);
     }
 
-    _isNearSelectionEdge(box, x, y) {
+    _isNearSelectionEdge(rectangle, x, y) {
         let delta = 10;
-        return ((((x > box.x - delta) && (x < box.x + delta)) || ((x > box.x + box.width - delta) && (x < box.x + box.width + delta))) &&
-            (((y > box.y - delta) && (y < box.y + delta)) || ((y > box.y + box.height - delta) && (y < box.y + box.height + delta)))
+        return ((((x > rectangle.x - delta) && (x < rectangle.x + delta)) || ((x > rectangle.x + rectangle.width - delta) && (x < rectangle.x + rectangle.width + delta))) &&
+            (((y > rectangle.y - delta) && (y < rectangle.y + delta)) || ((y > rectangle.y + rectangle.height - delta) && (y < rectangle.y + rectangle.height + delta)))
         );
     }
 
@@ -241,7 +243,7 @@ export class ImageCanvas {
     repaint() {
         this.paint(this.image);
         _.defer(() => {
-            this.paintImageBounds();
+            this.paintBoundRegions();
         });
     }
 
@@ -249,28 +251,31 @@ export class ImageCanvas {
         this.repaint();
     }
 
-    imageBoundsChanged() {
-        if (this.imageBounds) {
-            this.paintImageBounds();
-            _.forEach(this.imageBounds, imageBox => {
-                this._generateCropImage(imageBox);
-                console.log('...', imageBox);
+    regionsChanged() {
+        if (this.boundRegions) {
+            this.repaint();
+            _.forEach(this.boundRegions, region => {
+                region.image = this._generateCropImage(region.rectangle);
             });
         }
     }
 
-    _generateCropImage(imageBoundary) {
-        imageBoundary.image = this.crop(this._offscreenBuffer, imageBoundary.x, imageBoundary.y, imageBoundary.width, imageBoundary.height);
+    _generateCropImage(rectangle) {
+        return this.crop(this._offscreenBuffer, rectangle.x, rectangle.y, rectangle.width, rectangle.height);
     }
 
-    paintImageBounds() {
+    paintBoundRegions() {
         let ctx = this._getContext();
 
-        ctx.lineWidth = this.LINE_WIDTH;
-        _.forEach(this.imageBounds, rect => {
-            ctx.strokeStyle = (rect === this.selectedBox) ? '#ee2222' : '#22cc22';
+        _.forEach(this.boundRegions, region => {
+            ctx.lineWidth = this.LINE_WIDTH;
+            let rect = region.rectangle;
+            ctx.strokeStyle = (rect === this.selectedBox) ? '#0088f0' : '#999';
             ctx.strokeRect(rect.x * this.scalingFactor, rect.y * this.scalingFactor,
                 rect.width * this.scalingFactor, rect.height * this.scalingFactor);
+            ctx.font = "10pt Sans-Serif";
+            ctx.lineWidth = 1;
+            ctx.strokeText(region.name, rect.x * this.scalingFactor + 5, rect.y * this.scalingFactor + 15);
         });
     }
 
@@ -289,7 +294,7 @@ export class ImageCanvas {
 
 class ClickMode {
 
-    static box = 'box';
+    static box = 'rectangle';
     static select = 'select';
     static resize = 'resize';
 }

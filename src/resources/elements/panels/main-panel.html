@@ -8,7 +8,7 @@
         <input type="file" files.bind="chosenFile" change.delegate="fileSelected($event)">
         <button click.trigger="process()" disabled.bind="!image"><i class="sw-icon-stamp"></i></button>
 
-        <button click.trigger="addBox()" disabled.bind="!image"><i class="sw-icon-plus"></i></button>
+        <button click.trigger="addRectangle()" disabled.bind="!image"><i class="sw-icon-plus"></i></button>
         <button click.trigger="deleteSelected()" disabled.bind="!selectedBox"><i class="sw-icon-delete"></i></button>
 
         <button click.trigger="zoom(1)" disabled.bind="!image"><i class="sw-icon-zoom-in"></i></button>
@@ -16,7 +16,9 @@
         <button click.trigger="settings()"><i class="sw-icon-settings"></i></button>
     </div>
     <div class="content-pane">
-        <image-canvas image.bind="image" selected-box.bind="selectedBox" image-bounds.bind="boxes"
+        <image-canvas image.bind="image"
+                      bound-regions.bind="boundRegions"
+                      selected-box.bind="selectedBox"
                       scaling-factor.bind="scalingFactor"></image-canvas>
         <side-panel bound-regions.bind="boundRegions" selected-box.bind="selectedBox"></side-panel>
     </div>

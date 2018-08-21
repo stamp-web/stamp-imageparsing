@@ -47,7 +47,7 @@ export class SidePanel {
         return (region.filePath ? region.filePath : region.name);
     }
 
-    regionsChanged(removedRegions) {
+    regionsChanged() {
         let first = _.first(this.boundRegions);
         if(first) {
             first.expanded = true;
@@ -55,29 +55,20 @@ export class SidePanel {
     }
 
     selectedBoxChanged(newBox) {
-        console.log(newBox);
-        console.log(this.selectedBox);
-        console.log(_.find(this.boundRegions, region => {
-            return region.box === this.selectedBox;
-        }));
         _.defer(() => {
-            let exp = _.find(this.boundRegions, region => {
-                return region.box === this.selectedBox;
-            });
-            console.log(exp);
-            if(exp) {
-                this.expand(exp);
-            }
+            let region = _.find(this.boundRegions, {rectangle: this.selectedBox});
+            this.expand(region);
         });
-
     }
 
     expand(region) {
-        let index = _.findIndex(this.boundRegions, region);
-        _.forEach(this.boundRegions, iter => {
-            iter.expanded = false;
-        });
-        region.expanded = true;
-        this.eventAggregator.publish('selection-changed', region.box);
+        if(region) {
+            _.forEach(this.boundRegions, iter => {
+                iter.expanded = false;
+            });
+            region.expanded = true;
+            this.eventAggregator.publish('selection-changed', region.rectangle);
+        }
+
     }
 }

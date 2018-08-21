@@ -18,6 +18,8 @@ import {customElement, inject, bindable, LogManager, BindingEngine} from 'aureli
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {remote} from 'electron';
 import {ImageHandler} from 'processing/image/image-handler';
+import {ImageBounds} from 'model/image-bounds';
+import _ from 'lodash';
 
 @customElement('main-panel')
 @inject(ImageHandler, EventAggregator, BindingEngine)
@@ -60,7 +62,7 @@ export class MainPanel {
     _setupListeners() {
         this.subscribers.push(this.eventAggregator.subscribe('canvas-click', this._handleCanvasClick.bind(this)));
         this.subscribers.push(this.eventAggregator.subscribe('selection-changed', this._handleSelectionChange.bind(this)));
-        this.subscribers.push(this.eventAggregator.subscribe('new-box', this._handleNewBox.bind(this)));
+        this.subscribers.push(this.eventAggregator.subscribe('new-image-bounds', this._handleNewImageBounds.bind(this)));
         this.subscribers.push(this.bindingEngine.collectionObserver(this.boxes).subscribe(this.boxesChanged.bind(this)));
     }
 
@@ -68,9 +70,9 @@ export class MainPanel {
         console.log(">>> ", clickData.x, ' and ', clickData.y);
     }
 
-    _handleNewBox(box) {
-        this.boundRegions.push(this._createRegion(box, this.boundRegions.length));
-        this.selectedBox = box;
+    _handleNewImageBounds(boundImage) {
+        this.boundRegions.push(boundImage);
+        this.selectedBox = boundImage.rectangle;
     }
 
     _handleSelectionChange(box) {
@@ -79,20 +81,19 @@ export class MainPanel {
 
     boxesChanged(newBoxes) {
         this.boundRegions.splice(0, this.boundRegions.length);
-        _.defer(() => {
-            _.forEach(this.boxes, (box, index) => {
-                this.boundRegions.push(this._createRegion(box, index));
+        this.selectedBox = undefined;
+        _.defer(()=> { // allow other components to cleanup
+            _.forEach(newBoxes, (box, index) => {
+                let region = new ImageBounds({
+                    rectangle: box
+                });
+                this.boundRegions.push(region);
+                if (index === 0) {
+                   this.selectedBox = box;
+                }
             });
         });
 
-    }
-
-    _createRegion(box, index) {
-        return {
-            name:  'Region-' + index,
-            image: box.image,
-            box: box
-        };
     }
 
     fileSelected() {
@@ -106,12 +107,17 @@ export class MainPanel {
         }
     }
 
-    addBox() {
-        this.eventAggregator.publish('add-bounding-box');
+    addRectangle() {
+        this.eventAggregator.publish('add-rectangle');
     }
 
     deleteSelected() {
-        this.eventAggregator.publish('delete-selected');
+        let index = _.findIndex(this.boundRegions, {rectangle: this.selectedBox});
+        if (index >= 0) {
+            this.boundRegions.splice(index, 1);
+            this.eventAggregator.publish('delete-selected', this.selectedBox);
+            this.selectedBox = undefined;
+        }
     }
 
     clear() {
