@@ -9,7 +9,7 @@ The following is a sketch created for the concept art for the project
 ## Progress Videos
 
 Here is a short video showing the application in action (Note the window frame and dialogs are not visible due to the reocrding software):
-![BETA Video](http://www.drakeserver.com/javaws/videos/BETA%20-%20Stamp%20Image%20Bursting%20Application.mp4)
+[BETA Video](http://www.drakeserver.com/javaws/videos/BETA%20-%20Stamp%20Image%20Bursting%20Application.mp4)
 
 ## Pre-Requisites
 
