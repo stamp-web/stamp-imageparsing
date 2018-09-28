@@ -1,15 +1,21 @@
 <template>
 
     <require from="resources/elements/panels/side-panel.css"></require>
-
+    <div class="action-list">
+        <button click.delegate="saveValues()" disabled.bind="!validForSave"><i class="sw-icon-download"></i></button>
+        <button click.delegate="clearValues()"><i class="sw-icon-eraser"></i></button>
+    </div>
     <div class="section-list">
         <section repeat.for="section of boundRegions" class="${section.expanded ? 'selected' : ''}">
-            <h3 click.trigger="expand(section)">${regionName(section)}</h3>
-            <div if.bind="section.expanded">
+            <h3 click.trigger="expand(section)">${section.name}</h3>
+            <div class="bound-details au-animate" show.bind="section.expanded">
                 <form>
                     <label>${'labels.folder'|t}</label>
                     <label>${'labels.filename'|t}</label>
-                    <input name="filename" value.bind="section.filename">
+                    <input name="filename"
+                           focus.bind="section.hasFocus"
+                           value.bind="section.filename & throttle"
+                           keyup.delegate="filenameUpdated($event, section)">
                 </form>
                 <div class="image-preview" show.bind="section.image" >
                     <img src.bind="section.image">

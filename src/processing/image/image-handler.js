@@ -30,7 +30,7 @@ export class ImageHandler {
                 reader.onload = () => {
                     log.info('Time to read image: ', (new Date().getTime() - t), 'ms');
                     resolve({
-                        data: new Int8Array(reader.result)
+                        data: Buffer.from(reader.result)
                     });
                 };
                 reader.readAsArrayBuffer(fileBlob);
@@ -46,42 +46,29 @@ export class ImageHandler {
         let blob = new Blob([Uint8Array.from(imageArr)], {type: mimeType});
         let urlCreator = window.URL || window.webkitURL || {}.createObjectURL;
         return urlCreator.createObjectURL(blob);
-
     }
 
-    extractRegion(region, options = {}) {
-
-      //  let data = new File(imageArr);
-        let q = new Promise((resolve, reject) => {
-
-            let url = region.image.replace(/^data:image\/\w+;base64,/, '');
-            let buffer = Buffer.from(url, 'base64');
-
-            this.imageProcessor.extractRegion(region, buffer, options).then(result => {
-                resolve(result);
-            }).catch(err => {
-                reject(err);
+    saveRegions(imageBuffer, regions, options) {
+        _.forEach(regions, region => {
+            this.imageProcessor.saveImages(imageBuffer, region, options).then(() => {
+                log.info("saved -> " + region.filename);
+            }).catch(e => {
+                log.error(e);
             });
         });
-        return q;
     }
 
     process(dataArray, options) {
         let q = new Promise((resolve, reject) => {
-            //let imageProcessor = remote.require('./platform/image-processing');
             this.imageProcessor.process(dataArray, options).then(result => {
-
                 resolve({
                     boxes: result
                 });
-
             }).catch(err => {
                 reject(err);
             });
-
         });
         return q;
     }
-
 
 }

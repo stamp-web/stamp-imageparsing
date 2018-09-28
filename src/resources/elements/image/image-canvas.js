@@ -13,7 +13,7 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-import {customElement, bindable, inject, BindingEngine} from 'aurelia-framework';
+import {customElement, bindable, inject, BindingEngine, LogManager} from 'aurelia-framework';
 import {bindingMode} from 'aurelia-binding';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {ImageBounds} from 'model/image-bounds';
@@ -31,7 +31,14 @@ export class ImageCanvas {
     @bindable image;
     @bindable boundRegions = [];
     @bindable scalingFactor = 1.0;
-    @bindable({defaultBindingMode: bindingMode.twoWay}) selectedBox;
+    @bindable selectedRegion;
+    @bindable style = {
+        selected:     '#89bdd3',
+        border:       '#c9c9c9',
+        create:       '#9ad3de',
+        transparency: 0.1
+    };
+
 
     _boxStart;
     _offscreenBuffer;
@@ -44,6 +51,7 @@ export class ImageCanvas {
         this.element = element;
         this.eventAggregator = eventAggregator;
         this.bindingEngine = bindingEngine;
+        this.logger = LogManager.getLogger('image-canvas');
     }
 
     attached() {
@@ -62,7 +70,6 @@ export class ImageCanvas {
         this._subscribers.push(this.eventAggregator.subscribe('add-rectangle', () => {
             this._clickMode = ClickMode.box;
         }));
-        this._subscribers.push(this.eventAggregator.subscribe('selection-changed', this._handleSelectionChange.bind(this)));
         this._subscribers.push(this.eventAggregator.subscribe('delete-selected', this.deleteSelected.bind(this)));
         this._subscribers.push(this.bindingEngine.collectionObserver(this.boundRegions).subscribe(this.regionsChanged.bind(this)));
     }
@@ -71,27 +78,32 @@ export class ImageCanvas {
         this.repaint();
     }
 
-    _handleSelectionChange(rectangle) {
-        this.paintBoundRegions();
+    selectedRegionChanged(newSelection, oldSelection) {
+        if (oldSelection) {
+            this._paintRegion(oldSelection.rectangle, oldSelection.name);
+        }
+        if(newSelection) {
+            this._paintRegion(newSelection.rectangle, newSelection.name);
+        }
     }
 
     clickCanvas(evt) {
         if (this._clickMode === ClickMode.select) {
-            let previousBox = this.selectedBox;
-            this.selectedBox = undefined;
+            let previousRegion = this.selectedRegion;
             _.forEachRight(this.boundRegions, region => {
                 let rectangle = region.rectangle;
                 if (this._isSelectionWithinBox(rectangle, evt.offsetX / this.scalingFactor, evt.offsetY / this.scalingFactor)) {
-                    if (previousBox === rectangle) {
+                    if (_.get(previousRegion, 'rectangle') === rectangle) {
                         return true;
                     }
-                    this.selectedBox = rectangle;
-                    this.repaint();
+                    this.eventAggregator.publish('selection-changed', region);
+
                     return false;
                 }
             });
-            if (!this.selectedBox && previousBox) {
-                this.selectedBox = previousBox;
+            if (!this.selectedRegion && previousRegion) {
+                this.logger.warn(">> reseting to previous");
+                this.eventAggregator.publish('selection-changed', previousRegion);
             }
         }
     }
@@ -102,9 +114,9 @@ export class ImageCanvas {
                 x: evt.offsetX,
                 y: evt.offsetY
             };
-        } else if (this._clickMode == ClickMode.select && this.selectedBox) {
+        } else if (this._clickMode == ClickMode.select && this.selectedRegion) {
             //   console.log("near?", this._isNearSelectionEdge(this.selectedBox, evt.offsetX, evt.offsetY));
-            if (this._isNearSelectionEdge(this.selectedBox, evt.offsetX, evt.offsetY)) {
+            if (this._isNearSelectionEdge(this.selectedRegion.rectangle, evt.offsetX, evt.offsetY)) {
                 this._clickMode == ClickMode.resize;
             }
         }
@@ -115,7 +127,7 @@ export class ImageCanvas {
             this.repaint();
             _.defer(() => {
                 let ctx = this._getContext();
-                ctx.strokeStyle = '#0FF';
+                ctx.strokeStyle = this.style.create;
                 ctx.setLineDash([10, 2]);
                 ctx.lineWidth = this.LINE_WIDTH;
                 ctx.strokeRect(this._boxStart.x, this._boxStart.y,
@@ -254,8 +266,16 @@ export class ImageCanvas {
     regionsChanged() {
         if (this.boundRegions) {
             this.repaint();
-            _.forEach(this.boundRegions, region => {
-                region.image = this._generateCropImage(region.rectangle);
+            _.forEach(this.boundRegions, (region,index) => {
+                let genCrop = (r) => {
+                    r.image = this._generateCropImage(r.rectangle);
+                };
+                if (index === 0) {
+                    genCrop(region);
+                } else {
+                    _.delay(genCrop, 100, region);
+                }
+
             });
         }
     }
@@ -265,18 +285,32 @@ export class ImageCanvas {
     }
 
     paintBoundRegions() {
-        let ctx = this._getContext();
-
         _.forEach(this.boundRegions, region => {
-            ctx.lineWidth = this.LINE_WIDTH;
-            let rect = region.rectangle;
-            ctx.strokeStyle = (rect === this.selectedBox) ? '#0088f0' : '#999';
-            ctx.strokeRect(rect.x * this.scalingFactor, rect.y * this.scalingFactor,
-                rect.width * this.scalingFactor, rect.height * this.scalingFactor);
-            ctx.font = "10pt Sans-Serif";
-            ctx.lineWidth = 1;
-            ctx.strokeText(region.name, rect.x * this.scalingFactor + 5, rect.y * this.scalingFactor + 15);
+            this._paintRegion(region.rectangle, region.name);
         });
+    }
+
+    _paintRegion(rect, text) {
+        let ctx = this._getContext();
+        ctx.lineWidth = this.LINE_WIDTH;
+        let isSelected = (rect === _.get(this.selectedRegion, 'rectangle'));
+        ctx.strokeStyle = isSelected ? this.style.selected : this.style.border;
+        ctx.strokeRect(rect.x * this.scalingFactor, rect.y * this.scalingFactor,
+            rect.width * this.scalingFactor, rect.height * this.scalingFactor);
+        /* Will continuously fill
+        if (isSelected) {
+            ctx.globalAlpha = this.style.transparency;
+            ctx.fillStyle = this.style.selected;
+            ctx.fillRect(rect.x * this.scalingFactor, rect.y * this.scalingFactor,
+                rect.width * this.scalingFactor, rect.height * this.scalingFactor);
+            ctx.globalAlpha = 1.0; // revert
+        }
+         */
+        let fontSize = (this.scalingFactor < 0.5) ? '11px': '14px';
+        ctx.font = `small-caps ${fontSize} arial`;
+        ctx.lineWidth = 1;
+        ctx.fillStyle = isSelected ? this.style.selected : this.style.border;
+        ctx.fillText(text, rect.x * this.scalingFactor + 5, rect.y * this.scalingFactor + 15);
     }
 
     /**

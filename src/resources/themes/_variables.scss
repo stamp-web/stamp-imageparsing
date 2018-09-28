@@ -13,11 +13,19 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
+
+$pallet-base-medium: #c9c9c9;
+$pallet-base: #e3e3e3;
+$pallet-primary: #9ad3de;
+$pallet-primary-medium: #89bdd3;
+
 $color-gray: #ccc;
-$color-gray-dark: #777;
+$color-gray-dark: #434343;
 $color-blue: #005580;
 $color-blue-bright: #0088f0;
+$color-green-bright: #00e077;
 $color-white: #fefefe;
+
 
 $image-background: #232323;
 
@@ -26,3 +34,17 @@ $padding-thick: 0.5rem;
 $padding-med: 0.25rem;
 
 $input-margin: 0.25rem;
+
+$selection-color: $pallet-primary-medium;
+$selection-text-color: $color-white;
+
+$section-bg: $color-white;
+$section-title-bg: $pallet-base;
+$section-title-color: $color-gray-dark;
+
+$button-bg: $pallet-base;
+$button-bg-disabled: $pallet-base-medium;
+$button-color: $color-gray-dark;
+$button-color-disabled: lighten($color-gray-dark, 10%);
+
+

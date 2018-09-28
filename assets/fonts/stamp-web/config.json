@@ -405,6 +405,18 @@
       "src": "fontawesome"
     },
     {
+      "uid": "b08cfe8039de2ce815686aced2caef06",
+      "css": "download",
+      "code": 59453,
+      "src": "entypo"
+    },
+    {
+      "uid": "ebc57fa8400e4ede049ac5dc665210e1",
+      "css": "eraser",
+      "code": 61741,
+      "src": "fontawesome"
+    },
+    {
       "uid": "fb41c3a521c66ffd5a8492ee2c53e783",
       "css": "calendar",
       "code": 59427,

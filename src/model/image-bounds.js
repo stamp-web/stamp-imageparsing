@@ -25,8 +25,8 @@ export class ImageBounds {
 
     constructor(opts = {}) {
         this.name = 'Region-' + (++lastCount);
-        this.rectangle = opts.rectangle || undefined;
-        this.image = opts.image || undefined;
+        this.rectangle = opts.rectangle;
+        this.image = opts.image;
     }
 
 

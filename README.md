@@ -6,6 +6,11 @@ The following is a sketch created for the concept art for the project
 
 ![Concept Sketch](https://github.com/jadrake75/stamp-imageparsing/raw/master/assets/sketches/image-bursting-sketch.png)
 
+## Progress Videos
+
+Here is a short video showing the application in action (Note the window frame and dialogs are not visible due to the reocrding software):
+![BETA Video](http://www.drakeserver.com/javaws/videos/BETA%20-%20Stamp%20Image%20Bursting%20Application.mp4)
+
 ## Pre-Requisites
 
 - Java 1.8 or higher using the 64-bit JVM

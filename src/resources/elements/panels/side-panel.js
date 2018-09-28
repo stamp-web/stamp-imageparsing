@@ -23,9 +23,10 @@ import _ from 'lodash';
 export class SidePanel {
 
     @bindable boundRegions = [];
-    @bindable selectedBox;
+    @bindable selectedRegion;
 
     subscribers = [];
+    validForSave = false;
 
     constructor(eventAggregator, bindingEngine) {
         this.eventAggregator = eventAggregator;
@@ -43,22 +44,48 @@ export class SidePanel {
         this.subscribers.push(this.bindingEngine.collectionObserver(this.boundRegions).subscribe(this.regionsChanged.bind(this)));
     }
 
-    regionName(region) {
-        return (region.filePath ? region.filePath : region.name);
-    }
-
     regionsChanged() {
         let first = _.first(this.boundRegions);
         if(first) {
             first.expanded = true;
         }
     }
-
-    selectedBoxChanged(newBox) {
-        _.defer(() => {
-            let region = _.find(this.boundRegions, {rectangle: this.selectedBox});
-            this.expand(region);
+    clearValues() {
+        _.each(this.boundRegions, region => {
+           region.filePath = undefined;
+           region.filename = undefined;
         });
+        this.validForSave = false;
+    }
+
+    saveValues() {
+        let saveRegions = [];
+        _.each(this.boundRegions, region => {
+            if(this.isValidRegion(region)) {
+                saveRegions.push(region);
+            }
+        });
+        if(saveRegions.length > 0) {
+            this.eventAggregator.publish('save-regions', saveRegions);
+        }
+    }
+
+    isValidRegion(region) {
+        return !_.isEmpty(region.filename) && !_.isNil(region.rectangle);
+    }
+
+    filenameUpdated(event, region) {
+        if(!this.validForSave && this.isValidRegion(region)) {
+            this.validForSave = true;
+        }
+        region.filePath = region.filename;
+        return true;
+    }
+
+    selectedRegionChanged(newBox) {
+        let region = _.find(this.boundRegions, o => {return o === this.selectedRegion});
+        region.hasFocus = true;
+        this.expand(region);
     }
 
     expand(region) {
@@ -67,7 +94,7 @@ export class SidePanel {
                 iter.expanded = false;
             });
             region.expanded = true;
-            this.eventAggregator.publish('selection-changed', region.rectangle);
+            this.eventAggregator.publish('selection-changed', region);
         }
 
     }

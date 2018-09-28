@@ -32,6 +32,7 @@ Promise.config({
 export function configure(aurelia) {
     aurelia.use
         .standardConfiguration()
+        .plugin('aurelia-animator-css')
         .plugin('aurelia-i18n', (instance) => {
             let aliases = ['t', 'i18n'];
             TCustomAttribute.configureAliases(aliases);

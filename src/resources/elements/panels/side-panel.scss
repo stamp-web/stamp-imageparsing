@@ -16,27 +16,53 @@
 @import '../../themes/variables';
 
 side-panel {
-    display:    flex;
-    height:     100%;
-    overflow-y: auto;
+    display:        flex;
+    flex-direction: column;
+    height:         100%;
+
+    .action-list {
+        flex:   1 0 auto;
+        height: 3rem;
+    }
 
     .section-list {
-        flex:   1 0 auto;
-        height: 100%;
-        width:  100%;
+        flex:       1 0 auto;
+        height:     100%;
+        overflow-y: auto;
+        width:      100%;
 
         section {
+            background-color: $section-bg;
             border-bottom: 0.1rem solid $color-gray-dark;
             border-top:    0;
 
+            h3 {
+                background-color: $section-title-bg;
+                color:            $section-title-color;
+                cursor:           pointer;
+                margin:           0;
+                padding:          $padding-thick $padding-med;
+            }
             &.selected {
-                bottom-bottom: 0.1rem solid $color-blue;
-                border-top:    0.1rem solid $color-blue;
+                bottom-bottom: 0.1rem solid $selection-color;
+                border-top:    0.1rem solid $selection-color;
 
                 h3 {
-                    background-color: $color-blue;
-                    color:            $color-white;
+                    background-color: $selection-color;
+                    color:            $selection-text-color;
                 }
+            }
+
+
+            .bound-details {
+                &.au-enter {
+                    opacity: 0 !important;
+                }
+                &.au-enter-active, &.aurelia-hide-remove {
+                    animation:                 rollDown 0.5s;
+                    animation-timing-function: ease;
+                }
+
             }
         }
     }
@@ -49,12 +75,7 @@ side-panel {
         }
     }
 
-    h3 {
-        background-color: #dcdcdc;
-        cursor:           pointer;
-        margin:           0;
-        padding:          $padding-thick $padding-med;
-    }
+
 
     .image-preview {
         img {
@@ -64,5 +85,25 @@ side-panel {
             transform: translate(-50%, 0);
         }
 
+    }
+
+
+}
+
+@keyframes rollDown {
+    0% {
+        transform: translateY(-1%);
+    }
+    100% {
+        transform: translateY(0%);
+    }
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
     }
 }

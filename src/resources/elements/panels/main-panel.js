@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import {customElement, inject, bindable, LogManager, BindingEngine} from 'aurelia-framework';
+import {customElement, computedFrom, inject, bindable, LogManager, BindingEngine} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {remote} from 'electron';
 import {ImageHandler} from 'processing/image/image-handler';
@@ -27,19 +27,24 @@ export class MainPanel {
 
     @bindable boxes = [];
     @bindable boundRegions = [];
-    selectedBox;
-    imageBlob;
+    @bindable selectedRegion;
+
+    toobig = false;
+    toosmall = false;
 
     scalingFactor = 1.0;
     image;
 
     data;
     chosenFile;
+    meta;
     handler;
-    processing;
+    processing = false;
 
     subscribers = [];
 
+    _MAX_ZOOM = 4.0;
+    _MIN_ZOOM = 0.25;
 
     constructor(imageHandler, eventAggregator, bindingEngine) {
         this.handler = imageHandler;
@@ -64,6 +69,7 @@ export class MainPanel {
         this.subscribers.push(this.eventAggregator.subscribe('selection-changed', this._handleSelectionChange.bind(this)));
         this.subscribers.push(this.eventAggregator.subscribe('new-image-bounds', this._handleNewImageBounds.bind(this)));
         this.subscribers.push(this.bindingEngine.collectionObserver(this.boxes).subscribe(this.boxesChanged.bind(this)));
+        this.subscribers.push(this.eventAggregator.subscribe('save-regions', this._handleSaveRegions.bind(this)));
     }
 
     _handleCanvasClick(clickData) {
@@ -72,16 +78,20 @@ export class MainPanel {
 
     _handleNewImageBounds(boundImage) {
         this.boundRegions.push(boundImage);
-        this.selectedBox = boundImage.rectangle;
+        this.selectedRegion = boundImage;
     }
 
-    _handleSelectionChange(box) {
-        this.selectedBox = box;
+    _handleSelectionChange(region) {
+        this.selectedRegion = region;
+    }
+
+    _handleSaveRegions(regions) {
+        this.handler.saveRegions(this.data, regions, {});
     }
 
     boxesChanged(newBoxes) {
         this.boundRegions.splice(0, this.boundRegions.length);
-        this.selectedBox = undefined;
+        this.selectedRegion = undefined;
         _.defer(()=> { // allow other components to cleanup
             _.forEach(newBoxes, (box, index) => {
                 let region = new ImageBounds({
@@ -89,7 +99,7 @@ export class MainPanel {
                 });
                 this.boundRegions.push(region);
                 if (index === 0) {
-                   this.selectedBox = box;
+                   this.selectedRegion = region;
                 }
             });
         });
@@ -99,12 +109,25 @@ export class MainPanel {
     fileSelected() {
         if (this.chosenFile.length > 0) {
             let f = this.chosenFile[0];
+            this.processing = true;
+
+            this.meta = {
+                name:         f.name,
+                originalSize: f.size,
+                mimeType:     f.type
+            };
             this.clear();
             this.handler.readImage(f).then((result) => {
                 this.data = result.data;
-                this.image = this.handler.asDataUrl(this.data);
+                this.image = this.handler.asDataUrl(this.data, this.meta);
+                this.processing = false;
             });
         }
+    }
+
+    @computedFrom('boundRegions.length')
+    get showSidePanel() {
+        return this.boundRegions.length > 0;
     }
 
     addRectangle() {
@@ -112,34 +135,52 @@ export class MainPanel {
     }
 
     deleteSelected() {
-        let index = _.findIndex(this.boundRegions, {rectangle: this.selectedBox});
+        let index = _.findIndex(this.boundRegions, o => { return o === this.selectedRegion});
         if (index >= 0) {
             this.boundRegions.splice(index, 1);
-            this.eventAggregator.publish('delete-selected', this.selectedBox);
-            this.selectedBox = undefined;
+            this.eventAggregator.publish('delete-selected', this.selectedRegion);
+            this.selectedRegion = undefined;
         }
     }
 
     clear() {
         this.data = undefined;
+        this.clearBoxes();
+    }
+
+    clearBoxes() {
         this.boxes.splice(0, this.boxes.length);
         this.boundRegions.splice(0, this.boundRegions.length);
-        this.selectedBox = undefined;
+        this.selectedRegion = undefined;
     }
 
     zoom(factor) {
+        this.toobig = false;
+        this.toosmall = false;
         if (factor > 0) {
-            this.scalingFactor = this.scalingFactor / 0.5;
+            this.scalingFactor = Math.min(this.scalingFactor / 0.5, this._MAX_ZOOM);
         } else {
-            this.scalingFactor = this.scalingFactor * 0.5;
+            this.scalingFactor = Math.max(this.scalingFactor * 0.5, this._MIN_ZOOM);
+        }
+        if (this.scalingFactor <= this._MIN_ZOOM) {
+            this.toosmall = true;
+        } else if (this.scalingFactor >= this._MAX_ZOOM) {
+            this.toobig = true;
         }
     }
 
     process(f) {
-        if (this.data) {
-            this.handler.process(this.data, {}).then(info => {
-                this.boxes = info.boxes;
-            });
-        }
+        this.processing = true;
+        this.clearBoxes();
+
+        _.delay(() => {
+            if (this.data) {
+                this.handler.process(this.data, {}).then(info => {
+                    this.boxes = info.boxes;
+                    this.processing = false;
+                });
+            }
+        }, 50);
+
     }
 }

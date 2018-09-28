@@ -5,22 +5,23 @@
     <require from="resources/elements/panels/side-panel"></require>
 
     <div class="header-pane">
-        <input type="file" files.bind="chosenFile" change.delegate="fileSelected($event)">
-        <button click.trigger="process()" disabled.bind="!image"><i class="sw-icon-stamp"></i></button>
+        <input type="file" files.bind="chosenFile" change.delegate="fileSelected($event)" disabled.bind="processing">
+        <button click.trigger="process()" disabled.bind="!image || processing"><i class="sw-icon-stamp"></i></button>
 
-        <button click.trigger="addRectangle()" disabled.bind="!image"><i class="sw-icon-plus"></i></button>
-        <button click.trigger="deleteSelected()" disabled.bind="!selectedBox"><i class="sw-icon-delete"></i></button>
+        <button click.trigger="addRectangle()" disabled.bind="!image || processing"><i class="sw-icon-plus"></i></button>
+        <button click.trigger="deleteSelected()" disabled.bind="!selectedRegion || processing"><i class="sw-icon-delete"></i></button>
 
-        <button click.trigger="zoom(1)" disabled.bind="!image"><i class="sw-icon-zoom-in"></i></button>
-        <button click.trigger="zoom(-1)" disabled.bind="!image"><i class="sw-icon-zoom-out"></i></button>
-        <button click.trigger="settings()"><i class="sw-icon-settings"></i></button>
+        <button click.trigger="zoom(1)" disabled.bind="!image || toobig || processing"><i class="sw-icon-zoom-in"></i></button>
+        <button click.trigger="zoom(-1)" disabled.bind="!image || toosmall || processing"><i class="sw-icon-zoom-out"></i></button>
+        <button click.trigger="settings()" disabled.bind="processing"><i class="sw-icon-settings"></i></button>
     </div>
     <div class="content-pane">
-        <image-canvas image.bind="image"
+        <image-canvas class="${showSidePanel ? 'width-side-panel' : ''}"
+                      image.bind="image"
                       bound-regions.bind="boundRegions"
-                      selected-box.bind="selectedBox"
+                      selected-region.bind="selectedRegion"
                       scaling-factor.bind="scalingFactor"></image-canvas>
-        <side-panel bound-regions.bind="boundRegions" selected-box.bind="selectedBox"></side-panel>
+        <side-panel if.bind="showSidePanel" bound-regions.bind="boundRegions" selected-region.bind="selectedRegion"></side-panel>
     </div>
     <div class="footer-pane">
         <label>${'labels.zoom'|t}:<label> ${scalingFactor|asPercentage}

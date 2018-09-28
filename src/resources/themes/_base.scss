@@ -1,0 +1,28 @@
+@import 'variables';
+
+// Global button styles
+button, input[type="file"] {
+    background-color: $button-bg;
+    color: $button-color;
+
+    &:disabled {
+        background-color: $button-bg-disabled;
+        color: $button-color-disabled;
+    }
+}
+
+
+html {
+    font-size: 10px;
+    font-family: Bookman, Helvetica, Arial;
+}
+
+body {
+    bottom:    0;
+    font-size: 1.2rem;
+    height:    100%;
+    margin:    0;
+    position:  absolute;
+    right:     0;
+    width:     100%;
+}

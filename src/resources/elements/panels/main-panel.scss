@@ -30,6 +30,7 @@ main-panel {
         height: 30px;
     }
 
+
     .content-pane {
         display:        flex;
         flex:           1 0 auto;
@@ -42,7 +43,11 @@ main-panel {
 
         image-canvas {
             flex:      1 0 auto;
-            max-width: calc(100% - #{$side-panel-width});
+            max-width: 100%;
+
+            &.width-side-panel {
+                max-width: calc(100% - #{$side-panel-width});
+            }
         }
 
         side-panel {

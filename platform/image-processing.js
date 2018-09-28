@@ -88,12 +88,23 @@ module.exports = function () {
             return q;
         },
 
+
+        saveImages: function (data, region, options) {
+            let q = new Promise((resolve, reject) => {
+                jimp.read(data).then(img => {
+                    let rect = region.rectangle;
+                    let newImg = img.crop(rect.x, rect.y, rect.width, rect.height);
+                    newImg.write(path.join(__dirname, region.filename + '.jpg'));
+                    resolve();
+                }).catch(e => {
+                    reject(e);
+                });
+            });
+            return q;
+        },
+
         extractRegion: function(region, buffer, options) {
-            console.log("ok here we go", region);
             let q = new Promise((resolve,reject) => {
-
-
-
                 jimp.read(buffer).then(img => {
                     console.log(img);
                     resolve('tada');
