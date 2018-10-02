@@ -16,8 +16,10 @@
 
 $pallet-base-medium: #c9c9c9;
 $pallet-base: #e3e3e3;
+$pallet-base-light: #fcfcfc;
 $pallet-primary: #9ad3de;
 $pallet-primary-medium: #89bdd3;
+
 
 $color-gray: #ccc;
 $color-gray-dark: #434343;
@@ -33,12 +35,15 @@ $image-background: #232323;
 $padding-thick: 0.5rem;
 $padding-med: 0.25rem;
 
+$margin-med: .5rem;
+$margin-thick: 1rem;
+
 $input-margin: 0.25rem;
 
 $selection-color: $pallet-primary-medium;
 $selection-text-color: $color-white;
 
-$section-bg: $color-white;
+$section-bg: $pallet-base-light;
 $section-title-bg: $pallet-base;
 $section-title-color: $color-gray-dark;
 
@@ -47,4 +52,9 @@ $button-bg-disabled: $pallet-base-medium;
 $button-color: $color-gray-dark;
 $button-color-disabled: lighten($color-gray-dark, 10%);
 
+$fieldset-border: 1px $pallet-base-medium solid;
 
+$legend-color: $pallet-primary-medium;
+
+$panel-bg: $pallet-base-light;
+$panel-border: 1px solid $pallet-base-medium;

@@ -16,7 +16,10 @@
 const java = require('java');
 const path = require('path');
 const jimp = require('jimp');
+const sharp = require('sharp');
 const _ = require('lodash');
+const fs = require('fs');
+
 
 java.classpath.push('dist/stamp-imageparsing.jar');
 java.classpath.push('dist/lib/ij.jar');
@@ -27,6 +30,10 @@ module.exports = function () {
     "use strict";
 
     let imageProcessor;
+
+    let calcPixelPerMillimeter = function(dpi) {
+        return dpi * 0.3937;
+    }
 
     return {
 
@@ -89,49 +96,65 @@ module.exports = function () {
         },
 
 
-        saveImages: function (data, region, options) {
+        saveImages: function (outputFolder, data, region, options = {}) {
+            let mimeType = options.mimeType || jimp.MIME_JPEG;
             let q = new Promise((resolve, reject) => {
-                jimp.read(data).then(img => {
+                /*jimp.read(data).then(img => {
                     let rect = region.rectangle;
                     let newImg = img.crop(rect.x, rect.y, rect.width, rect.height);
-                    newImg.write(path.join(__dirname, region.filename + '.jpg'));
-                    resolve();
+                    if (mimeType === jimp.MIME_JPEG) {
+                        newImg.quality(98); // jpeg only
+                    }
+                    newImg.getBufferAsync(mimeType).then(buf => {
+                        fs.writeFileSync(path.join(__dirname, region.filename + '.jpg'), buf);
+                        resolve();
+                    });
                 }).catch(e => {
                     reject(e);
+                });*/
+                let img = new sharp(data).withMetadata();
+                let rect = region.rectangle;
+                img = img.extract({left: rect.x, top: rect.y, width: rect.width, height: rect.height});
+                switch(mimeType) {
+                    case 'image/tiff':
+                        img = this.processTIFF(img, options);
+                        break;
+                    case 'image/jpeg':
+                        img = this.processJPEG(img, options);
+                        break;
+                    case 'image/png':
+                        img = this.procesPNG(img, options);
+                        break;
+                }
+                img.toBuffer().then(buf => {
+                    fs.writeFileSync(path.join((outputFolder || __dirname), region.filename), buf);
+                    resolve();
                 });
+
             });
             return q;
         },
 
-        extractRegion: function(region, buffer, options) {
-            let q = new Promise((resolve,reject) => {
-                jimp.read(buffer).then(img => {
-                    console.log(img);
-                    resolve('tada');
-                }).catch(function(err) {
-                    console.error(err);
-                });
+        processTIFF(image, options = {}) {
+            let tiffOptions = {};
+            if(_.has(options, 'dpi.dpiHorizontal')) {
+                _.set(tiffOptions, 'xres', +_.get(options, 'dpi.dpiHorizontal'));
+            }
+            if(_.has(options, 'dpi.dpiVertical')) {
+                _.set(tiffOptions, 'yres', +_.get(options, 'dpi.dpiVertical'));
+            }
+            return image.tiff(tiffOptions);
+        },
 
-                /*var fileReader = new FileReader();
-                fileReader.onload = function(event) {
-                    let arrayBuffer = event.target.result;
-                    jimp.read(arrayBuffer).then(img => {
-                        console.log("got image");
-                        img.crop(region.x, region.y, region.w, region.h);
-                        resolve(img);
-                    }).catch(err => {
-                        console.log(err);
-                        reject(err);
-                    });
-                };
-                fileReader.readAsArrayBuffer(image);*/
+        processJPEG(image, options = {}) {
+            let jpegOptions = {};
+            _.set(jpegOptions, 'quality', +_.get(options, 'jpeg.quality', 85));
+            return image.jpeg(jpegOptions);
+        },
 
-
-            });
-            return q;
-
+        procesPNG(image, options = {}) {
+            return image.png();
         }
-
 
     };
 

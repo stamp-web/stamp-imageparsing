@@ -1,0 +1,68 @@
+<template>
+    <require from="resources/elements/panels/settings-panel.css"></require>
+    <div class="panel container">
+        <form>
+            <fieldset>
+                <legend>${'titles.dpi'|t}</legend>
+                <div class="form-group">
+                    <label>${'labels.dpi-default-usage'|t}</label>
+                    <div class="form-check" repeat.for="mode of dpiModes">
+                        <input class="form-check-input"
+                               type="radio"
+                               name="dpiMode"
+                               value.bind="mode"
+                               checked.bind="settings.dpi.mode">
+                        <label class="form-check-label">${'labels.dpi-' + mode|t}</label>
+                    </div>
+                </div>
+                <div class="alert alert-warning" role="alert" show.bind="settings.dpi.mode === 'output'">
+                    ${'messages.dpi'|t}
+                </div>
+                <div class="form-group" show.bind="settings.dpi.mode === 'output'">
+                      <label>${'labels.dpi-horizontal'|t}</label>
+                      <input class="form-control"
+                             type="number"
+                             step="1"
+                             min="0"
+                             pattern="\d+"
+                             name="dpi-horizontal"
+                             value.bind="settings.dpi.horizontal">
+                </div>
+                <div class="form-group" show.bind="settings.dpi.mode === 'output'">
+                    <label>${'labels.dpi-vertical'|t}</label>
+                    <input class="form-control"
+                           type="number"
+                           step="1"
+                           min="0"
+                           pattern="\d+"
+                           name="dpi-vertical"
+                           value.bind="settings.dpi.vertical">
+                </div>
+            </fieldset>
+            <fieldset>
+                <legend>${'titles.jpeg'|t}</legend>
+                <div class="form-group">
+                    <label>${'labels.jpeg-quality'|t}</label>
+                    <div class="range-slider">
+                        <input type="range"
+                               min="0"
+                               max="100"
+                               class="form-control-range"
+                               value.bind="settings.jpeg.quality">
+                        <label class="range-value">${settings.jpeg.quality}</label>
+                    </div>
+                    <div class="alert alert-info" role="alert">
+                        ${'labels.jpeq-quality-subtext'|t}
+                    </div>
+                </div>
+            </fieldset>
+
+        </form>
+
+    </div>
+    <div class="footer-actions">
+        <button class="btn btn-secondary" click.delegate="reset()">Reset</button>
+        <button class="btn btn-primary" click.delegate="save()">Save</button>
+
+    </div>
+</template>

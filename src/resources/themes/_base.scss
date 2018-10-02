@@ -3,17 +3,20 @@
 // Global button styles
 button, input[type="file"] {
     background-color: $button-bg;
-    color: $button-color;
+    color:            $button-color;
 
     &:disabled {
         background-color: $button-bg-disabled;
-        color: $button-color-disabled;
+        color:            $button-color-disabled;
     }
 }
 
+input[type="range"] {
+    outline: none;
+}
 
 html {
-    font-size: 10px;
+    font-size:   10px;
     font-family: Bookman, Helvetica, Arial;
 }
 
@@ -25,4 +28,28 @@ body {
     position:  absolute;
     right:     0;
     width:     100%;
+}
+
+fieldset {
+    border:        $fieldset-border;
+    margin-bottom: $margin-med;
+    padding:       $padding-thick;
+}
+
+legend {
+    color: $legend-color;
+    width: inherit;
+}
+
+.panel {
+    background-color: $panel-bg;
+}
+
+.form-check {
+    padding-left: 1.75rem;
+
+    .form-check-input {
+        margin-left: -1.75rem;
+    }
+
 }

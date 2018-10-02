@@ -17,8 +17,10 @@
 import {customElement, computedFrom, inject, bindable, LogManager, BindingEngine} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {remote} from 'electron';
+import {changeDpiDataUrl, changeDpiBlob} from 'changedpi';
 import {ImageHandler} from 'processing/image/image-handler';
 import {ImageBounds} from 'model/image-bounds';
+import {DefaultOptions, EventNames, StorageKeys} from 'util/constants';
 import _ from 'lodash';
 
 @customElement('main-panel')
@@ -37,9 +39,13 @@ export class MainPanel {
 
     data;
     chosenFile;
+    chosenFolder;
     meta;
     handler;
+    outputPath;
     processing = false;
+
+    showSettings = false;
 
     subscribers = [];
 
@@ -51,11 +57,19 @@ export class MainPanel {
         this.eventAggregator = eventAggregator;
         this.bindingEngine = bindingEngine;
         this.logger = LogManager.getLogger('main-panel');
-
     }
 
     attached() {
         this._setupListeners();
+        this.options = _.cloneDeep(DefaultOptions);
+        let opts = localStorage.getItem(StorageKeys.OPTIONS);
+        if (!_.isNil(opts)) {
+            this.options = JSON.parse(opts);
+        }
+        let folder = localStorage.getItem(StorageKeys.OUTPUT_PATH);
+        if (!_.isNil(folder)) {
+            this.outputPath = folder;
+        }
     }
 
     detached() {
@@ -66,10 +80,16 @@ export class MainPanel {
 
     _setupListeners() {
         this.subscribers.push(this.eventAggregator.subscribe('canvas-click', this._handleCanvasClick.bind(this)));
-        this.subscribers.push(this.eventAggregator.subscribe('selection-changed', this._handleSelectionChange.bind(this)));
+        this.subscribers.push(this.eventAggregator.subscribe(EventNames.SELECTION_CHANGED, this._handleSelectionChange.bind(this)));
         this.subscribers.push(this.eventAggregator.subscribe('new-image-bounds', this._handleNewImageBounds.bind(this)));
         this.subscribers.push(this.bindingEngine.collectionObserver(this.boxes).subscribe(this.boxesChanged.bind(this)));
-        this.subscribers.push(this.eventAggregator.subscribe('save-regions', this._handleSaveRegions.bind(this)));
+        this.subscribers.push(this.eventAggregator.subscribe(EventNames.SAVE_REGIONS, this._handleSaveRegions.bind(this)));
+        this.subscribers.push(this.eventAggregator.subscribe(EventNames.SAVE_SETTINGS, this._handleSaveSettings.bind(this)));
+    }
+
+    _handleSaveSettings(settings) {
+        this.options = _.merge(this.options, settings);
+        localStorage.setItem(StorageKeys.OPTIONS, JSON.stringify(this.options));
     }
 
     _handleCanvasClick(clickData) {
@@ -86,7 +106,7 @@ export class MainPanel {
     }
 
     _handleSaveRegions(regions) {
-        this.handler.saveRegions(this.data, regions, {});
+        this.handler.saveRegions(this.outputPath, this.data, regions, this.options);
     }
 
     boxesChanged(newBoxes) {
@@ -106,6 +126,14 @@ export class MainPanel {
 
     }
 
+    folderSelected() {
+        if(this.chosenFolder.length > 0) {
+            let dir = this.chosenFolder[0];
+            localStorage.setItem(StorageKeys.OUTPUT_PATH, dir.path);
+            this.outputPath = dir.path;
+        }
+    }
+
     fileSelected() {
         if (this.chosenFile.length > 0) {
             let f = this.chosenFile[0];
@@ -117,11 +145,22 @@ export class MainPanel {
                 mimeType:     f.type
             };
             this.clear();
-            this.handler.readImage(f).then((result) => {
-                this.data = result.data;
-                this.image = this.handler.asDataUrl(this.data, this.meta);
-                this.processing = false;
-            });
+            let fn = (b) => {
+                this.handler.readImage(b).then((result) => {
+                    this.data = result.data;
+                    this.image = this.handler.asDataUrl(this.data, this.meta);
+                    this.processing = false;
+                });
+            };
+            if(this.meta.mimeType === "image/tiff" || _.get(this.options, 'dpi.mode', 'image') === 'image') {
+                fn(f);
+            } else {
+                let dpi = _.get(this.options, 'dpi.horizontal', 300);
+                changeDpiBlob(f, dpi).then(b => {
+                    fn(b);
+                });
+            }
+
         }
     }
 
@@ -167,6 +206,21 @@ export class MainPanel {
         } else if (this.scalingFactor >= this._MAX_ZOOM) {
             this.toobig = true;
         }
+    }
+
+    settings() {
+        this.showSettings = !this.showSettings;
+    }
+
+    get imagePanelClassnames() {
+        let classNames = '';
+        if( this.showSettings ) {
+            classNames += ' with-settings-panel';
+        }
+        if( this.showSidePanel) {
+            classNames += ' with-side-panel';
+        }
+        return classNames;
     }
 
     process(f) {

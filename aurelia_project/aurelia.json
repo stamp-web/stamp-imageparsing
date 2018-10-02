@@ -96,6 +96,7 @@
                     "node_modules/jquery/dist/jquery.js"
                 ],
                 "dependencies": [
+                    "jquery",
                     "aurelia-animator-css",
                     "aurelia-binding",
                     "aurelia-bootstrapper",
@@ -118,8 +119,18 @@
                     "aurelia-task-queue",
                     "aurelia-templating",
                     "aurelia-templating-binding",
+                    {
+                        "name": "bootstrap",
+                        "path": "../node_modules/bootstrap/dist",
+                        "main": "js/bootstrap.bundle",
+                        "deps": [
+                            "jquery"
+                        ],
+                        "resources": [
+                            "css/bootstrap.css"
+                        ]
+                    },
                     "lodash",
-                    "jquery",
                     "text",
                     {
                         "name": "aurelia-templating-resources",
@@ -155,6 +166,11 @@
                     {
                         "name": "electron",
                         "path": "../src/electron-fix"
+                    },
+                    {
+                        "name": "changedpi",
+                        "path": "../node_modules/changedpi/dist",
+                        "main": "index"
                     }
                 ]
             }

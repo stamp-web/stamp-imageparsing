@@ -16,8 +16,10 @@
 import environment from './environment';
 import {I18N, TCustomAttribute} from 'aurelia-i18n';
 import Backend from 'i18next-xhr-backend';
-import {LogManager} from 'aurelia-framework';
+import {PLATFORM, LogManager} from 'aurelia-framework';
 import {ConsoleAppender} from 'aurelia-logging-console';
+
+import 'bootstrap';
 
 LogManager.addAppender(new ConsoleAppender());
 LogManager.setLevel(LogManager.logLevel.debug);
@@ -30,6 +32,16 @@ Promise.config({
 });
 
 export function configure(aurelia) {
+    require(['jquery'], jquery => {
+       window.jQuery = jquery;
+       require(['bootstrap'], bs => {
+           _initAurelia(aurelia);
+       });
+    });
+
+}
+
+function _initAurelia(aurelia) {
     aurelia.use
         .standardConfiguration()
         .plugin('aurelia-animator-css')

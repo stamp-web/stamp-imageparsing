@@ -14,6 +14,7 @@
  limitations under the License.
  */
 import {remote} from 'electron';
+import {changeDpiDataUrl, changeDpiBlob} from 'changedpi';
 import {log} from '../../util/log';
 import _ from 'lodash';
 
@@ -48,9 +49,10 @@ export class ImageHandler {
         return urlCreator.createObjectURL(blob);
     }
 
-    saveRegions(imageBuffer, regions, options) {
+    saveRegions(outputFolder, imageBuffer, regions, options) {
+        options.mimeType = 'image/jpeg';
         _.forEach(regions, region => {
-            this.imageProcessor.saveImages(imageBuffer, region, options).then(() => {
+            this.imageProcessor.saveImages(outputFolder, imageBuffer, region, options).then(() => {
                 log.info("saved -> " + region.filename);
             }).catch(e => {
                 log.error(e);

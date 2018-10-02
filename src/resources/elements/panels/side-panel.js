@@ -15,7 +15,7 @@
  */
 import {customElement, bindable, inject, BindingEngine} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
-import {bindingMode} from 'aurelia-binding';
+import {EventNames} from 'util/constants';
 import _ from 'lodash';
 
 @customElement('side-panel')
@@ -66,7 +66,7 @@ export class SidePanel {
             }
         });
         if(saveRegions.length > 0) {
-            this.eventAggregator.publish('save-regions', saveRegions);
+            this.eventAggregator.publish(EventNames.SAVE_REGIONS, saveRegions);
         }
     }
 
@@ -94,7 +94,7 @@ export class SidePanel {
                 iter.expanded = false;
             });
             region.expanded = true;
-            this.eventAggregator.publish('selection-changed', region);
+            this.eventAggregator.publish(EventNames.SELECTION_CHANGED, region);
         }
 
     }

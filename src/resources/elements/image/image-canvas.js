@@ -16,6 +16,7 @@
 import {customElement, bindable, inject, BindingEngine, LogManager} from 'aurelia-framework';
 import {bindingMode} from 'aurelia-binding';
 import {EventAggregator} from 'aurelia-event-aggregator';
+import {EventNames} from 'util/constants';
 import {ImageBounds} from 'model/image-bounds';
 
 import $ from 'jquery';
@@ -96,14 +97,14 @@ export class ImageCanvas {
                     if (_.get(previousRegion, 'rectangle') === rectangle) {
                         return true;
                     }
-                    this.eventAggregator.publish('selection-changed', region);
+                    this.eventAggregator.publish(EventNames.SELECTION_CHANGED, region);
 
                     return false;
                 }
             });
             if (!this.selectedRegion && previousRegion) {
                 this.logger.warn(">> reseting to previous");
-                this.eventAggregator.publish('selection-changed', previousRegion);
+                this.eventAggregator.publish(EventNames.SELECTION_CHANGED, previousRegion);
             }
         }
     }

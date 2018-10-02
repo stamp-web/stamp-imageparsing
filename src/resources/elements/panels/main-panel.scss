@@ -17,6 +17,7 @@
 
 $header-height: 3.0rem;
 $footer-height: 3.0rem;
+$settings-panel-width: 45rem;
 $side-panel-width: 30rem;
 
 main-panel {
@@ -26,8 +27,9 @@ main-panel {
     width:          100%;
 
     .header-pane {
-        flex:   0 0 auto;
-        height: 30px;
+        background-color: $panel-bg;
+        flex:             0 0 auto;
+        height:           30px;
     }
 
 
@@ -41,12 +43,23 @@ main-panel {
 
         }
 
+        settings-panel {
+            flex: 0 0 auto;
+            width: $settings-panel-width;
+        }
+
         image-canvas {
             flex:      1 0 auto;
             max-width: 100%;
 
-            &.width-side-panel {
+            &.with-side-panel {
                 max-width: calc(100% - #{$side-panel-width});
+            }
+            &.with-settings-panel {
+                max-width: calc(100% - #{$settings-panel-width});
+            }
+            &.with-side-panel.with-settings-panel {
+                max-width: calc(100% - #{$side-panel-width + $settings-panel-width});
             }
         }
 
@@ -57,8 +70,10 @@ main-panel {
     }
 
     .footer-pane {
-        flex:   0 0 auto;
-        height: 30px;
+        border-top: $panel-border;
+        flex:       0 0 auto;
+        height:     30px;
+        padding:    $padding-thick;
     }
 
 }

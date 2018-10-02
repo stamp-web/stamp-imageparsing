@@ -5,9 +5,9 @@
         <button click.delegate="saveValues()" disabled.bind="!validForSave"><i class="sw-icon-download"></i></button>
         <button click.delegate="clearValues()"><i class="sw-icon-eraser"></i></button>
     </div>
-    <div class="section-list">
+    <div class="section-list panel">
         <section repeat.for="section of boundRegions" class="${section.expanded ? 'selected' : ''}">
-            <h3 click.trigger="expand(section)">${section.name}</h3>
+            <h4 click.trigger="expand(section)">${section.name}</h4>
             <div class="bound-details au-animate" show.bind="section.expanded">
                 <form>
                     <label>${'labels.folder'|t}</label>

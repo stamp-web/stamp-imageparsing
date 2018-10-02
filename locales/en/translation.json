@@ -1,7 +1,23 @@
 {
     "title": "Stamp Image Bursting Application",
 
+    "titles": {
+        "dpi": "DPI Settings",
+        "jpeg": "JPEG Settings"
+    },
+
+    "messages": {
+        "dpi": "Images output using jpeg or png file types will only utilize the horizontal DPI value for both DPI values in the output file. The value will only take effect after loading the next jpeg or png image file."
+    },
+
     "labels": {
+        "dpi-default-usage": "Default DPI Usage",
+        "dpi-image": "Use DPI values from loading image",
+        "dpi-output": "Use output DPI values from settings",
+        "dpi-horizontal": "Horizontal DPI",
+        "dpi-vertical": "Vertical DPI",
+        "jpeg-quality": "Output Quality",
+        "jpeq-quality-subtext": "JPEG is a lossy format and there will always be some level of fidelity loss on saving bursting images.  In general a range of 75-95% will provide the best balance between quality and file size.",
         "filename": "Filename",
         "folder": "Folder",
         "zoom": "Zoom"
