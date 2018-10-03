@@ -28,4 +28,6 @@ public interface ImageConstants {
 
     // Preference Keys
     public static final String MIN_INTERCEPTING_AREA = "minimumInterceptingArea";
+    public static final String MIN_BOUNDING_AREA = "minimumBoundingArea";
+    public static final String BOX_PADDING = "padding";
 }

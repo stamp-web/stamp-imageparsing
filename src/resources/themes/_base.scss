@@ -13,6 +13,10 @@ button, input[type="file"] {
 
 input[type="range"] {
     outline: none;
+
+    &:disabled {
+        opacity: 0.4;
+    }
 }
 
 html {

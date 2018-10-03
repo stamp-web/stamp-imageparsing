@@ -229,7 +229,7 @@ export class MainPanel {
 
         _.delay(() => {
             if (this.data) {
-                this.handler.process(this.data, {}).then(info => {
+                this.handler.process(this.data, this.options).then(info => {
                     this.boxes = info.boxes;
                     this.processing = false;
                 });

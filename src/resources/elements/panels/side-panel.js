@@ -82,8 +82,11 @@ export class SidePanel {
         return true;
     }
 
-    selectedRegionChanged(newBox) {
-        let region = _.find(this.boundRegions, o => {return o === this.selectedRegion});
+    selectedRegionChanged() {
+        let region = _.find(this.boundRegions, o => {
+            o.hasFocus = false;
+            return o === this.selectedRegion
+        });
         region.hasFocus = true;
         this.expand(region);
     }

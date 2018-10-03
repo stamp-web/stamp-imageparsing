@@ -3,7 +3,8 @@
 
     "titles": {
         "dpi": "DPI Settings",
-        "jpeg": "JPEG Settings"
+        "jpeg": "JPEG Settings",
+        "bounding-box": "Bounding Box Configuration"
     },
 
     "messages": {
@@ -11,15 +12,20 @@
     },
 
     "labels": {
+        "box-padding": "Box padding",
         "dpi-default-usage": "Default DPI Usage",
         "dpi-image": "Use DPI values from loading image",
         "dpi-output": "Use output DPI values from settings",
         "dpi-horizontal": "Horizontal DPI",
         "dpi-vertical": "Vertical DPI",
+        "exclude-maximum-bounding": "Exclude Maximum bounding area boxes",
         "jpeg-quality": "Output Quality",
         "jpeq-quality-subtext": "JPEG is a lossy format and there will always be some level of fidelity loss on saving bursting images.  In general a range of 75-95% will provide the best balance between quality and file size.",
         "filename": "Filename",
         "folder": "Folder",
+        "min-bounding-area": "Minimum bounding area",
+        "min-intercepting-area": "Minimum intercepting area",
+        "max-bounding-area": "Maximum bounding percentage",
         "zoom": "Zoom"
 
     }

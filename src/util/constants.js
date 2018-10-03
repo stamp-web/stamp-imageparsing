@@ -22,6 +22,13 @@ export const DefaultOptions = {
     },
     jpeg: {
         quality: 85
+    },
+    boundingBox: {
+        padding:                 20,
+        minimumBoundingArea:     10000,
+        excludeMaximumArea:      false,
+        maximumBoundingArea:     0.85,
+        minimumInterceptingArea: 0.25
     }
 };
 

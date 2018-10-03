@@ -7,3 +7,4 @@ release-builds
 installers
 nbproject
 scripts
+test/coverage

@@ -36,6 +36,10 @@ module.exports = function () {
 
     return {
 
+        initialize: function() {
+            this.getImageProcessor();
+        },
+
         getImageProcessor: function () {
             if (imageProcessor) {
                 return imageProcessor;
@@ -73,7 +77,10 @@ module.exports = function () {
                 let byteArray = java.newArray('byte', _.flatten(dataArray));
                 console.log('time to flatten: ', (new Date().getTime() - t), 'ms');
                 let javaOptions = java.newInstanceSync('java.util.Properties');
-                // javaOptions.setPropertySync('minimumInterceptingArea', '0.25');
+
+                javaOptions.setPropertySync('padding', options.boundingBox.padding);
+                javaOptions.setPropertySync('minimumInterceptingArea', options.boundingBox.minimumInterceptingArea);
+                javaOptions.setPropertySync('minimumBoundingArea', options.boundingBox.minimumBoundingArea);
 
                 let lastMsg;
                 setInterval(() => {

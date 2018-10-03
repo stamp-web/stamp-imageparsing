@@ -23,6 +23,12 @@ export class ImageHandler {
 
     imageProcessor = remote.require('./platform/image-processing');
 
+    constructor() {
+        _.defer(() => {  // lazy init
+            this.imageProcessor.initialize();
+        });
+    }
+
     readImage(fileBlob) {
         let t = new Date().getTime();
         let q = new Promise((resolve, reject) => {

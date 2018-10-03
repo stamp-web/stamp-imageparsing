@@ -1,5 +1,8 @@
 <template>
+    <require from="resources/value-converters/as-percentage"></require>
+
     <require from="resources/elements/panels/settings-panel.css"></require>
+
     <div class="panel container">
         <form>
             <fieldset>
@@ -53,6 +56,65 @@
                     </div>
                     <div class="alert alert-info" role="alert">
                         ${'labels.jpeq-quality-subtext'|t}
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset>
+                <legend>${'titles.bounding-box'|t}</legend>
+                <div class="form-group">
+                    <label>${'labels.box-padding'|t}</label>
+                    <input class="form-control"
+                           type="number"
+                           step="1"
+                           min="0"
+                           pattern="\d+"
+                           name="box-padding"
+                           value.bind="settings.boundingBox.padding">
+                </div>
+                <div class="form-group">
+                    <label>${'labels.min-bounding-area'|t}</label>
+                    <input class="form-control"
+                           type="number"
+                           step="1"
+                           min="0"
+                           pattern="\d+"
+                           name="min-bounding-area"
+                           value.bind="settings.boundingBox.minimumBoundingArea">
+                </div>
+
+                <div class="form-group">
+                    <div class="form-check">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               name="excludeMaximumArea"
+                               checked.bind="settings.boundingBox.excludeMaximumArea">
+                        <label class="form-check-label">${'labels.exclude-maximum-bounding'|t}</label>
+                    </div>
+                    <label>${'labels.max-bounding-area'|t}</label>
+                    <div class="range-slider">
+                        <input class="form-control"
+                               type="range"
+                               min="0"
+                               max="1"
+                               step="0.01"
+                               disabled.bind="!settings.boundingBox.excludeMaximumArea"
+                               name="max-bounding-area"
+                               value.bind="settings.boundingBox.maximumBoundingArea">
+                        <label class="range-value">(${settings.boundingBox.maximumBoundingArea|asPercentage})</label>
+                    </div>
+
+                </div>
+                <div class="form-group">
+                    <label>${'labels.min-intercepting-area'|t}</label>
+                    <div class="range-slider">
+                        <input class="form-control"
+                               type="range"
+                               min="0"
+                               max="1"
+                               step="0.01"
+                               name="min-intercepting-area"
+                               value.bind="settings.boundingBox.minimumInterceptingArea">
+                        <label class="range-value">(${settings.boundingBox.minimumInterceptingArea|asPercentage})</label>
                     </div>
                 </div>
             </fieldset>

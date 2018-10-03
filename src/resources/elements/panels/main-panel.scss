@@ -44,8 +44,9 @@ main-panel {
         }
 
         settings-panel {
-            flex: 0 0 auto;
-            width: $settings-panel-width;
+            border-left: $separator-border;
+            flex:        0 0 auto;
+            width:       $settings-panel-width;
         }
 
         image-canvas {

@@ -27,25 +27,19 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
-import java.util.prefs.Preferences;
 import javax.imageio.ImageIO;
 
 /**
- *
- * @author jadra
  */
 public class ImageProcessor {
 
@@ -65,85 +59,79 @@ public class ImageProcessor {
     }
 
     public Rectangle[] process(byte[] imgBytes, Properties options) {
-        //  System.out.println(options);
-
+        int image_padding = Integer.valueOf(options.getProperty(ImageConstants.BOX_PADDING, Integer.toString(ImageConstants.PADDING_DEFAULT)));
+        int minimum_size = Integer.valueOf(options.getProperty(ImageConstants.MIN_BOUNDING_AREA, Integer.toString(ImageConstants.MINIMUM_AREA_DEFAULT)));
+        float min_percentage = Float.valueOf(options.getProperty(ImageConstants.MIN_INTERCEPTING_AREA, Float.toString(ImageConstants.MINIMUM_OVERLAP_PERCENTAGE)));
+        LOGGER.log(Level.INFO, "Padding: {0}, Minimum Size: {1}, Minimum Intercepting Area: {2}", new Object[] {image_padding, minimum_size, min_percentage});
+        
         BufferedImage image = getBufferedImage(imgBytes);
 
         ImagePlus the_image = new ImagePlus("imported image...", image);
         options.setProperty("msg", "test it now");
-        ArrayList<Rectangle> rectangles = new ArrayList<Rectangle>();
+        ArrayList<Rectangle> rectangles = new ArrayList<>();
         try {
-options.setProperty("msg", "smoothing");
-            IJ.run(the_image, "Smooth", ""); //$NON-NLS-1$
+            options.setProperty("msg", "smoothing");
+            IJ.run(the_image, "Smooth", "");
             options.setProperty("msg", "enhance constrast");
-            IJ.run(the_image, "Enhance Contrast", "saturated=0.4"); //$NON-NLS-1$
-            IJ.run(the_image, "8-bit", ""); //$NON-NLS-1$
+            IJ.run(the_image, "Enhance Contrast", "saturated=0.4");
+            IJ.run(the_image, "8-bit", "");
             //handleLightBackground(the_image);
             options.setProperty("msg", "despeckle");
-            IJ.run(the_image, "Despeckle", ""); //$NON-NLS-1$
-            IJ.run(the_image, "Remove Outliers...", "radius=5 threshold=50 which=Bright"); //$NON-NLS-1$
-            IJ.run(the_image, "Make Binary", ""); //$NON-NLS-1$
+            IJ.run(the_image, "Despeckle", "");
+            IJ.run(the_image, "Remove Outliers...", "radius=5 threshold=50 which=Bright");
+            IJ.run(the_image, "Make Binary", "");
 /*            if (Resources.getPreferencesNode().getBoolean(ImageConstants.STAMP_AGE, false)) {
                 EventBus.publish(new StatusEvent(StatusType.Message, Resources.getString("message.boundingBoxes.modernConvert")));
-                IJ.run(the_image, "Make Binary", ""); //$NON-NLS-1$
+                IJ.run(the_image, "Make Binary", "");
                 logImage(the_image, "binaryModern");
             }*/
             int iterations = 4; // Resources.getPreferencesNode().getInt(ImageConstants.DILATION_COUNT, 0);
             for (int i = 0; i < iterations; i++) {
                 IJ.run(the_image, "Dilate", "");
             }
-            IJ.run(the_image, "Fill Holes", ""); //$NON-NLS-1$
-            IJ.run(the_image, "Set Measurements...", "area bounding redirect=None decimal=3"); //$NON-NLS-1$
+            IJ.run(the_image, "Fill Holes", "");
+            IJ.run(the_image, "Set Measurements...", "area bounding redirect=None decimal=3");
             ResultsTable table = new ResultsTable();
             LOGGER.log(Level.INFO, "test message");
-            int minimum_size = 10000;
+           
             int maximum_area = the_image.getWidth() * the_image.getHeight();
 
             ParticleAnalyzer partAnalyzer = new ParticleAnalyzer(ParticleAnalyzer.EXCLUDE_EDGE_PARTICLES + ParticleAnalyzer.SHOW_NONE,
                     Measurements.AREA + Measurements.RECT, table, (1.0 * minimum_size), maximum_area, 0.0, 1.0);
             partAnalyzer.analyze(the_image, the_image.getProcessor());
-partAnalyzer = null;
+            
             int total = table.getCounter();
             int h = image.getHeight();
             int w = image.getWidth();
             int size_min = (int) Math.sqrt(minimum_size);
             for (int row = 0; row < total; row++) {
-                Rectangle r = createRectangle(table, h, w, row);
+                Rectangle r = createRectangle(table, h, w, row, image_padding);
                 if (r.width > size_min && r.height > size_min) {
                     rectangles.add(r);
                 }
             }
             table.reset();
             System.gc();
-            //  logger.log(Level.INFO, "createBoundingBoxes() - memory after completion of bounding box creation: {0}MB", UIHelper.getUsedMemory()); //$NON-NLS-1$
+            //  logger.log(Level.INFO, "createBoundingBoxes() - memory after completion of bounding box creation: {0}MB", UIHelper.getUsedMemory());
             LOGGER.log(Level.INFO, "Number of rectangles found before post-processing: {0}", new Object[]{rectangles.size()});
-            postProcessBoundingBoxes(rectangles, options);
+            options.setProperty("msg", "post-processing");
+            postProcessBoundingBoxes(rectangles, min_percentage);
             //  if (Resources.getPreferencesNode().getBoolean(ImageConstants.CONJOIN_STAMPS, false)) {
             //      rectangles = conjoinStamps(rectangles);
             //  }
         } finally {
             the_image.flush();
             the_image.close();
-            imgBytes = null;
         }
 
         Rectangle[] rects = new Rectangle[0];
         return rectangles.toArray(rects);
     }
 
-    protected void postProcessBoundingBoxes(List<Rectangle> rectangles, Properties options) {
-        // EventBus.publish(new StatusEvent(StatusType.Message, Resources.getString("message.boundingBoxes.sort"))); //$NON-NLS-1$
+    protected void postProcessBoundingBoxes(List<Rectangle> rectangles, float min_percentage) {
         Collections.sort(rectangles, new BoundingBoxesComparator());
-        // EventBus.publish(new StatusEvent(StatusType.Message, Resources.getString("message.postProcessing"))); //$NON-NLS-1$
         Set<Rectangle> removal = new HashSet<>();
         int size = rectangles.size();
-        // Preferences prefs = Resources.getPreferencesNode();
-        // float min_percentage = prefs.getFloat(ImageConstants.BOUNDING_BOX_MIN_OVERLAP_AREA, ImageConstants.MINIMUM_OVERLAP_PERCENTAGE);
-
-        float min_percentage = options.containsKey(ImageConstants.MIN_INTERCEPTING_AREA)
-                ? Float.valueOf(options.getProperty(ImageConstants.MIN_INTERCEPTING_AREA))
-                : 0.25f;
-        LOGGER.log(Level.INFO, "min-percentage: " + min_percentage);
         
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
@@ -175,10 +163,8 @@ partAnalyzer = null;
         }
     }
 
-    private Rectangle createRectangle(ResultsTable table, int h, int w, int row) {
+    private Rectangle createRectangle(ResultsTable table, int h, int w, int row, int image_padding) {
         Rectangle r = new Rectangle();
-
-        int image_padding = 20;
 
         r.x = Math.max(0, Double.valueOf(table.getValueAsDouble(ResultsTable.ROI_X, row)).intValue() - image_padding);
         r.y = Math.max(0, Double.valueOf(table.getValueAsDouble(ResultsTable.ROI_Y, row)).intValue() - image_padding);
