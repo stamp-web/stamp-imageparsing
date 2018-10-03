@@ -15,7 +15,6 @@
  */
 const java = require('java');
 const path = require('path');
-const jimp = require('jimp');
 const sharp = require('sharp');
 const _ = require('lodash');
 const fs = require('fs');
@@ -99,19 +98,6 @@ module.exports = function () {
         saveImages: function (outputFolder, data, region, options = {}) {
             let mimeType = options.mimeType || jimp.MIME_JPEG;
             let q = new Promise((resolve, reject) => {
-                /*jimp.read(data).then(img => {
-                    let rect = region.rectangle;
-                    let newImg = img.crop(rect.x, rect.y, rect.width, rect.height);
-                    if (mimeType === jimp.MIME_JPEG) {
-                        newImg.quality(98); // jpeg only
-                    }
-                    newImg.getBufferAsync(mimeType).then(buf => {
-                        fs.writeFileSync(path.join(__dirname, region.filename + '.jpg'), buf);
-                        resolve();
-                    });
-                }).catch(e => {
-                    reject(e);
-                });*/
                 let img = new sharp(data).withMetadata();
                 let rect = region.rectangle;
                 img = img.extract({left: rect.x, top: rect.y, width: rect.width, height: rect.height});

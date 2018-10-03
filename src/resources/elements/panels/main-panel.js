@@ -50,7 +50,7 @@ export class MainPanel {
     subscribers = [];
 
     _MAX_ZOOM = 4.0;
-    _MIN_ZOOM = 0.25;
+    _MIN_ZOOM = 0.125;
 
     constructor(imageHandler, eventAggregator, bindingEngine) {
         this.handler = imageHandler;
