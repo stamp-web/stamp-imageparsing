@@ -34,7 +34,7 @@ module.exports = function (config) {
             dir:  'test/coverage/bundled'
         },
         'babelPreprocessor':      {options: project.transpiler.options},
-        reporters:                ['progress', 'coverage', 'karma-remap-istanbul'],
+        reporters:                ['progress', 'coverage'/*, 'karma-remap-istanbul'*/],
         port:                     9876,
         colors:                   true,
         logLevel:                 config.LOG_INFO,

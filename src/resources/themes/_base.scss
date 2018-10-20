@@ -55,5 +55,19 @@ legend {
     .form-check-input {
         margin-left: -1.75rem;
     }
+}
 
+.btn-primary {
+    background-color: $button-bg-primary;
+    border-color: $button-bg-primary;
+
+    &:hover {
+        background-color: darken($button-bg-primary, 20%);
+        border-color: darken($button-bg-primary, 20%);
+    }
+}
+
+.btn-secondary {
+    background-color: $button-bg;
+    border-color: $button-bg;
 }
