@@ -1,16 +1,5 @@
 @import 'variables';
 
-// Global button styles
-button, input[type="file"] {
-    background-color: $button-bg;
-    color:            $button-color;
-
-    &:disabled {
-        background-color: $button-bg-disabled;
-        color:            $button-color-disabled;
-    }
-}
-
 input[type="range"] {
     outline: none;
 
@@ -69,5 +58,21 @@ legend {
 
 .btn-secondary {
     background-color: $button-bg;
-    border-color: $button-bg;
+    color:            $button-color;
+    border-color:     $button-bg;
+
+    &:disabled {
+        background-color: $button-bg-disabled;
+        color:            $button-color-disabled;
+
+        &:hover {
+            background-color: $button-bg-disabled;
+            color:            $button-color-disabled;
+        }
+    }
+
+    &:hover {
+        background-color: $button-bg-hover;
+        color:            $button-color-hover;
+    }
 }

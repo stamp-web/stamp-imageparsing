@@ -14,7 +14,12 @@
  limitations under the License.
  */
 
+export const ImageTypes = ['png', 'jpeg', 'tiff'];
+
 export const DefaultOptions = {
+    image: {
+        defaultType: ImageTypes[1]
+    },
     dpi:  {
         mode:       'image',
         horizontal: 300,

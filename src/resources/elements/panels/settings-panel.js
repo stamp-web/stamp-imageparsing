@@ -16,7 +16,7 @@
 import {customElement, bindable, inject} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {bindingMode} from 'aurelia-binding';
-import {DefaultOptions, EventNames} from 'util/constants';
+import {DefaultOptions, EventNames, ImageTypes} from 'util/constants';
 
 import _ from 'lodash';
 
@@ -25,6 +25,8 @@ import _ from 'lodash';
 export class SettingsPanel {
 
     @bindable options;
+
+    imageTypes = ImageTypes;
 
     settings = {};
     dpiModes = ['image', 'output'];

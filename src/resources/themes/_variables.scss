@@ -14,6 +14,7 @@
  limitations under the License.
  */
 
+$pallet-base-dark: #777;
 $pallet-base-medium: #c9c9c9;
 $pallet-base: #e3e3e3;
 $pallet-base-light: #fcfcfc;
@@ -49,10 +50,13 @@ $section-title-color: $color-gray-dark;
 
 $separator-border: 2px $pallet-base-medium solid;
 
-$button-bg: $pallet-base;
-$button-bg-disabled: $pallet-base-medium;
-$button-color: $color-gray-dark;
-$button-color-disabled: lighten($color-gray-dark, 10%);
+$button-bg: $pallet-base-dark;
+$button-bg-disabled: $pallet-base;
+$button-color: $pallet-base-light;
+$button-color-disabled: $pallet-base-medium;
+$button-bg-hover: darken($button-bg, 10%);
+$button-color-hover: $pallet-base-light;
+
 
 $button-bg-primary: $pallet-primary-medium;
 

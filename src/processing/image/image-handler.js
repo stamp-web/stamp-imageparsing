@@ -55,10 +55,10 @@ export class ImageHandler {
         return urlCreator.createObjectURL(blob);
     }
 
-    saveRegions(outputFolder, imageBuffer, regions, options) {
+    saveRegions(imageBuffer, regions, options) {
         options.mimeType = 'image/jpeg';
         _.forEach(regions, region => {
-            this.imageProcessor.saveImages(outputFolder, imageBuffer, region, options).then(() => {
+            this.imageProcessor.saveImages(imageBuffer, region, options).then(() => {
                 log.info("saved -> " + region.filename);
             }).catch(e => {
                 log.error(e);

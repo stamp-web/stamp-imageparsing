@@ -20,7 +20,7 @@ import {remote} from 'electron';
 import {changeDpiDataUrl, changeDpiBlob} from 'changedpi';
 import {ImageHandler} from 'processing/image/image-handler';
 import {ImageBounds} from 'model/image-bounds';
-import {DefaultOptions, EventNames, StorageKeys} from 'util/constants';
+import {DefaultOptions, EventNames, StorageKeys, ImageTypes} from 'util/constants';
 import _ from 'lodash';
 
 @customElement('main-panel')
@@ -44,6 +44,7 @@ export class MainPanel {
     handler;
     outputPath;
     processing = false;
+    folders = [];
 
     showSettings = false;
 
@@ -57,14 +58,16 @@ export class MainPanel {
         this.eventAggregator = eventAggregator;
         this.bindingEngine = bindingEngine;
         this.logger = LogManager.getLogger('main-panel');
+
+        this.folderHandler = remote.require('./platform/file-utilities');
     }
 
     attached() {
         this._setupListeners();
-        this.options = _.cloneDeep(DefaultOptions);
+        this.options = _.assign({}, DefaultOptions);
         let opts = localStorage.getItem(StorageKeys.OPTIONS);
         if (!_.isNil(opts)) {
-            this.options = JSON.parse(opts);
+            this.options = _.assign(this.options, JSON.parse(opts));
         }
         let folder = localStorage.getItem(StorageKeys.OUTPUT_PATH);
         if (!_.isNil(folder)) {
@@ -85,6 +88,7 @@ export class MainPanel {
         this.subscribers.push(this.bindingEngine.collectionObserver(this.boxes).subscribe(this.boxesChanged.bind(this)));
         this.subscribers.push(this.eventAggregator.subscribe(EventNames.SAVE_REGIONS, this._handleSaveRegions.bind(this)));
         this.subscribers.push(this.eventAggregator.subscribe(EventNames.SAVE_SETTINGS, this._handleSaveSettings.bind(this)));
+        this.subscribers.push(this.bindingEngine.propertyObserver(this, 'outputPath').subscribe(this._handleOutputPath.bind(this)));
     }
 
     _handleSaveSettings(settings) {
@@ -97,6 +101,7 @@ export class MainPanel {
     }
 
     _handleNewImageBounds(boundImage) {
+        this._initializeRegion(boundImage);
         this.boundRegions.push(boundImage);
         this.selectedRegion = boundImage;
     }
@@ -106,7 +111,7 @@ export class MainPanel {
     }
 
     _handleSaveRegions(regions) {
-        this.handler.saveRegions(this.outputPath, this.data, regions, this.options);
+        this.handler.saveRegions(this.data, regions, this.options);
     }
 
     boxesChanged(newBoxes) {
@@ -117,13 +122,21 @@ export class MainPanel {
                 let region = new ImageBounds({
                     rectangle: box
                 });
+                this._initializeRegion(region);
                 this.boundRegions.push(region);
                 if (index === 0) {
                    this.selectedRegion = region;
                 }
             });
         });
+    }
 
+    _initializeRegion(region) {
+        _.set(region, 'imageType', _.get(this.options, 'image.defaultType', ImageTypes[0]));
+    }
+
+    _handleOutputPath(newPath) {
+        this.folders = this.folderHandler.getFolders(newPath);
     }
 
     folderSelected() {
@@ -131,6 +144,7 @@ export class MainPanel {
             let dir = this.chosenFolder[0];
             localStorage.setItem(StorageKeys.OUTPUT_PATH, dir.path);
             this.outputPath = dir.path;
+
         }
     }
 

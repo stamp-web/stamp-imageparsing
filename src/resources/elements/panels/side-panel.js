@@ -15,7 +15,7 @@
  */
 import {customElement, bindable, inject, BindingEngine} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
-import {EventNames} from 'util/constants';
+import {EventNames, ImageTypes} from 'util/constants';
 import _ from 'lodash';
 
 @customElement('side-panel')
@@ -23,10 +23,14 @@ import _ from 'lodash';
 export class SidePanel {
 
     @bindable boundRegions = [];
+    @bindable folders = [];
+    @bindable options = {};
     @bindable selectedRegion;
 
     subscribers = [];
     validForSave = false;
+
+    imageTypes = ImageTypes;
 
     constructor(eventAggregator, bindingEngine) {
         this.eventAggregator = eventAggregator;
@@ -78,8 +82,13 @@ export class SidePanel {
         if(!this.validForSave && this.isValidRegion(region)) {
             this.validForSave = true;
         }
-        region.filePath = region.filename;
+        this.updateFilePath(region);
         return true;
+    }
+
+
+    updateFilePath(region) {
+        region.filePath = region.filename + "." + region.imageType;
     }
 
     selectedRegionChanged() {

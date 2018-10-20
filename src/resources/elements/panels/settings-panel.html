@@ -6,7 +6,15 @@
     <div class="panel container">
         <form>
             <fieldset>
-                <legend>${'titles.dpi'|t}</legend>
+                <legend>${'titles.image-settings'|t}</legend>
+                <div class="form-group">
+                    <label>${'labels.default-image-type'|t}</label>
+                    <select class="form-control" value.bind="settings.image.defaultType">
+                        <option repeat.for="imageType of imageTypes" model.bind="imageType">
+                            ${'labels.image.' + imageType|t}
+                        </option>
+                    </select>
+                </div>
                 <div class="form-group">
                     <label>${'labels.dpi-default-usage'|t}</label>
                     <div class="form-check" repeat.for="mode of dpiModes">
@@ -41,9 +49,6 @@
                            name="dpi-vertical"
                            value.bind="settings.dpi.vertical">
                 </div>
-            </fieldset>
-            <fieldset>
-                <legend>${'titles.jpeg'|t}</legend>
                 <div class="form-group">
                     <label>${'labels.jpeg-quality'|t}</label>
                     <div class="range-slider">

@@ -75,6 +75,24 @@ side-panel {
             display:       block;
             margin-bottom: $input-margin;
         }
+
+        input[type="text"] {
+            max-width: 12.5rem;
+        }
+
+        .image-type {
+             max-width: 9rem;
+        }
+
+        .form-row {
+            margin-left:  0;
+            margin-right: 0;
+
+            .form-group {
+                margin-right: $margin-med;
+            }
+        }
+
     }
 
 
@@ -82,7 +100,7 @@ side-panel {
     .image-preview {
         img {
             left:      50%;
-            max-width: 28rem;
+            max-width: 26rem;
             position:  relative;
             transform: translate(-50%, 0);
         }

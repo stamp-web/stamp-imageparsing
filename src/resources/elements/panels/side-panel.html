@@ -6,19 +6,41 @@
         <button click.delegate="clearValues()"><i class="sw-icon-eraser"></i></button>
     </div>
     <div class="section-list panel">
-        <section repeat.for="section of boundRegions" class="${section.expanded ? 'selected' : ''}">
-            <h4 click.trigger="expand(section)">${section.name}</h4>
-            <div class="bound-details au-animate" show.bind="section.expanded">
+        <section repeat.for="region of boundRegions" class="${region.expanded ? 'selected' : ''}">
+            <h4 click.trigger="expand(region)">${region.name}</h4>
+            <div class="bound-details au-animate" show.bind="region.expanded">
                 <form>
                     <label>${'labels.folder'|t}</label>
-                    <label>${'labels.filename'|t}</label>
-                    <input name="filename"
-                           focus.bind="section.hasFocus"
-                           value.bind="section.filename & throttle"
-                           keyup.delegate="filenameUpdated($event, section)">
+                    <select class="form-control" value.bind="region.folder">
+                        <option repeat.for="folder of folders" model.bind="folder">${folder.name}</option>
+                    </select>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>${'labels.filename'|t}</label>
+                            <input name="filename"
+                                   class="form-control"
+                                   focus.bind="region.hasFocus"
+                                   value.bind="region.filename & throttle"
+                                   keyup.delegate="filenameUpdated($event, region)">
+                        </div>
+                        <div class="form-group">
+                            <label>&nbsp;</label>
+                            <select class="form-control image-type"
+                                    value.bind="region.imageType"
+                                    change.delegate="updateFilePath(region)">
+                                <option repeat.for="imageType of imageTypes" model.bind="imageType">
+                                    ${'labels.image.' + imageType|t}
+                                </option>
+                            </select>
+                        </div>
+
+
+                    </div>
+
                 </form>
-                <div class="image-preview" show.bind="section.image" >
-                    <img src.bind="section.image">
+                <div class="image-preview" show.bind="region.image" >
+                    <img src.bind="region.image">
                 </div>
             </div>
         </section>

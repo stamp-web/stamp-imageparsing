@@ -26,7 +26,11 @@
                       bound-regions.bind="boundRegions"
                       selected-region.bind="selectedRegion"
                       scaling-factor.bind="scalingFactor"></image-canvas>
-        <side-panel if.bind="showSidePanel" bound-regions.bind="boundRegions" selected-region.bind="selectedRegion"></side-panel>
+        <side-panel if.bind="showSidePanel"
+                    bound-regions.bind="boundRegions"
+                    folders.bind="folders"
+                    options.bind="options"
+                    selected-region.bind="selectedRegion"></side-panel>
         <settings-panel if.bind="showSettings" options.bind="options"></settings-panel>
     </div>
     <div class="footer-pane panel">

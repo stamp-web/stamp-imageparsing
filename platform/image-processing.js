@@ -102,7 +102,7 @@ module.exports = function () {
         },
 
 
-        saveImages: function (outputFolder, data, region, options = {}) {
+        saveImages: function (data, region, options = {}) {
             let mimeType = options.mimeType || jimp.MIME_JPEG;
             let q = new Promise((resolve, reject) => {
                 let img = new sharp(data).withMetadata();
@@ -120,7 +120,7 @@ module.exports = function () {
                         break;
                 }
                 img.toBuffer().then(buf => {
-                    fs.writeFileSync(path.join((outputFolder || __dirname), region.filename), buf);
+                    fs.writeFileSync(path.join((region.folder.path || __dirname), region.filePath), buf);
                     resolve();
                 });
 

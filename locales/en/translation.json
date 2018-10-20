@@ -4,7 +4,8 @@
     "titles": {
         "dpi": "DPI Settings",
         "jpeg": "JPEG Settings",
-        "bounding-box": "Bounding Box Configuration"
+        "bounding-box": "Bounding Box Configuration",
+        "image-settings": "Image Settings"
     },
 
     "messages": {
@@ -13,6 +14,7 @@
 
     "labels": {
         "box-padding": "Box padding",
+        "default-image-type": "Default Image Type",
         "dpi-default-usage": "Default DPI Usage",
         "dpi-image": "Use DPI values from loading image",
         "dpi-output": "Use output DPI values from settings",
@@ -26,7 +28,12 @@
         "min-bounding-area": "Minimum bounding area",
         "min-intercepting-area": "Minimum intercepting area",
         "max-bounding-area": "Maximum bounding percentage",
-        "zoom": "Zoom"
+        "zoom": "Zoom",
 
+        "image": {
+            "jpeg": "JPEG (.jpeg)",
+            "png": "PNG (.png)",
+            "tiff": "TIFF (.tiff)"
+        }
     }
 }
