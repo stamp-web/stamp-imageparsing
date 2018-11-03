@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-export const ImageTypes = ['png', 'jpeg', 'tiff'];
+export const ImageTypes = ['png', 'jpg', 'tiff'];
 
 export const DefaultOptions = {
     image: {

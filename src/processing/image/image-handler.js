@@ -56,7 +56,7 @@ export class ImageHandler {
     }
 
     saveRegions(imageBuffer, regions, options) {
-        options.mimeType = 'image/jpeg';
+        options.mimeType = options.mimeType || 'image/jpeg';
         _.forEach(regions, region => {
             this.imageProcessor.saveImages(imageBuffer, region, options).then(() => {
                 log.info("saved -> " + region.filename);

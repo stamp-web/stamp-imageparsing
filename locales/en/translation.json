@@ -31,7 +31,7 @@
         "zoom": "Zoom",
 
         "image": {
-            "jpeg": "JPEG (.jpeg)",
+            "jpg": "JPEG (.jpg)",
             "png": "PNG (.png)",
             "tiff": "TIFF (.tiff)"
         }
