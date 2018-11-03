@@ -21,14 +21,21 @@ import _ from 'lodash';
 
 export class ImageHandler {
 
-    imageProcessor = remote.require('./platform/image-processing');
+    imageProcessor;
+    static configureProcessor = true;
 
     constructor() {
         _.defer(() => {  // lazy init
-            this.imageProcessor.initialize();
+            this._initialize();
         });
     }
 
+    _initialize() {
+        if (ImageHandler.configureProcessor) {
+            this.imageProcessor = remote.require('./platform/image-processing');
+            this.imageProcessor.initialize();
+        }
+    }
     readImage(fileBlob) {
         let t = new Date().getTime();
         let q = new Promise((resolve, reject) => {
@@ -56,9 +63,10 @@ export class ImageHandler {
     }
 
     saveRegions(imageBuffer, regions, options) {
-        options.mimeType = options.mimeType || 'image/jpeg';
+        let opts = _.cloneDeep(options);
         _.forEach(regions, region => {
-            this.imageProcessor.saveImages(imageBuffer, region, options).then(() => {
+            opts.mimeType = region.imageType ? this._imageToMimeType(region.imageType) : options.mimeType;
+            this.imageProcessor.saveImages(imageBuffer, region, opts).then(() => {
                 log.info("saved -> " + region.filename);
             }).catch(e => {
                 log.error(e);
@@ -77,6 +85,19 @@ export class ImageHandler {
             });
         });
         return q;
+    }
+
+    _imageToMimeType(imgType) {
+        let mimeType = 'image/jpeg';
+        switch(imgType) {
+            case 'png':
+                mimeType = 'image/png';
+                break;
+            case 'tiff':
+                mimeType = 'image/tiff';
+                break;
+        }
+        return mimeType;
     }
 
 }
