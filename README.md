@@ -13,14 +13,20 @@ Here is a short video showing the application in action (Note the window frame a
 
 ## Pre-Requisites
 
+Due to the complex environment, the pre-requisites to build are extensive.  
+
 - Java 1.8 or higher using the 64-bit JVM
 - NodeJS 8.x or higher
 - Aurelia CLI (install with "npm install -g aurelia-cli")
-- Ant 1.8+
-- Maven 3.x+ ?
+- Ant 1.8+ (if building/using Java parser)
+- Maven 3.x+ (if building/user Java parser)
+- Install Microsoft Build Tools as Administrator `npm install --global --production windows-build-tools`
+  - This install will take a while to execute
+  - `npm config set msvs_version 2013 --global` to force it to use version 2.0
 - Download [mavent-ant-tasks.jar](http://archive.apache.org/dist/maven/ant-tasks/2.1.3/binaries/maven-ant-tasks-2.1.3.jar) and copy this to a common folder (eg. c:\ant-tasks)
 - create a file in the ${user.home} called "stampdev.properties"
   - Define the property "user.lib" and set this to where ant libraries are located
+  - If using '\' make sure the double them '\\' or use '/'
 
 
 ## Build/Run

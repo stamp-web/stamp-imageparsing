@@ -78,9 +78,9 @@ module.exports = function () {
                 console.log('time to flatten: ', (new Date().getTime() - t), 'ms');
                 let javaOptions = java.newInstanceSync('java.util.Properties');
 
-                javaOptions.setPropertySync('padding', options.boundingBox.padding);
-                javaOptions.setPropertySync('minimumInterceptingArea', options.boundingBox.minimumInterceptingArea);
-                javaOptions.setPropertySync('minimumBoundingArea', options.boundingBox.minimumBoundingArea);
+                javaOptions.setPropertySync('padding', '' + options.boundingBox.padding);
+                javaOptions.setPropertySync('minimumInterceptingArea', '' + options.boundingBox.minimumInterceptingArea);
+                javaOptions.setPropertySync('minimumBoundingArea', '' + options.boundingBox.minimumBoundingArea);
 
                 let lastMsg;
                 setInterval(() => {
