@@ -62,7 +62,7 @@ public class ImageProcessor {
         System.gc();
     }
 
-    public Rectangle[] process(Properties options, File file) {
+    public Rectangle[] process(Properties options, String file) {
         int image_padding = Integer.valueOf(options.getProperty(ImageConstants.BOX_PADDING, Integer.toString(ImageConstants.PADDING_DEFAULT)));
         int minimum_size = Integer.valueOf(options.getProperty(ImageConstants.MIN_BOUNDING_AREA, Integer.toString(ImageConstants.MINIMUM_AREA_DEFAULT)));
         float min_percentage = Float.valueOf(options.getProperty(ImageConstants.MIN_INTERCEPTING_AREA, Float.toString(ImageConstants.MINIMUM_OVERLAP_PERCENTAGE)));
@@ -189,9 +189,9 @@ public class ImageProcessor {
         return r;
     }
 
-    private BufferedImage getBufferedImage(File file) {
+    private BufferedImage getBufferedImage(String file) {
         try {
-            return ImageIO.read(file);
+            return ImageIO.read(new File(file));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

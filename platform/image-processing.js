@@ -75,23 +75,26 @@ module.exports = function () {
                 let imageProcessor = this.getImageProcessor();
                 let t = (new Date()).getTime();
                 let javaOptions = java.newInstanceSync('java.util.Properties');
-                let javaFile = java.newInstanceSync('java.io.File', inputFile);
                 javaOptions.setPropertySync('padding', '' + options.boundingBox.padding);
                 javaOptions.setPropertySync('minimumInterceptingArea', '' + options.boundingBox.minimumInterceptingArea);
                 javaOptions.setPropertySync('minimumBoundingArea', '' + options.boundingBox.minimumBoundingArea);
 
                 let lastMsg;
-                setInterval(() => {
-                    let msg = javaOptions.getPropertySync('msg');
-                    if (lastMsg !== msg) {
-                        console.log(msg);
-                        lastMsg = msg;
+                let interval = () => {
+                    if (javaOptions) {
+                        let msg = javaOptions.getPropertySync('msg');
+                        if (lastMsg !== msg) {
+                            console.log(msg);
+                            lastMsg = msg;
+                        }
                     }
-                }, 150);
+
+                };
+                setInterval(interval, 150);
 
                 imageProcessor.then(ip => {
-                    ip.processPromise(javaOptions, javaFile).then(result => {
-                        javaFile = null;
+                    ip.processPromise(javaOptions, inputFile).then(result => {
+                        clearInterval(interval);
                         javaOptions = null;
                         ip.cleanup();
                         resolve(result);
