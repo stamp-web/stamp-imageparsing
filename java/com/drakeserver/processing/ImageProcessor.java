@@ -50,12 +50,15 @@ public class ImageProcessor {
     }
 
     private void configureLogger() {
-        try {
-            FileInputStream fis = new FileInputStream("dist/logging.properties");
+        try(FileInputStream fis = new FileInputStream("dist/logging.properties");) {
             LogManager.getLogManager().readConfiguration(fis);
         } catch (IOException | SecurityException ex) {
             Logger.getLogger(ImageProcessor.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public void cleanup() {
+        System.gc();
     }
 
     public Rectangle[] process(byte[] imgBytes, Properties options) {
@@ -67,7 +70,7 @@ public class ImageProcessor {
         BufferedImage image = getBufferedImage(imgBytes);
 
         ImagePlus the_image = new ImagePlus("imported image...", image);
-        options.setProperty("msg", "test it now");
+
         ArrayList<Rectangle> rectangles = new ArrayList<>();
         try {
             options.setProperty("msg", "smoothing");
@@ -92,14 +95,14 @@ public class ImageProcessor {
             IJ.run(the_image, "Fill Holes", "");
             IJ.run(the_image, "Set Measurements...", "area bounding redirect=None decimal=3");
             ResultsTable table = new ResultsTable();
-            LOGGER.log(Level.INFO, "test message");
-           
+
             int maximum_area = the_image.getWidth() * the_image.getHeight();
 
             ParticleAnalyzer partAnalyzer = new ParticleAnalyzer(ParticleAnalyzer.EXCLUDE_EDGE_PARTICLES + ParticleAnalyzer.SHOW_NONE,
                     Measurements.AREA + Measurements.RECT, table, (1.0 * minimum_size), maximum_area, 0.0, 1.0);
             partAnalyzer.analyze(the_image, the_image.getProcessor());
-            
+            partAnalyzer = null;
+
             int total = table.getCounter();
             int h = image.getHeight();
             int w = image.getWidth();
@@ -111,6 +114,8 @@ public class ImageProcessor {
                 }
             }
             table.reset();
+            table = null;
+
             System.gc();
             //  logger.log(Level.INFO, "createBoundingBoxes() - memory after completion of bounding box creation: {0}MB", UIHelper.getUsedMemory());
             LOGGER.log(Level.INFO, "Number of rectangles found before post-processing: {0}", new Object[]{rectangles.size()});
@@ -122,6 +127,11 @@ public class ImageProcessor {
         } finally {
             the_image.flush();
             the_image.close();
+
+            image.flush();
+            image = null;
+            imgBytes = null;
+            the_image = null;
         }
 
         Rectangle[] rects = new Rectangle[0];
@@ -180,8 +190,7 @@ public class ImageProcessor {
     }
 
     private BufferedImage getBufferedImage(byte[] imgBytes) {
-        ByteArrayInputStream bais = new ByteArrayInputStream(imgBytes);
-        try {
+        try(ByteArrayInputStream bais = new ByteArrayInputStream(imgBytes);) {
             return ImageIO.read(bais);
         } catch (IOException e) {
             throw new RuntimeException(e);

@@ -93,6 +93,8 @@ module.exports = function () {
 
                 imageProcessor.then(ip => {
                     ip.processPromise(byteArray, javaOptions).then(result => {
+                        byteArray = undefined;
+                        ip.cleanup();
                         resolve(result);
                     });
                 });
