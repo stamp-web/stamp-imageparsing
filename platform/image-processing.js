@@ -70,14 +70,12 @@ module.exports = function () {
             java.options.push(options);
         },
 
-        process: function (dataArray, options) {
+        process: function (options, inputFile) {
             let q = new Promise((resolve, reject) => {
                 let imageProcessor = this.getImageProcessor();
                 let t = (new Date()).getTime();
-                let byteArray = java.newArray('byte', _.flatten(dataArray));
-                console.log('time to flatten: ', (new Date().getTime() - t), 'ms');
                 let javaOptions = java.newInstanceSync('java.util.Properties');
-
+                let javaFile = java.newInstanceSync('java.io.File', inputFile);
                 javaOptions.setPropertySync('padding', '' + options.boundingBox.padding);
                 javaOptions.setPropertySync('minimumInterceptingArea', '' + options.boundingBox.minimumInterceptingArea);
                 javaOptions.setPropertySync('minimumBoundingArea', '' + options.boundingBox.minimumBoundingArea);
@@ -92,8 +90,9 @@ module.exports = function () {
                 }, 150);
 
                 imageProcessor.then(ip => {
-                    ip.processPromise(byteArray, javaOptions).then(result => {
-                        byteArray = undefined;
+                    ip.processPromise(javaOptions, javaFile).then(result => {
+                        javaFile = null;
+                        javaOptions = null;
                         ip.cleanup();
                         resolve(result);
                     });

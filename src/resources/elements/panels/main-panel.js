@@ -111,7 +111,7 @@ export class MainPanel {
     }
 
     _handleSaveRegions(regions) {
-        this.handler.saveRegions(this.data, regions, this.options);
+        this.handler.saveRegions(this.data, regions, this.options, this.inputFile);
     }
 
     boxesChanged(newBoxes) {
@@ -163,6 +163,7 @@ export class MainPanel {
                 this.handler.readImage(b).then((result) => {
                     this.data = result.data;
                     this.image = this.handler.asDataUrl(this.data, this.meta);
+                    this.inputFile = f.path;
                     this.processing = false;
                 });
             };
@@ -243,7 +244,7 @@ export class MainPanel {
 
         _.delay(() => {
             if (this.data) {
-                this.handler.process(this.data, this.options).then(info => {
+                this.handler.process(this.options, this.inputFile).then(info => {
                     this.boxes = info.boxes;
                     this.processing = false;
                 });

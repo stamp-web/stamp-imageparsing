@@ -28,6 +28,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -61,13 +62,13 @@ public class ImageProcessor {
         System.gc();
     }
 
-    public Rectangle[] process(byte[] imgBytes, Properties options) {
+    public Rectangle[] process(Properties options, File file) {
         int image_padding = Integer.valueOf(options.getProperty(ImageConstants.BOX_PADDING, Integer.toString(ImageConstants.PADDING_DEFAULT)));
         int minimum_size = Integer.valueOf(options.getProperty(ImageConstants.MIN_BOUNDING_AREA, Integer.toString(ImageConstants.MINIMUM_AREA_DEFAULT)));
         float min_percentage = Float.valueOf(options.getProperty(ImageConstants.MIN_INTERCEPTING_AREA, Float.toString(ImageConstants.MINIMUM_OVERLAP_PERCENTAGE)));
         LOGGER.log(Level.INFO, "Padding: {0}, Minimum Size: {1}, Minimum Intercepting Area: {2}", new Object[] {image_padding, minimum_size, min_percentage});
         
-        BufferedImage image = getBufferedImage(imgBytes);
+        BufferedImage image = getBufferedImage(file);
 
         ImagePlus the_image = new ImagePlus("imported image...", image);
 
@@ -130,7 +131,6 @@ public class ImageProcessor {
 
             image.flush();
             image = null;
-            imgBytes = null;
             the_image = null;
         }
 
@@ -189,9 +189,9 @@ public class ImageProcessor {
         return r;
     }
 
-    private BufferedImage getBufferedImage(byte[] imgBytes) {
-        try(ByteArrayInputStream bais = new ByteArrayInputStream(imgBytes);) {
-            return ImageIO.read(bais);
+    private BufferedImage getBufferedImage(File file) {
+        try {
+            return ImageIO.read(file);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

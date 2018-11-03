@@ -66,7 +66,7 @@ export class ImageHandler {
         let opts = _.cloneDeep(options);
         _.forEach(regions, region => {
             opts.mimeType = region.imageType ? this._imageToMimeType(region.imageType) : options.mimeType;
-            this.imageProcessor.saveImages(imageBuffer, region, opts).then(() => {
+            this.imageProcessor.saveImages(imageBuffer, region, opts,).then(() => {
                 log.info("saved -> " + region.filename);
             }).catch(e => {
                 log.error(e);
@@ -74,9 +74,9 @@ export class ImageHandler {
         });
     }
 
-    process(dataArray, options) {
+    process(options, inputFile) {
         let q = new Promise((resolve, reject) => {
-            this.imageProcessor.process(dataArray, options).then(result => {
+            this.imageProcessor.process(options, inputFile).then(result => {
                 resolve({
                     boxes: result
                 });
