@@ -41,6 +41,7 @@ side-panel {
                 background-color: $section-title-bg;
                 color:            $section-title-color;
                 cursor:           pointer;
+                font-size:        1.3rem;
                 margin:           0;
                 padding:          $padding-thick $padding-med;
                 text-transform:   uppercase;
@@ -70,6 +71,10 @@ side-panel {
     }
     form {
         padding: $padding-thick;
+
+        .form-control {
+            font-size: 1.1rem;
+        }
 
         label, input {
             display:       block;

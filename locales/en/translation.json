@@ -5,7 +5,8 @@
         "dpi": "DPI Settings",
         "jpeg": "JPEG Settings",
         "bounding-box": "Bounding Box Configuration",
-        "image-settings": "Image Settings"
+        "image-settings": "Image Settings",
+        "image-processing": "Image Processing Settings"
     },
 
     "messages": {
@@ -15,6 +16,7 @@
     "labels": {
         "box-padding": "Box padding",
         "default-image-type": "Default Image Type",
+        "dilation-count": "Filter Pass Count",
         "dpi-default-usage": "Default DPI Usage",
         "dpi-image": "Use DPI values from loading image",
         "dpi-output": "Use output DPI values from settings",

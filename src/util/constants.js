@@ -38,6 +38,9 @@ export const DefaultOptions = {
         excludeMaximumArea:      false,
         maximumBoundingArea:     0.85,
         minimumInterceptingArea: 0.25
+    },
+    processing: {
+        dilationCount: 2
     }
 };
 

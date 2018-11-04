@@ -20,13 +20,8 @@ package com.drakeserver;
  */
 public interface ImageConstants {
 
-    public static final float AVAILABLE_MEMORY_RATIO = 2.5f;
-    public static final int PADDING_DEFAULT = 20;
-    public static final int MINIMUM_AREA_DEFAULT = 10000;
-    public static final float MAXIMUM_AREA_PERCENTAGE = 0.85f;
-    public static final float MINIMUM_OVERLAP_PERCENTAGE = 0.25f;
-
     // Preference Keys
+    public static final String DILATION_COUNT = "dilationCount";
     public static final String MIN_INTERCEPTING_AREA = "minimumInterceptingArea";
     public static final String MIN_BOUNDING_AREA = "minimumBoundingArea";
     public static final String BOX_PADDING = "padding";

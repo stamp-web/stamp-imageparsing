@@ -46,6 +46,13 @@ public class ImageProcessor {
 
     static final Logger LOGGER = Logger.getLogger(ImageProcessor.class.getName());
 
+    public static final float AVAILABLE_MEMORY_RATIO = 2.5f;
+    public static final int DILATION_COUNT = 0;
+    public static final int PADDING_DEFAULT = 20;
+    public static final int MINIMUM_AREA_DEFAULT = 10000;
+    public static final float MAXIMUM_AREA_PERCENTAGE = 0.85f;
+    public static final float MINIMUM_OVERLAP_PERCENTAGE = 0.25f;
+
     public ImageProcessor() {
         configureLogger();
     }
@@ -63,13 +70,15 @@ public class ImageProcessor {
     }
 
     public Rectangle[] process(Properties options, String file) {
-        int image_padding = Integer.valueOf(options.getProperty(ImageConstants.BOX_PADDING, Integer.toString(ImageConstants.PADDING_DEFAULT)));
-        int minimum_size = Integer.valueOf(options.getProperty(ImageConstants.MIN_BOUNDING_AREA, Integer.toString(ImageConstants.MINIMUM_AREA_DEFAULT)));
-        float min_percentage = Float.valueOf(options.getProperty(ImageConstants.MIN_INTERCEPTING_AREA, Float.toString(ImageConstants.MINIMUM_OVERLAP_PERCENTAGE)));
-        LOGGER.log(Level.INFO, "Padding: {0}, Minimum Size: {1}, Minimum Intercepting Area: {2}", new Object[] {image_padding, minimum_size, min_percentage});
+        int image_padding = Integer.valueOf(options.getProperty(ImageConstants.BOX_PADDING, Integer.toString(PADDING_DEFAULT)));
+        int minimum_size = Integer.valueOf(options.getProperty(ImageConstants.MIN_BOUNDING_AREA, Integer.toString(MINIMUM_AREA_DEFAULT)));
+        float min_percentage = Float.valueOf(options.getProperty(ImageConstants.MIN_INTERCEPTING_AREA, Float.toString(MINIMUM_OVERLAP_PERCENTAGE)));
+        int dilationCount = Integer.valueOf(options.getProperty(ImageConstants.DILATION_COUNT, Integer.toString(DILATION_COUNT)));
+
+        LOGGER.log(Level.INFO, "Padding: {0}, Minimum Size: {1}, Minimum Intercepting Area: {2}, Dilation Count: {3}",
+                   new Object[] {image_padding, minimum_size, min_percentage, dilationCount});
         
         BufferedImage image = getBufferedImage(file);
-
         ImagePlus the_image = new ImagePlus("imported image...", image);
 
         ArrayList<Rectangle> rectangles = new ArrayList<>();
@@ -89,8 +98,9 @@ public class ImageProcessor {
                 IJ.run(the_image, "Make Binary", "");
                 logImage(the_image, "binaryModern");
             }*/
-            int iterations = 4; // Resources.getPreferencesNode().getInt(ImageConstants.DILATION_COUNT, 0);
-            for (int i = 0; i < iterations; i++) {
+
+            for (int i = 0; i < dilationCount; i++) {
+                options.setProperty("msg", "dilating phase " + (i+1));
                 IJ.run(the_image, "Dilate", "");
             }
             IJ.run(the_image, "Fill Holes", "");

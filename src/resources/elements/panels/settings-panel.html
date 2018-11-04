@@ -131,7 +131,20 @@
                     </div>
                 </div>
             </fieldset>
-
+            <fieldset>
+                <legend>${'titles.image-processing'|t}</legend>
+                <div class="form-group">
+                    <label>${'labels.dilation-count'|t}</label>
+                    <input class="form-control"
+                           type="number"
+                           step="1"
+                           min="0"
+                           max="10"
+                           pattern="\d+"
+                           name="dilation-count"
+                           value.bind="settings.processing.dilationCount">
+                </div>
+            </fieldset>
         </form>
 
     </div>

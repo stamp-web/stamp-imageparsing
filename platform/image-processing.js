@@ -75,10 +75,10 @@ module.exports = function () {
                 let imageProcessor = this.getImageProcessor();
                 let t = (new Date()).getTime();
                 let javaOptions = java.newInstanceSync('java.util.Properties');
-                javaOptions.setPropertySync('padding', '' + options.boundingBox.padding);
-                javaOptions.setPropertySync('minimumInterceptingArea', '' + options.boundingBox.minimumInterceptingArea);
-                javaOptions.setPropertySync('minimumBoundingArea', '' + options.boundingBox.minimumBoundingArea);
-
+                javaOptions.setPropertySync('padding', '' + _.get(options, 'boundingBox.padding'));
+                javaOptions.setPropertySync('minimumInterceptingArea', '' + _.get(options, 'boundingBox.minimumInterceptingArea'));
+                javaOptions.setPropertySync('minimumBoundingArea', '' + _.get(options, 'boundingBox.minimumBoundingArea'));
+                javaOptions.setPropertySync('dilationCount', '' + _.get(options, 'processing.dilationCount', 2));
                 let lastMsg;
                 let interval = () => {
                     if (javaOptions) {
