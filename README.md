@@ -18,15 +18,17 @@ Due to the complex environment, the pre-requisites to build are extensive.
 - Java 1.8 or higher using the 64-bit JVM
 - NodeJS 8.x or higher
 - Aurelia CLI (install with "npm install -g aurelia-cli")
-- Ant 1.8+ (if building/using Java parser)
-- Maven 3.x+ (if building/user Java parser)
-- Install Microsoft Build Tools as Administrator `npm install --global --production windows-build-tools`
+- Ant 1.8+
+- Maven 3.x+
+- Install Microsoft Build Tools as Administrator 
+  - `npm install --global --production windows-build-tools`
+  - Need to build node-java and other node-gyp modules
   - This install will take a while to execute
   - `npm config set msvs_version 2013 --global` to force it to use version 2.0
 - Download [mavent-ant-tasks.jar](http://archive.apache.org/dist/maven/ant-tasks/2.1.3/binaries/maven-ant-tasks-2.1.3.jar) and copy this to a common folder (eg. c:\ant-tasks)
 - create a file in the ${user.home} called "stampdev.properties"
   - Define the property "user.lib" and set this to where ant libraries are located
-  - If using '\' make sure the double them '\\' or use '/'
+  - If using '\' make sure to double them '\\\\' or use '/'
 
 
 ## Build/Run
@@ -50,6 +52,15 @@ ant jar
 npm start
 ```
 
+## Executing Unit Tests
+
+To execute the tests run the following
+```bash
+au test
+```
+
+You can add the ``--watch`` flag if you want to keep the tests harness running and watch for code changes.  This currently only tests the client application code.
+
 ## Create Windows Installer
 
 Assuming you have been able to Build/Run the app, you can create and installer with
@@ -59,9 +70,6 @@ npm start win32
 ```
 
 This will create an installer in release-builds called "stamp-imageparsing-install.exe"
-
-
-Note: If you're using Linux Bash for Windows, [see this guide](https://www.howtogeek.com/261575/how-to-run-graphical-linux-desktop-applications-from-windows-10s-bash-shell/) or use `node` from the command prompt.
 
 
 ## License
