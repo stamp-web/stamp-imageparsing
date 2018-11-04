@@ -20,6 +20,9 @@ settings-panel {
     flex-direction: column;
     height:         100%;
 
+    .form-control {
+        font-size: 1.1rem;
+    }
     .container {
         height:     100%;
         overflow-y: auto;

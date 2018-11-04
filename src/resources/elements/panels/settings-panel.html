@@ -50,6 +50,14 @@
                            value.bind="settings.dpi.vertical">
                 </div>
                 <div class="form-group">
+                    <label>${'labels.tiff-compression'|t}</label>
+                    <select class="form-control" value.bind="settings.tiff.compression">
+                        <option repeat.for="compressionMode of compressionModes" model.bind="compressionMode">
+                            ${'labels.compression.' + compressionMode|t}
+                        </option>
+                    </select>
+                </div>
+                <div class="form-group">
                     <label>${'labels.jpeg-quality'|t}</label>
                     <div class="range-slider">
                         <input type="range"

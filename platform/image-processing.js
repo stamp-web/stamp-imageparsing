@@ -132,13 +132,22 @@ module.exports = function () {
             return q;
         },
 
+        _dpiToPixelDensity(val) {
+            return val / 2.54;
+        },
+
         processTIFF(image, options = {}) {
             let tiffOptions = {};
-            if(_.has(options, 'dpi.dpiHorizontal')) {
-                _.set(tiffOptions, 'xres', +_.get(options, 'dpi.dpiHorizontal'));
+            let compression = _.get(options, 'tiff.compression', 'jpeg');
+            _.set(tiffOptions, 'compression', compression);
+            if (compression === 'jpeg') {
+                _.set(tiffOptions, 'quality', _.get(options, 'jpeg.quality', 85));
             }
-            if(_.has(options, 'dpi.dpiVertical')) {
-                _.set(tiffOptions, 'yres', +_.get(options, 'dpi.dpiVertical'));
+            if(_.has(options, 'dpi.horizontal')) {
+                _.set(tiffOptions, 'xres', this._dpiToPixelDensity(+_.get(options, 'dpi.horizontal', 300)));
+            }
+            if(_.has(options, 'dpi.vertical')) {
+                _.set(tiffOptions, 'yres', this._dpiToPixelDensity(+_.get(options, 'dpi.vertical', 300)));
             }
             return image.tiff(tiffOptions);
         },

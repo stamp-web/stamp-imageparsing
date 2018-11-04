@@ -28,12 +28,19 @@
         "min-bounding-area": "Minimum bounding area",
         "min-intercepting-area": "Minimum intercepting area",
         "max-bounding-area": "Maximum bounding percentage",
+        "tiff-compression": "TIFF Compression Mode",
         "zoom": "Zoom",
 
         "image": {
             "jpg": "JPEG (.jpg)",
             "png": "PNG (.png)",
             "tiff": "TIFF (.tiff)"
+        },
+
+        "compression": {
+            "lzw": "LZW",
+            "jpeg": "JPEG",
+            "deflate": "Deflate"
         }
     }
 }

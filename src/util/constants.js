@@ -15,6 +15,7 @@
  */
 
 export const ImageTypes = ['png', 'jpg', 'tiff'];
+export const TIFFCompression = ['lzw', 'jpeg', 'deflate'];
 
 export const DefaultOptions = {
     image: {
@@ -27,6 +28,9 @@ export const DefaultOptions = {
     },
     jpeg: {
         quality: 85
+    },
+    tiff: {
+        compression: TIFFCompression[1]
     },
     boundingBox: {
         padding:                 20,
