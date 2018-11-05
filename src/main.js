@@ -45,6 +45,9 @@ function _initAurelia(aurelia) {
     aurelia.use
         .standardConfiguration()
         .plugin('aurelia-animator-css')
+        .plugin(PLATFORM.moduleName('aurelia-dialog'), (configuration) => {
+            configuration.useResource('attach-focus');
+        })
         .plugin('aurelia-i18n', (instance) => {
             let aliases = ['t', 'i18n'];
             TCustomAttribute.configureAliases(aliases);

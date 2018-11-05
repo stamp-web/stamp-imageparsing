@@ -13,18 +13,24 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
+import {EventAggregator} from 'aurelia-event-aggregator';
+import {I18N} from 'aurelia-i18n';
 import {remote} from 'electron';
 import {changeDpiDataUrl, changeDpiBlob} from 'changedpi';
-import {log} from '../../util/log';
+import {log} from 'util/log';
+import {EventNames} from 'util/constants';
 import _ from 'lodash';
 
-
 export class ImageHandler {
+
+    static inject = [EventAggregator, I18N];
 
     imageProcessor;
     static configureProcessor = true;
 
-    constructor() {
+    constructor(eventAggregator, i18n) {
+        this.eventAggregator = eventAggregator;
+        this.i18n = i18n;
         _.defer(() => {  // lazy init
             this._initialize();
         });
@@ -65,18 +71,31 @@ export class ImageHandler {
     saveRegions(imageBuffer, regions, options) {
         let opts = _.cloneDeep(options);
         _.forEach(regions, region => {
+            this.eventAggregator.publish(EventNames.STATUS_MESSAGE, {
+                message: this.i18n.tr('messages.saving-file', {filename: region.filePath}),
+                showBusy: true
+            });
             opts.mimeType = region.imageType ? this._imageToMimeType(region.imageType) : options.mimeType;
             this.imageProcessor.saveImages(imageBuffer, region, opts,).then(() => {
                 log.info("saved -> " + region.filename);
             }).catch(e => {
                 log.error(e);
             });
+            this.eventAggregator.publish(EventNames.STATUS_MESSAGE, {dismiss: true});
         });
     }
 
     process(options, inputFile) {
         let q = new Promise((resolve, reject) => {
-            this.imageProcessor.process(options, inputFile).then(result => {
+            let statusCallback = (msg) => {
+                this.eventAggregator.publish(EventNames.STATUS_MESSAGE, {
+                    message: msg ? this.i18n.tr('messages.processing-status', {status: msg}) : this.i18n.tr('messages.finished'),
+                    showBusy: true,
+                    dismiss: msg === null
+                });
+            };
+            this.eventAggregator.publish(EventNames.STATUS_MESSAGE, {message: this.i18n.tr('messages.processing'), showBusy: true});
+            this.imageProcessor.process(options, inputFile, statusCallback).then(result => {
                 resolve({
                     boxes: result
                 });

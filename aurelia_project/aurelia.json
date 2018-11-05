@@ -143,6 +143,12 @@
                         "main": "aurelia-templating-router"
                     },
                     {
+                        "name": "aurelia-dialog",
+                        "path": "../node_modules/aurelia-dialog/dist/amd",
+                        "main": "aurelia-dialog",
+                        "resources": ["resources/*.js"]
+                    },
+                    {
                         "name": "aurelia-testing",
                         "path": "../node_modules/aurelia-testing/dist/amd",
                         "main": "aurelia-testing",

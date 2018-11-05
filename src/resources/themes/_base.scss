@@ -48,11 +48,11 @@ legend {
 
 .btn-primary {
     background-color: $button-bg-primary;
-    border-color: $button-bg-primary;
+    border-color:     $button-bg-primary;
 
     &:hover {
         background-color: darken($button-bg-primary, 20%);
-        border-color: darken($button-bg-primary, 20%);
+        border-color:     darken($button-bg-primary, 20%);
     }
 }
 
@@ -74,5 +74,12 @@ legend {
     &:hover {
         background-color: $button-bg-hover;
         color:            $button-color-hover;
+    }
+}
+
+ux-dialog-overlay {
+    background-color: $panel-overlay;
+    &.active {
+        opacity: 0.3;
     }
 }

@@ -47,7 +47,8 @@ export const DefaultOptions = {
 export const EventNames = {
     SAVE_REGIONS: 'save-regions',
     SAVE_SETTINGS: 'save-settings',
-    SELECTION_CHANGED: 'selection-changed'
+    SELECTION_CHANGED: 'selection-changed',
+    STATUS_MESSAGE: 'status-message'
 };
 
 export const StorageKeys = {

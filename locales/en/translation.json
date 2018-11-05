@@ -10,7 +10,13 @@
     },
 
     "messages": {
-        "dpi": "Images output using jpeg or png file types will only utilize the horizontal DPI value for both DPI values in the output file. The value will only take effect after loading the next jpeg or png image file."
+        "dpi": "Images output using jpeg or png file types will only utilize the horizontal DPI value for both DPI values in the output file. The value will only take effect after loading the next jpeg or png image file.",
+        "finished": "Finished.",
+        "loading": "Loading image...",
+        "loading-done": "Loading finished.",
+        "processing": "Processing image",
+        "processing-status": "Processing image: {{status}}",
+        "saving-file" : "Saving {{filename}}"
     },
 
     "labels": {

@@ -16,15 +16,17 @@
 
 import {customElement, computedFrom, inject, bindable, LogManager, BindingEngine} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
+import {I18N} from 'aurelia-i18n';
 import {remote} from 'electron';
 import {changeDpiDataUrl, changeDpiBlob} from 'changedpi';
 import {ImageHandler} from 'processing/image/image-handler';
+import {MessageManager} from 'manager/message-manager';
 import {ImageBounds} from 'model/image-bounds';
 import {DefaultOptions, EventNames, StorageKeys, ImageTypes} from 'util/constants';
 import _ from 'lodash';
 
 @customElement('main-panel')
-@inject(ImageHandler, EventAggregator, BindingEngine)
+@inject(Element, I18N, ImageHandler, EventAggregator, BindingEngine, MessageManager)
 export class MainPanel {
 
     @bindable boxes = [];
@@ -53,13 +55,16 @@ export class MainPanel {
     _MAX_ZOOM = 4.0;
     _MIN_ZOOM = 0.125;
 
-    constructor(imageHandler, eventAggregator, bindingEngine) {
+    constructor(element, i18n, imageHandler, eventAggregator, bindingEngine, messageManager) {
+        this.element = element;
+        this.i18n = i18n;
         this.handler = imageHandler;
         this.eventAggregator = eventAggregator;
         this.bindingEngine = bindingEngine;
         this.logger = LogManager.getLogger('main-panel');
 
         this.folderHandler = remote.require('./platform/file-utilities');
+        this.messageManager = messageManager;
     }
 
     attached() {
@@ -79,6 +84,7 @@ export class MainPanel {
         _.forEach(this.subscribers, sub => {
             sub.dispose();
         });
+        this.messageManager.dispose();
     }
 
     _setupListeners() {
@@ -152,7 +158,10 @@ export class MainPanel {
         if (this.chosenFile.length > 0) {
             let f = this.chosenFile[0];
             this.processing = true;
-
+            this.eventAggregator.publish(EventNames.STATUS_MESSAGE, {
+                message: this.i18n.tr('messages.loading'),
+                showBusy: true
+            });
             this.meta = {
                 name:         f.name,
                 originalSize: f.size,
@@ -165,6 +174,11 @@ export class MainPanel {
                     this.image = this.handler.asDataUrl(this.data, this.meta);
                     this.inputFile = f.path;
                     this.processing = false;
+                    this.eventAggregator.publish(EventNames.STATUS_MESSAGE, {
+                        message:  this.i18n.tr('messages.loading-done'),
+                        showBusy: false,
+                        dismiss:  true
+                    });
                 });
             };
             if(this.meta.mimeType === "image/tiff" || _.get(this.options, 'dpi.mode', 'image') === 'image') {

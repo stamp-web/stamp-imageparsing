@@ -70,7 +70,7 @@ module.exports = function () {
             java.options.push(options);
         },
 
-        process: function (options, inputFile) {
+        process: function (options, inputFile, statusCallback) {
             let q = new Promise((resolve, reject) => {
                 let imageProcessor = this.getImageProcessor();
                 let t = (new Date()).getTime();
@@ -83,8 +83,8 @@ module.exports = function () {
                 let interval = () => {
                     if (javaOptions) {
                         let msg = javaOptions.getPropertySync('msg');
-                        if (lastMsg !== msg) {
-                            console.log(msg);
+                        if (msg && lastMsg !== msg) {
+                            statusCallback(msg);
                             lastMsg = msg;
                         }
                     }
@@ -95,6 +95,7 @@ module.exports = function () {
                 imageProcessor.then(ip => {
                     ip.processPromise(javaOptions, inputFile).then(result => {
                         clearInterval(interval);
+                        statusCallback(null);
                         javaOptions = null;
                         ip.cleanup();
                         resolve(result);
