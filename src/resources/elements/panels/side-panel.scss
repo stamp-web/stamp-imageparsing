@@ -82,11 +82,11 @@ side-panel {
         }
 
         input[type="text"] {
-            max-width: 12.5rem;
+            max-width: 12rem;
         }
 
         .image-type {
-             max-width: 9rem;
+             max-width: 8.5rem;
         }
 
         .form-row {
@@ -108,9 +108,23 @@ side-panel {
             max-width: 26rem;
             position:  relative;
             transform: translate(-50%, 0);
+
+            &.rotate-90 {
+                transform: translate(-50%, 0) rotate(90deg);
+            }
+
+            &.rotate-180 {
+                transform: translate(-50%, 0) rotate(180deg);
+            }
+
+            &.rotate-270 {
+                transform: translate(-50%, 0) rotate(270deg);
+            }
         }
 
     }
+
+
 
 
 }

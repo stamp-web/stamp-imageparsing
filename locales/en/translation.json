@@ -19,6 +19,10 @@
         "saving-file" : "Saving {{filename}}"
     },
 
+    "tooltips": {
+        "rotate": "Rotate 90 degrees clockwise"
+    },
+
     "labels": {
         "box-padding": "Box padding",
         "default-image-type": "Default Image Type",

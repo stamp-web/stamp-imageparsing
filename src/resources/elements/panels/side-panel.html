@@ -34,13 +34,17 @@
                                 </option>
                             </select>
                         </div>
-
-
+                        <div class="form-group">
+                            <label>&nbsp;</label>
+                            <button class="btn btn-secondary" click.delegate="rotate(region)" title="${'tooltips.rotate'|t}">
+                                <i class="sw-icon-rotate"></i>
+                            </button>
+                        </div>
                     </div>
 
                 </form>
                 <div class="image-preview" show.bind="region.image" >
-                    <img src.bind="region.image">
+                    <img class="${region.rotate ? rotationClass(region) : ''}" src.bind="region.image">
                 </div>
             </div>
         </section>

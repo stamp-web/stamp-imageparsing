@@ -113,6 +113,9 @@ module.exports = function () {
                 let img = new sharp(data).withMetadata();
                 let rect = region.rectangle;
                 img = img.extract({left: rect.x, top: rect.y, width: rect.width, height: rect.height});
+                if( region.rotate) {
+                    img = img.rotate(region.rotate);
+                }
                 switch(mimeType) {
                     case 'image/tiff':
                         img = this.processTIFF(img, options);

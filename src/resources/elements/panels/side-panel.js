@@ -86,6 +86,17 @@ export class SidePanel {
         return true;
     }
 
+    rotate(region) {
+        let angle = region.rotate || 0;
+        region.rotate = (angle + 90) % 360;
+    }
+
+    rotationClass(region) {
+        if (!region.rotate) {
+            return '';
+        }
+        return 'rotate-' + region.rotate;
+    }
 
     updateFilePath(region) {
         region.filePath = region.filename + "." + region.imageType;
