@@ -1,0 +1,23 @@
+<template>
+    <require from="resources/elements/dialogs/region-defaults-dialog.css"></require>
+    <ux-dialog class="region-defaults-dialog">
+        <ux-dialog-body>
+            <h3>${'titles.default-region'|t}</h3>
+
+            <form>
+                <div class="form-group">
+                    <label>${'labels.default-folder-path'|t}</label>
+                    <select class="form-control" value.bind="config.folder">
+                        <option repeat.for="folder of folders" model.bind="folder">${folder.name}</option>
+                    </select>
+                </div>
+            </form>
+        </ux-dialog-body>
+
+
+        <ux-dialog-footer>
+            <button class="btn btn-primary" click.trigger="controller.ok(config)">${'actions.apply'|t}</button>
+            <button class="btn btn-secondary" click.trigger="controller.cancel()">${'actions.cancel'|t}</button>
+        </ux-dialog-footer>
+    </ux-dialog>
+</template>

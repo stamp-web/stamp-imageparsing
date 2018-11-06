@@ -2,11 +2,13 @@
     "title": "Stamp Image Bursting Application",
 
     "titles": {
+        "default-region": "Region Defaults",
         "dpi": "DPI Settings",
         "jpeg": "JPEG Settings",
         "bounding-box": "Bounding Box Configuration",
         "image-settings": "Image Settings",
         "image-processing": "Image Processing Settings"
+
     },
 
     "messages": {
@@ -23,9 +25,15 @@
         "rotate": "Rotate 90 degrees clockwise"
     },
 
+    "actions": {
+        "apply": "Apply",
+        "cancel": "Cancel",
+        "ok": "Ok"
+    },
     "labels": {
         "box-padding": "Box padding",
         "default-image-type": "Default Image Type",
+        "default-folder-path": "Default Folder",
         "dilation-count": "Filter Pass Count",
         "dpi-default-usage": "Default DPI Usage",
         "dpi-image": "Use DPI values from loading image",

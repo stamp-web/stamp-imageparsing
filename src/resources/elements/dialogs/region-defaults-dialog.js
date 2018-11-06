@@ -13,21 +13,22 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
+import {DialogController} from 'aurelia-dialog';
+
 import _ from 'lodash';
 
-export class ImageBounds {
+export class RegionDefaultsDialog {
 
-    static lastCount = 0;
+    static inject = [DialogController];
 
-    rectangle;
-    name;
-    image;
+    config = {};
 
-    constructor(opts = {}) {
-        this.name = 'Region-' + (++ImageBounds.lastCount);
-        this.rectangle = opts.rectangle;
-        this.image = opts.image;
+    constructor(controller){
+        this.controller = controller;
     }
-
-
+    activate(model){
+        this.model = model;
+        this.folders = _.get(model, 'folders', []);
+        this.config.folder = _.get(model, 'folder');
+    }
 }

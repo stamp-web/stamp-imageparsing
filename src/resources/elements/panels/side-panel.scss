@@ -45,6 +45,10 @@ side-panel {
                 margin:           0;
                 padding:          $padding-thick $padding-med;
                 text-transform:   uppercase;
+
+                .valid-region {
+                    margin-left: $margin-med;
+                }
             }
             &.selected {
                 bottom-bottom: 0.1rem solid $selection-color;
@@ -55,7 +59,6 @@ side-panel {
                     color:            $selection-text-color;
                 }
             }
-
 
             .bound-details {
                 &.au-enter {
@@ -73,7 +76,7 @@ side-panel {
         padding: $padding-thick;
 
         .form-control {
-            font-size: 1.1rem;
+            font-size: $input-fontsize;
         }
 
         label, input {
@@ -86,7 +89,7 @@ side-panel {
         }
 
         .image-type {
-             max-width: 8.5rem;
+            max-width: 8.5rem;
         }
 
         .form-row {
@@ -100,32 +103,33 @@ side-panel {
 
     }
 
-
-
     .image-preview {
+        background-color: $image-background;
+        height:           24rem;
+        margin-bottom:    $margin-med;
+
         img {
-            left:      50%;
-            max-width: 26rem;
-            position:  relative;
-            transform: translate(-50%, 0);
+            left:       50%;
+            max-width:  23.5rem;
+            max-height: 23.5rem;
+            position:   relative;
+            top:        50%;
+            transform:  translate(-50%, -50%);
 
             &.rotate-90 {
-                transform: translate(-50%, 0) rotate(90deg);
+                transform: translate(-50%, -50%) rotate(90deg);
             }
 
             &.rotate-180 {
-                transform: translate(-50%, 0) rotate(180deg);
+                transform: translate(-50%, -50%) rotate(180deg);
             }
 
             &.rotate-270 {
-                transform: translate(-50%, 0) rotate(270deg);
+                transform: translate(-50%, -50%) rotate(270deg);
             }
         }
 
     }
-
-
-
 
 }
 

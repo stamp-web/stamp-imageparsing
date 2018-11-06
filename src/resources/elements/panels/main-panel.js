@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import {customElement, computedFrom, inject, bindable, LogManager, BindingEngine} from 'aurelia-framework';
+import {customElement, computedFrom, inject, bindable, observable, LogManager, BindingEngine} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {I18N} from 'aurelia-i18n';
 import {remote} from 'electron';
@@ -29,7 +29,7 @@ import _ from 'lodash';
 @inject(Element, I18N, ImageHandler, EventAggregator, BindingEngine, MessageManager)
 export class MainPanel {
 
-    @bindable boxes = [];
+    @observable boxes = [];
     @bindable boundRegions = [];
     @bindable selectedRegion;
 
@@ -90,10 +90,11 @@ export class MainPanel {
     _setupListeners() {
         this.subscribers.push(this.eventAggregator.subscribe('canvas-click', this._handleCanvasClick.bind(this)));
         this.subscribers.push(this.eventAggregator.subscribe(EventNames.SELECTION_CHANGED, this._handleSelectionChange.bind(this)));
-        this.subscribers.push(this.eventAggregator.subscribe('new-image-bounds', this._handleNewImageBounds.bind(this)));
-        this.subscribers.push(this.bindingEngine.collectionObserver(this.boxes).subscribe(this.boxesChanged.bind(this)));
+        this.subscribers.push(this.eventAggregator.subscribe(EventNames.NEW_REGION, this._handleNewRegion.bind(this)));
         this.subscribers.push(this.eventAggregator.subscribe(EventNames.SAVE_REGIONS, this._handleSaveRegions.bind(this)));
         this.subscribers.push(this.eventAggregator.subscribe(EventNames.SAVE_SETTINGS, this._handleSaveSettings.bind(this)));
+
+      //  this.subscribers.push(this.bindingEngine.collectionObserver(this.boxes).subscribe(this.boxesChanged.bind(this)));
         this.subscribers.push(this.bindingEngine.propertyObserver(this, 'outputPath').subscribe(this._handleOutputPath.bind(this)));
     }
 
@@ -106,7 +107,7 @@ export class MainPanel {
         console.log(">>> ", clickData.x, ' and ', clickData.y);
     }
 
-    _handleNewImageBounds(boundImage) {
+    _handleNewRegion(boundImage) {
         this._initializeRegion(boundImage);
         this.boundRegions.push(boundImage);
         this.selectedRegion = boundImage;
@@ -120,18 +121,17 @@ export class MainPanel {
         this.handler.saveRegions(this.data, regions, this.options, this.inputFile);
     }
 
-    boxesChanged(newBoxes) {
-        this.boundRegions.splice(0, this.boundRegions.length);
+    boxesChanged() {
         this.selectedRegion = undefined;
-        _.defer(()=> { // allow other components to cleanup
-            _.forEach(newBoxes, (box, index) => {
+        _.defer(() => {
+            _.forEach(this.boxes, (box, index) => {
                 let region = new ImageBounds({
                     rectangle: box
                 });
                 this._initializeRegion(region);
                 this.boundRegions.push(region);
                 if (index === 0) {
-                   this.selectedRegion = region;
+                    this.selectedRegion = region;
                 }
             });
         });
@@ -217,7 +217,8 @@ export class MainPanel {
     }
 
     clearBoxes() {
-        this.boxes.splice(0, this.boxes.length);
+        this.boxes = [];
+        ImageBounds.lastCount = 0;
         this.boundRegions.splice(0, this.boundRegions.length);
         this.selectedRegion = undefined;
     }

@@ -3,11 +3,12 @@
     <require from="resources/elements/panels/side-panel.css"></require>
     <div class="action-list">
         <button click.delegate="saveValues()" disabled.bind="!validForSave"><i class="sw-icon-download"></i></button>
+        <button click.delegate="setDefaults()"><i class="sw-icon-settings"></i></button>
         <button click.delegate="clearValues()"><i class="sw-icon-eraser"></i></button>
     </div>
     <div class="section-list panel">
         <section repeat.for="region of boundRegions" class="${region.expanded ? 'selected' : ''}">
-            <h4 click.trigger="expand(region)">${region.name}</h4>
+            <h4 click.trigger="expand(region)">${region.name}<i class="valid-region sw-icon-select-all" if.bind="region.valid"></i></h4>
             <div class="bound-details au-animate" show.bind="region.expanded">
                 <form>
                     <label>${'labels.folder'|t}</label>
@@ -22,6 +23,7 @@
                                    class="form-control"
                                    focus.bind="region.hasFocus"
                                    value.bind="region.filename"
+                                   blur.trigger="filenameUpdated($event, region)"
                                    keypress.delegate="filenameUpdated($event, region) & debounce">
                         </div>
                         <div class="form-group">

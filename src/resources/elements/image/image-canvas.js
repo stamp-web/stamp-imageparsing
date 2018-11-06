@@ -30,11 +30,11 @@ export class ImageCanvas {
     LINE_WIDTH = 2;
 
     @bindable image;
-    @bindable boundRegions = [];
+    @bindable boundRegions;
     @bindable scalingFactor = 1.0;
     @bindable selectedRegion;
     @bindable style = {
-        selected:     '#89bdd3',
+        selected:     '#89b1d3',
         border:       '#c9c9c9',
         create:       '#9ad3de',
         transparency: 0.1
@@ -274,7 +274,8 @@ export class ImageCanvas {
                 if (index === 0) {
                     genCrop(region);
                 } else {
-                    _.delay(genCrop, 100, region);
+                    genCrop(region);
+                    _.delay(genCrop, 250, region);
                 }
 
             });

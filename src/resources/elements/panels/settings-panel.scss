@@ -56,9 +56,14 @@ settings-panel {
     }
 
     .footer-actions {
+        border-top:     $panel-border;
         display:        flex;
         flex-direction: row-reverse;
-        padding:        $padding-thick;
+        padding:        $padding-x-thick;
+
+        button.btn {
+            font-size: 1.1rem;
+        }
 
         > * {
             margin-left: $margin-med;

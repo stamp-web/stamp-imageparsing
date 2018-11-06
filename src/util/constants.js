@@ -45,10 +45,11 @@ export const DefaultOptions = {
 };
 
 export const EventNames = {
-    SAVE_REGIONS: 'save-regions',
-    SAVE_SETTINGS: 'save-settings',
+    NEW_REGION:        'new-image-bounds',
+    SAVE_REGIONS:      'save-regions',
+    SAVE_SETTINGS:     'save-settings',
     SELECTION_CHANGED: 'selection-changed',
-    STATUS_MESSAGE: 'status-message'
+    STATUS_MESSAGE:    'status-message'
 };
 
 export const StorageKeys = {

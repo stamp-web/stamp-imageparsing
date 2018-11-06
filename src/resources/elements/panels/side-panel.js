@@ -13,29 +13,39 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-import {customElement, bindable, inject, BindingEngine} from 'aurelia-framework';
+import {customElement, bindable, BindingEngine} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
+import {DialogService} from 'aurelia-dialog';
 import {EventNames, ImageTypes} from 'util/constants';
+import {RegionDefaultsDialog} from 'resources/elements/dialogs/region-defaults-dialog';
 import _ from 'lodash';
 
+
 @customElement('side-panel')
-@inject(EventAggregator, BindingEngine)
 export class SidePanel {
 
-    @bindable boundRegions = [];
+    static inject = [EventAggregator, BindingEngine, DialogService];
+
+    @bindable boundRegions;
     @bindable folders = [];
     @bindable options = {};
     @bindable selectedRegion;
+
+    defaultConfig = { };
 
     subscribers = [];
     validForSave = false;
 
     imageTypes = ImageTypes;
 
-    constructor(eventAggregator, bindingEngine) {
+    constructor(eventAggregator, bindingEngine, dialogService) {
         this.eventAggregator = eventAggregator;
         this.bindingEngine = bindingEngine;
+        this.dialogService = dialogService;
+    }
 
+    attached() {
+        this.subscribers.push(this.bindingEngine.collectionObserver(this.boundRegions).subscribe(this.regionsChanged.bind(this)));
     }
 
     detached() {
@@ -44,22 +54,49 @@ export class SidePanel {
         });
     }
 
-    attached() {
-        this.subscribers.push(this.bindingEngine.collectionObserver(this.boundRegions).subscribe(this.regionsChanged.bind(this)));
+    foldersChanged() {
+        this.defaultConfig.folders = this.folders;
     }
 
-    regionsChanged() {
-        let first = _.first(this.boundRegions);
-        if(first) {
-            first.expanded = true;
+    regionsChanged(splices) {
+        let count = _.reduce(splices, (sum, obj) => {
+            return sum + obj.addedCount;
+        }, 0);
+        if (count > 0) {
+            this._setDefaultFolder();
         }
     }
+
+    _setDefaultFolder() {
+        let folder = _.get(this.defaultConfig, 'folder');
+        if (folder) {
+            _.each(this.boundRegions, region => {
+                region.folder = folder;
+            });
+        }
+    }
+
+
     clearValues() {
         _.each(this.boundRegions, region => {
            region.filePath = undefined;
            region.filename = undefined;
         });
         this.validForSave = false;
+    }
+
+    setDefaults() {
+        this.dialogService.open({
+            viewModel: RegionDefaultsDialog,
+            model: this.defaultConfig
+        }).then(dialogResult => {
+            return dialogResult.closeResult;
+        }).then((response) => {
+            if (!response.wasCancelled) {
+                _.set(this.defaultConfig, 'folder', _.get(response, 'output.folder'));
+                this._setDefaultFolder();
+            }
+        });
     }
 
     saveValues() {
@@ -79,9 +116,8 @@ export class SidePanel {
     }
 
     filenameUpdated(event, region) {
-        if(!this.validForSave && this.isValidRegion(region)) {
-            this.validForSave = true;
-        }
+        region.valid = this.isValidRegion(region);
+        this.validForSave = _.some(this.boundRegions, {valid: true});
         this.updateFilePath(region);
         return true;
     }
@@ -107,8 +143,10 @@ export class SidePanel {
             o.hasFocus = false;
             return o === this.selectedRegion
         });
-        region.hasFocus = true;
-        this.expand(region);
+        if (region) {
+            region.hasFocus = true;
+            this.expand(region);
+        }
     }
 
     expand(region) {

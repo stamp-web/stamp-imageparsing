@@ -13,21 +13,13 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-import _ from 'lodash';
+@import '../../themes/variables';
 
-export class ImageBounds {
-
-    static lastCount = 0;
-
-    rectangle;
-    name;
-    image;
-
-    constructor(opts = {}) {
-        this.name = 'Region-' + (++ImageBounds.lastCount);
-        this.rectangle = opts.rectangle;
-        this.image = opts.image;
+.region-defaults-dialog {
+    h3 {
+        margin-bottom: $margin-thick;
     }
-
-
+    .form-control {
+        font-size: $input-fontsize;
+    }
 }

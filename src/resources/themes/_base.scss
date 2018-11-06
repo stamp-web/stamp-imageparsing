@@ -77,6 +77,15 @@ legend {
     }
 }
 
+ux-dialog {
+    > ux-dialog-footer {
+        button.btn {
+            font-size: 1.1rem;
+            padding:   $padding-med $padding-x-thick;
+        }
+    }
+}
+
 ux-dialog-overlay {
     background-color: $panel-overlay;
     &.active {
