@@ -20,7 +20,7 @@
         ${outputPath}
     </div>
     <div class="content-pane">
-
+        <settings-panel if.bind="showSettings" options.bind="options"></settings-panel>
         <image-canvas class="${imagePanelClassnames}"
                       image.bind="image"
                       bound-regions.bind="boundRegions"
@@ -31,7 +31,7 @@
                     folders.bind="folders"
                     options.bind="options"
                     selected-region.bind="selectedRegion"></side-panel>
-        <settings-panel if.bind="showSettings" options.bind="options"></settings-panel>
+
     </div>
     <div class="footer-pane panel">
         <label>${'labels.zoom'|t}:</label> ${scalingFactor|asPercentage}

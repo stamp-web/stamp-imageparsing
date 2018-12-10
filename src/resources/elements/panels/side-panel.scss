@@ -20,10 +20,13 @@ side-panel {
     display:          flex;
     flex-direction:   column;
     height:           100%;
+    margin-left:      $margin-x-thin;
+    margin-right:     $margin-x-thin;
 
     .action-list {
-        flex:   1 0 auto;
-        height: 3rem;
+        flex:    1 0 auto;
+        height:  3rem;
+        padding: $padding-med $padding-med $padding-med 0;
     }
 
     .section-list {

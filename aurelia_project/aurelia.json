@@ -77,7 +77,8 @@
         },
         "options": {
             "minify": "stage & prod",
-            "sourcemaps": "dev & stage"
+            "sourcemaps": "dev & stage",
+            "cache": "dev & stage"
         },
         "bundles": [
             {
@@ -98,26 +99,10 @@
                 "dependencies": [
                     "jquery",
                     "aurelia-animator-css",
-                    "aurelia-binding",
                     "aurelia-bootstrapper",
-                    "aurelia-dependency-injection",
-                    "aurelia-event-aggregator",
-                    "aurelia-framework",
-                    "aurelia-history",
-                    "aurelia-history-browser",
-                    "aurelia-loader",
                     "aurelia-loader-default",
-                    "aurelia-logging",
-                    "aurelia-logging-console",
-                    "aurelia-metadata",
-                    "aurelia-pal",
+                    "aurelia-history-browser",
                     "aurelia-pal-browser",
-                    "aurelia-path",
-                    "aurelia-polyfills",
-                    "aurelia-route-recognizer",
-                    "aurelia-router",
-                    "aurelia-task-queue",
-                    "aurelia-templating",
                     "aurelia-templating-binding",
                     {
                         "name": "bootstrap",
@@ -133,41 +118,15 @@
                     "lodash",
                     "text",
                     {
-                        "name": "aurelia-templating-resources",
-                        "path": "../node_modules/aurelia-templating-resources/dist/amd",
-                        "main": "aurelia-templating-resources"
-                    },
-                    {
                         "name": "aurelia-templating-router",
                         "path": "../node_modules/aurelia-templating-router/dist/amd",
                         "main": "aurelia-templating-router"
-                    },
-                    {
-                        "name": "aurelia-dialog",
-                        "path": "../node_modules/aurelia-dialog/dist/amd",
-                        "main": "aurelia-dialog",
-                        "resources": ["resources/*.js"]
                     },
                     {
                         "name": "aurelia-testing",
                         "path": "../node_modules/aurelia-testing/dist/amd",
                         "main": "aurelia-testing",
                         "env": "dev"
-                    },
-                    {
-                        "name": "i18next",
-                        "path": "../node_modules/i18next/dist/umd",
-                        "main": "i18next"
-                    },
-                    {
-                        "name": "aurelia-i18n",
-                        "path": "../node_modules/aurelia-i18n/dist/amd",
-                        "main": "aurelia-i18n"
-                    },
-                    {
-                        "name": "i18next-xhr-backend",
-                        "path": "../node_modules/i18next-xhr-backend/dist/umd",
-                        "main": "i18nextXHRBackend"
                     },
                     {
                         "name": "electron",

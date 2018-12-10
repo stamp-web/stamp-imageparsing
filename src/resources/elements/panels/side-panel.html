@@ -2,9 +2,9 @@
 
     <require from="resources/elements/panels/side-panel.css"></require>
     <div class="action-list">
-        <button click.delegate="saveValues()" disabled.bind="!validForSave"><i class="sw-icon-download"></i></button>
-        <button click.delegate="setDefaults()"><i class="sw-icon-settings"></i></button>
-        <button click.delegate="clearValues()"><i class="sw-icon-eraser"></i></button>
+        <button class="btn btn-primary" click.delegate="saveValues()" disabled.bind="!validForSave" title="${'tooltips.save'|t}"><i class="sw-icon-download"></i></button>
+        <button class="btn btn-secondary" click.delegate="setDefaults()"><i class="sw-icon-settings" title="${'tooltips.region-settings'|t}"></i></button>
+        <button class="btn btn-secondary" click.delegate="clearValues()"><i class="sw-icon-eraser" title="${'tooltips.reset'|t}"></i></button>
     </div>
     <div class="section-list panel">
         <section repeat.for="region of boundRegions" class="${region.expanded ? 'selected' : ''}">
@@ -24,7 +24,8 @@
                                    focus.bind="region.hasFocus"
                                    value.bind="region.filename"
                                    blur.trigger="filenameUpdated($event, region)"
-                                   keypress.delegate="filenameUpdated($event, region) & debounce">
+                                   keydown.delegate="checkTab($event, region)"
+                                   keyup.delegate="filenameUpdated($event, region)">
                         </div>
                         <div class="form-group">
                             <label>&nbsp;</label>

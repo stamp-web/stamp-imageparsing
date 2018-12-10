@@ -22,7 +22,10 @@
     },
 
     "tooltips": {
-        "rotate": "Rotate 90 degrees clockwise"
+        "region-settings": "Configure region defaults",
+        "reset": "Clear regions",
+        "rotate": "Rotate 90 degrees clockwise",
+        "save": "Save valid regions"
     },
 
     "actions": {

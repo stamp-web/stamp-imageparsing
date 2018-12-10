@@ -50,6 +50,12 @@ legend {
     background-color: $button-bg-primary;
     border-color:     $button-bg-primary;
 
+    &:disabled {
+        background-color: $button-bg-disabled;
+        color:            $button-color-disabled;
+        border-color:     $button-bg;
+    }
+
     &:hover {
         background-color: darken($button-bg-primary, 20%);
         border-color:     darken($button-bg-primary, 20%);

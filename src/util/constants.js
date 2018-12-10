@@ -44,6 +44,10 @@ export const DefaultOptions = {
     }
 };
 
+export const KeyCodes = {
+    TAB: 9
+}
+
 export const EventNames = {
     NEW_REGION:        'new-image-bounds',
     SAVE_REGIONS:      'save-regions',

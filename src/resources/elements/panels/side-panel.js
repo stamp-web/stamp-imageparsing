@@ -16,7 +16,8 @@
 import {customElement, bindable, BindingEngine} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {DialogService} from 'aurelia-dialog';
-import {EventNames, ImageTypes} from 'util/constants';
+import {ImageBounds} from 'model/image-bounds';
+import {EventNames, ImageTypes, KeyCodes} from 'util/constants';
 import {RegionDefaultsDialog} from 'resources/elements/dialogs/region-defaults-dialog';
 import _ from 'lodash';
 
@@ -79,10 +80,16 @@ export class SidePanel {
 
     clearValues() {
         _.each(this.boundRegions, region => {
+            if (region.filePath) {
+                region.name = ImageBounds.nextName();
+            }
            region.filePath = undefined;
            region.filename = undefined;
+           region.valid = this.isValidRegion(region);
+
         });
         this.validForSave = false;
+        this.selectedRegion = _.first(this.boundRegions);
     }
 
     setDefaults() {
@@ -115,11 +122,27 @@ export class SidePanel {
         return !_.isEmpty(region.filename) && !_.isNil(region.rectangle);
     }
 
+    checkTab(event, region) {
+        this.tabPressed = (event.keyCode === KeyCodes.TAB);
+        return true;
+    }
+
     filenameUpdated(event, region) {
         region.valid = this.isValidRegion(region);
         this.validForSave = _.some(this.boundRegions, {valid: true});
         this.updateFilePath(region);
+        this._handleTabPressed(region);
         return true;
+    }
+
+    _handleTabPressed(region) {
+        if (this.tabPressed) {
+            let index = _.indexOf(this.boundRegions, region) + 1;
+            if (index > 0 && index < this.boundRegions.length) {
+                this.selectedRegion = this.boundRegions[index];
+            }
+            this.tabPressed = false;
+        }
     }
 
     rotate(region) {
@@ -135,7 +158,13 @@ export class SidePanel {
     }
 
     updateFilePath(region) {
-        region.filePath = region.filename + "." + region.imageType;
+        if (region.filename) {
+            region.filePath = region.filename + "." + region.imageType;
+            region.name = region.filePath;
+            this.eventAggregator.publish(EventNames.SELECTION_CHANGED, region);
+        } else {
+            region.name = ImageBounds.nextName();
+        }
     }
 
     selectedRegionChanged() {

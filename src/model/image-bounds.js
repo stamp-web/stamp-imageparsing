@@ -29,5 +29,8 @@ export class ImageBounds {
         this.image = opts.image;
     }
 
+    static nextName() {
+        return 'Region-' + (++ImageBounds.lastCount);
+    }
 
 }

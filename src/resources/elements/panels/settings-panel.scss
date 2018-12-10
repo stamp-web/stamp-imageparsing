@@ -19,6 +19,7 @@ settings-panel {
     display:        flex;
     flex-direction: column;
     height:         100%;
+    margin-top:     $margin-med;
 
     .form-control {
         font-size: 1.1rem;

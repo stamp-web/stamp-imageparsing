@@ -80,11 +80,30 @@ export class ImageCanvas {
     }
 
     selectedRegionChanged(newSelection, oldSelection) {
-        if (oldSelection) {
-            this._paintRegion(oldSelection.rectangle, oldSelection.name);
+        // in prior builds we repainted just the new and old selections however
+        // if we want the filename to get updated we need to wipe the canvas first to avoid overwriting
+        this.repaint();
+        this._observeFilePathChanges(newSelection);
+    }
+
+    /**
+     * Listen for changes on the selected region's filePath and force a debounced repaint.  This is to handle
+     * cases where a user 'updates' the filename and we want it reflected in box without waiting for a selection
+     * change.
+     *
+     * @param newSelection
+     * @private
+     */
+    _observeFilePathChanges(newSelection) {
+        if (this.filenameListener) {
+            this.filenameListener.dispose();
         }
-        if(newSelection) {
-            this._paintRegion(newSelection.rectangle, newSelection.name);
+        if (newSelection) {
+            this.filenameListener = this.bindingEngine.propertyObserver(newSelection, 'filePath').subscribe(() => {
+                _.debounce(() => {
+                    this.repaint();
+                }, 750)();
+            });
         }
     }
 
