@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.1.6.RELEASE</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.drakeserver</groupId>
 	<artifactId>stamp-imageparsing</artifactId>
@@ -39,27 +40,27 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-            <groupId>net.imagej</groupId>
-            <artifactId>ij</artifactId>
-            <version>1.52e</version>
-        </dependency>
+			<groupId>net.imagej</groupId>
+			<artifactId>ij</artifactId>
+			<version>1.52e</version>
+		</dependency>
 	</dependencies>
 
 	<repositories>
 		<repository>
-            <id>drakeserver.repo</id>
-            <name>Maven Repository on Drakeserver</name>
-            <url>http://drake-server.ddns.net:9001/maven.repo/</url>
-            <layout>default</layout>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-        	<id>wisc.edu</id>
-        	<name>Wisconson University</name>
-        	<url>http://dev.loci.wisc.edu/maven2/releases/</url>
-        </repository>
+			<id>drakeserver.repo</id>
+			<name>Maven Repository on Drakeserver</name>
+			<url>http://drake-server.ddns.net:9001/maven.repo/</url>
+			<layout>default</layout>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>wisc.edu</id>
+			<name>Wisconson University</name>
+			<url>http://dev.loci.wisc.edu/maven2/releases/</url>
+		</repository>
 	</repositories>
 	<build>
 		<plugins>
