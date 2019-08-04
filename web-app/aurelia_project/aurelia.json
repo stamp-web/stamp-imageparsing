@@ -1,0 +1,141 @@
+{
+    "name": "stamp-imageparsing",
+    "type": "project:application",
+    "platform": {
+        "id": "web",
+        "displayName": "Web",
+        "output": "scripts",
+        "index": "index.html"
+    },
+    "transpiler": {
+        "id": "babel",
+        "displayName": "Babel",
+        "fileExtension": ".js",
+        "options": {
+            "plugins": [
+                "transform-es2015-modules-amd"
+            ]
+        },
+        "source": "src/**/*.js"
+    },
+    "markupProcessor": {
+        "id": "minimum",
+        "displayName": "Minimal Minification",
+        "fileExtension": ".html",
+        "source": "src/**/*.html"
+    },
+    "cssProcessor": {
+        "id": "sass",
+        "displayName": "Sass",
+        "fileExtension": ".scss",
+        "source": "src/**/*.scss"
+    },
+    "editor": {
+        "id": "webstorm",
+        "displayName": "WebStorm"
+    },
+    "unitTestRunner": {
+        "id": "karma",
+        "displayName": "Karma",
+        "source": "test/unit/**/*.js"
+    },
+    "paths": {
+        "deploy": "../src/main/resources/web-app",
+        "root": "src",
+        "resources": "resources",
+        "elements": "resources/elements",
+        "attributes": "resources/attributes",
+        "valueConverters": "resources/value-converters",
+        "bindingBehaviors": "resources/binding-behaviors"
+    },
+    "testFramework": {
+        "id": "jasmine",
+        "displayName": "Jasmine"
+    },
+    "build": {
+        "targets": [
+            {
+                "id": "web",
+                "displayName": "Web",
+                "output": "scripts",
+                "index": "index.html"
+            }
+        ],
+        "loader": {
+            "type": "require",
+            "configTarget": "vendor-bundle.js",
+            "includeBundleMetadataInConfig": "auto",
+            "plugins": [
+                {
+                    "name": "text",
+                    "extensions": [
+                        ".html",
+                        ".css"
+                    ],
+                    "stub": true
+                }
+            ]
+        },
+        "options": {
+            "minify": "stage & prod",
+            "sourcemaps": "dev & stage",
+            "cache": "dev & stage"
+        },
+        "bundles": [
+            {
+                "name": "app-bundle.js",
+                "source": [
+                    "[**/*.js]",
+                    "**/*.{css,html}"
+                ]
+            },
+            {
+                "name": "vendor-bundle.js",
+                "prepend": [
+                    "node_modules/bluebird/js/browser/bluebird.core.js",
+                    "node_modules/aurelia-cli/lib/resources/scripts/configure-bluebird.js",
+                    "node_modules/requirejs/require.js",
+                    "node_modules/jquery/dist/jquery.js"
+                ],
+                "dependencies": [
+                    "jquery",
+                    "aurelia-animator-css",
+                    "aurelia-bootstrapper",
+                    "aurelia-loader-default",
+                    "aurelia-history-browser",
+                    "aurelia-pal-browser",
+                    "aurelia-templating-binding",
+                    {
+                        "name": "bootstrap",
+                        "path": "../node_modules/bootstrap/dist",
+                        "main": "js/bootstrap.bundle",
+                        "deps": [
+                            "jquery"
+                        ],
+                        "resources": [
+                            "css/bootstrap.css"
+                        ]
+                    },
+                    "lodash",
+                    "text",
+                    {
+                        "name": "aurelia-templating-router",
+                        "path": "../node_modules/aurelia-templating-router/dist/amd",
+                        "main": "aurelia-templating-router"
+                    },
+                    {
+                        "name": "aurelia-testing",
+                        "path": "../node_modules/aurelia-testing/dist/amd",
+                        "main": "aurelia-testing",
+                        "env": "dev"
+                    },
+                    {
+                        "name": "changedpi",
+                        "path": "../node_modules/changedpi/dist",
+                        "main": "index"
+                    }
+                ]
+            }
+        ]
+    }
+}
