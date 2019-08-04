@@ -3,5 +3,6 @@ web-app/scripts
 src/main/resources/web-app
 .idea
 .DS_STORE
+.factorypath
 target
 test/coverage
