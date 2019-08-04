@@ -2,8 +2,6 @@ web-app/node_modules
 web-app/scripts
 src/main/resources/web-app
 .idea
-.mvn
-.settings
 .DS_STORE
 target
 test/coverage
