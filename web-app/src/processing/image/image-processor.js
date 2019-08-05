@@ -13,31 +13,27 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-import {HttpClient, json} from 'aurelia-fetch-client';
+import {EventAggregator} from 'aurelia-event-aggregator';
+import {EventNames, StorageKeys} from "../../util/constants";
+import _ from "lodash";
+import {ConnectionService} from "../connection-service";
 
 export class ImageProcessor {
 
-    static inject = [HttpClient];
+    static inject = [ConnectionService, EventAggregator];
 
-    constructor(client) {
-        this.client = client;
+    constructor(connectionService, eventAggregrator) {
+        this.connectionService = connectionService;
+        this.eventAggregator = eventAggregrator;
     }
 
-    process(inputFile) {
-        let q = new Promise((resolve, reject) => {
-            let payload = {
-                file: inputFile
-            };
-            this.client.fetch('/api/svc/process-image', {
-                method: 'post',
-                body:   JSON.stringify(payload)
-            }).then(result => {
-                resolve(result.json());
-            }).catch(err => {
-                reject(err);
-            });
-        });
-        return q;
+    process(inputFile, options) {
+        let payload = {
+            file:    inputFile,
+            options: options
+        };
+        this.eventAggregator.publish(EventNames.REMOTE_MESSAGING);
+        return this.connectionService.post('/api/svc/process-image', payload);
     }
 
 }

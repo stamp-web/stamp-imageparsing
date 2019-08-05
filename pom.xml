@@ -16,7 +16,7 @@
 	<description>Application for stamp image processing</description>
 
 	<properties>
-		<java.version>12</java.version>
+		<java.version>8</java.version>
 	</properties>
 
 	<dependencies>
@@ -43,6 +43,10 @@
 			<groupId>net.imagej</groupId>
 			<artifactId>ij</artifactId>
 			<version>1.52e</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-websocket</artifactId>
 		</dependency>
 	</dependencies>
 
@@ -71,4 +75,8 @@
 		</plugins>
 	</build>
 
+	<issueManagement>
+		<system>Github</system>
+		<url>https://github.com/jadrake75/stamp-imageparsing/issues</url>
+	</issueManagement>
 </project>

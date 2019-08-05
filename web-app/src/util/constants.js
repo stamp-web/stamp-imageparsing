@@ -50,6 +50,7 @@ export const KeyCodes = {
 
 export const EventNames = {
     NEW_REGION:        'new-image-bounds',
+    REMOTE_MESSAGING:  'remote-messaging',
     SAVE_REGIONS:      'save-regions',
     SAVE_SETTINGS:     'save-settings',
     SELECTION_CHANGED: 'selection-changed',
@@ -58,5 +59,6 @@ export const EventNames = {
 
 export const StorageKeys = {
     OPTIONS: 'options',
-    OUTPUT_PATH: 'output-path'
+    OUTPUT_PATH: 'output-path',
+    SERVER_INFO: 'server-info'
 }

@@ -28,15 +28,16 @@ export class ImageCanvas {
 
 
     LINE_WIDTH = 2;
+    SELECTED_LINE_WIDTH = 3;
 
     @bindable image;
     @bindable boundRegions;
     @bindable scalingFactor = 1.0;
     @bindable selectedRegion;
     @bindable style = {
-        selected:     '#89b1d3',
+        selected:     '#7cfc00',
         border:       '#c9c9c9',
-        create:       '#9ad3de',
+        create:       '#3ddaff',
         transparency: 0.1
     };
 
@@ -73,6 +74,7 @@ export class ImageCanvas {
         }));
         this._subscribers.push(this.eventAggregator.subscribe('delete-selected', this.deleteSelected.bind(this)));
         this._subscribers.push(this.bindingEngine.collectionObserver(this.boundRegions).subscribe(this.regionsChanged.bind(this)));
+        this.repaintDebounced = _.debounce(this.repaint.bind(this), 50);
     }
 
     deleteSelected() {
@@ -82,7 +84,7 @@ export class ImageCanvas {
     selectedRegionChanged(newSelection, oldSelection) {
         // in prior builds we repainted just the new and old selections however
         // if we want the filename to get updated we need to wipe the canvas first to avoid overwriting
-        this.repaint();
+        this.repaintDebounced();
         this._observeFilePathChanges(newSelection);
     }
 
@@ -148,7 +150,7 @@ export class ImageCanvas {
             _.defer(() => {
                 let ctx = this._getContext();
                 ctx.strokeStyle = this.style.create;
-                ctx.setLineDash([10, 2]);
+                ctx.setLineDash([5, 5]);
                 ctx.lineWidth = this.LINE_WIDTH;
                 ctx.strokeRect(this._boxStart.x, this._boxStart.y,
                     evt.offsetX - this._boxStart.x, evt.offsetY - this._boxStart.y);
@@ -160,7 +162,7 @@ export class ImageCanvas {
 
     mouseUpCanvas(evt) {
         if (this._clickMode === ClickMode.box && this._boxStart) {
-            this.repaint();
+            this.repaintDebounced();
             let x = this._boxStart.x;
             let y = this._boxStart.y;
             let w = (evt.offsetX - this._boxStart.x);
@@ -286,7 +288,8 @@ export class ImageCanvas {
     regionsChanged() {
         if (this.boundRegions) {
             this.repaint();
-            _.forEach(this.boundRegions, (region,index) => {
+            _.forEach(this.boundRegions, (region, index) => {
+                region.image = undefined;
                 let genCrop = (r) => {
                     r.image = this._generateCropImage(r.rectangle);
                 };
@@ -294,9 +297,7 @@ export class ImageCanvas {
                     genCrop(region);
                 } else {
                     genCrop(region);
-                    _.delay(genCrop, 250, region);
                 }
-
             });
         }
     }
@@ -313,8 +314,8 @@ export class ImageCanvas {
 
     _paintRegion(rect, text) {
         let ctx = this._getContext();
-        ctx.lineWidth = this.LINE_WIDTH;
         let isSelected = (rect === _.get(this.selectedRegion, 'rectangle'));
+        ctx.lineWidth = isSelected ? this.SELECTED_LINE_WIDTH: this.LINE_WIDTH;
         ctx.strokeStyle = isSelected ? this.style.selected : this.style.border;
         ctx.strokeRect(rect.x * this.scalingFactor, rect.y * this.scalingFactor,
             rect.width * this.scalingFactor, rect.height * this.scalingFactor);

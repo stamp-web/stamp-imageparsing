@@ -23,9 +23,10 @@ import {MessageManager} from 'manager/message-manager';
 import {ImageBounds} from 'model/image-bounds';
 import {DefaultOptions, EventNames, StorageKeys, ImageTypes} from 'util/constants';
 import _ from 'lodash';
+import {ConnectionService} from "processing/connection-service";
 
 @customElement('main-panel')
-@inject(Element, I18N, ImageHandler, EventAggregator, BindingEngine, MessageManager)
+@inject(Element, I18N, ImageHandler, EventAggregator, BindingEngine, MessageManager, ConnectionService)
 export class MainPanel {
 
     @observable boxes = [];
@@ -37,7 +38,6 @@ export class MainPanel {
 
     scalingFactor = 1.0;
     image;
-
     data;
     chosenFile;
     chosenFolder;
@@ -54,7 +54,7 @@ export class MainPanel {
     _MAX_ZOOM = 4.0;
     _MIN_ZOOM = 0.125;
 
-    constructor(element, i18n, imageHandler, eventAggregator, bindingEngine, messageManager) {
+    constructor(element, i18n, imageHandler, eventAggregator, bindingEngine, messageManager, connectionService) {
         this.element = element;
         this.i18n = i18n;
         this.handler = imageHandler;
@@ -64,6 +64,7 @@ export class MainPanel {
 
         this.folderHandler = undefined; //remote.require('./platform/file-utilities');
         this.messageManager = messageManager;
+        this.connectionService = connectionService;
     }
 
     attached() {
@@ -259,9 +260,17 @@ export class MainPanel {
 
         _.defer(() => {
             if (this.dataURI) {
-                this.handler.process(this.options, this.dataURI).then(info => {
+                this.handler.process(this.dataURI, this.options).then(info => {
                     this.boxes = info.boxes;
                     this.processing = false;
+                }).catch(err => {
+                    this.processing = false;
+                    this.eventAggregator.publish(EventNames.STATUS_MESSAGE, {
+                        message:  this.i18n.tr('messages.processing-failed'),
+                        showBusy: false,
+                        dismiss:  true
+                    });
+
                 });
             }
         });

@@ -18,6 +18,7 @@
         "loading-done": "Loading finished.",
         "processing": "Processing image",
         "processing-status": "Processing image: {{status}}",
+        "processing-failed": "Processing failure",
         "saving-file" : "Saving {{filename}}"
     },
 

@@ -130,9 +130,28 @@
                         "env": "dev"
                     },
                     {
+	                    "name": "electron",
+	                    "path": "../src/electron-fix"
+                    },
+                    {
                         "name": "changedpi",
                         "path": "../node_modules/changedpi/dist",
                         "main": "index"
+                    }
+                ]
+            },
+            {
+                "name": "websocket-tools-bundle.js",
+                "dependencies": [
+                    {
+                        "name": "sockjs-client",
+                        "path": "../node_modules/sockjs-client/dist",
+                        "main": "sockjs.min.js"
+                    },
+                    {
+                        "name": "webstomp-client",
+                        "path": "../node_modules/webstomp-client/dist",
+                        "main": "webstomp.min.js"
                     }
                 ]
             }

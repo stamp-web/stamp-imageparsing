@@ -18,6 +18,10 @@ package com.drakeserver.image.processing;
 import com.drakeserver.image.ImageConstants;
 import com.drakeserver.image.model.BoundingBox;
 import com.drakeserver.image.model.BoundingBoxesComparator;
+import com.drakeserver.messaging.MessageConstants;
+import com.drakeserver.messaging.MessageHelper;
+import com.drakeserver.messaging.MessageStatus;
+import com.drakeserver.messaging.model.Message;
 
 import ij.IJ;
 import ij.ImagePlus;
@@ -34,8 +38,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Level;
@@ -45,6 +51,7 @@ import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -61,26 +68,26 @@ public class ImageProcessorService {
     public static final float MAXIMUM_AREA_PERCENTAGE = 0.85f;
     public static final float MINIMUM_OVERLAP_PERCENTAGE = 0.25f;
 
+    @Autowired
+    private MessageHelper messageHelper;
+    
     public ImageProcessorService() {
-        configureLogger();
+     
     }
 
-    private void configureLogger() {
-        /*try(FileInputStream fis = new FileInputStream("dist/logging.properties");) {
-            LogManager.getLogManager().readConfiguration(fis);
-        } catch (IOException | SecurityException ex) {
-            Logger.getLogger(ImageProcessor.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
-    }
 
     public void cleanup() {
         System.gc();
     }
 
-    public List<BoundingBox> process(Properties options, String dataUrl) throws IOException {
-    	if (options == null) {
-    		options = new Properties();
-    	}
+    private void sendMessage(String msg) {
+   		messageHelper.dispatchMessage(new Message(MessageConstants.STATUS_MESSAGE, msg, MessageStatus.STATUS));
+    }
+    
+    public List<BoundingBox> process(String dataUrl, Map<String, Object> opts) throws IOException {
+		Properties options = new Properties();
+		options.putAll(opts);
+		
         int image_padding = Integer.valueOf(options.getProperty(ImageConstants.BOX_PADDING, Integer.toString(PADDING_DEFAULT)));
         int minimum_size = Integer.valueOf(options.getProperty(ImageConstants.MIN_BOUNDING_AREA, Integer.toString(MINIMUM_AREA_DEFAULT)));
         float min_percentage = Float.valueOf(options.getProperty(ImageConstants.MIN_INTERCEPTING_AREA, Float.toString(MINIMUM_OVERLAP_PERCENTAGE)));
@@ -94,18 +101,18 @@ public class ImageProcessorService {
         byte[] imageData = Base64.getMimeDecoder().decode(dataUrl.substring(contentStartIndex));
         
         BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageData)); 
-
+        
         ImagePlus the_image = new ImagePlus("imported image...", image);
 
         ArrayList<BoundingBox> boxes = new ArrayList<>();
         try {
-            options.setProperty("msg", "smoothing");
+            sendMessage("Smoothing Image...");
             IJ.run(the_image, "Smooth", "");
-            options.setProperty("msg", "enhance constrast");
+            sendMessage("Enhancing Image Constrast...");
             IJ.run(the_image, "Enhance Contrast", "saturated=0.4");
             IJ.run(the_image, "8-bit", "");
             //handleLightBackground(the_image);
-            options.setProperty("msg", "despeckle");
+            sendMessage("Despeckling Image...");
             IJ.run(the_image, "Despeckle", "");
             IJ.run(the_image, "Remove Outliers...", "radius=5 threshold=50 which=Bright");
             IJ.run(the_image, "Make Binary", "");
@@ -116,7 +123,7 @@ public class ImageProcessorService {
             }*/
 
             for (int i = 0; i < dilationCount; i++) {
-                options.setProperty("msg", "dilating phase " + (i+1));
+            	sendMessage("Dilating Image - Phase:" + (i+1));
                 IJ.run(the_image, "Dilate", "");
             }
             IJ.run(the_image, "Fill Holes", "");
@@ -143,10 +150,10 @@ public class ImageProcessorService {
             table.reset();
             table = null;
 
-            System.gc();
+            cleanup();
             //  logger.log(Level.INFO, "createBoundingBoxes() - memory after completion of bounding box creation: {0}MB", UIHelper.getUsedMemory());
             LOGGER.log(Level.INFO, "Number of rectangles found before post-processing: {0}", new Object[]{boxes.size()});
-            options.setProperty("msg", "post-processing");
+            sendMessage("Post-Processing Image...");
             postProcessBoundingBoxes(boxes, min_percentage);
             //  if (Resources.getPreferencesNode().getBoolean(ImageConstants.CONJOIN_STAMPS, false)) {
             //      rectangles = conjoinStamps(rectangles);
@@ -157,7 +164,9 @@ public class ImageProcessorService {
 
             image.flush();
             image = null;
+            imageData = null;
             the_image = null;
+            cleanup();
         }
 
         return boxes;

@@ -12,7 +12,72 @@
     "main": "main.js",
     "scripts": {
         "build": "au build",
-        "watch": "au run --watch"
+        "watch": "au run --watch",
+        "win32": "build --x64",
+        "start": "electron .",
+        "postinstall": "electron-builder install-app-deps",
+        "rebuild-modules": "electron-rebuild && node node_modules/java/postInstall.js",
+        "package-win": "electron-packager . stamp-imageparsing --overwrite --platform=win32 --arch=x64 --icon=assets/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Stamp Image Bursting Application\""
+    },
+    "build": {
+        "appId": "com.drakeserver.stamp-imageparsing",
+        "copyright": "Copyright � 2019 Jason Drake (jadrake75@gmail.com)",
+        "win": {
+            "icon": "assets/icons/win/icon.ico",
+            "target": "nsis",
+            "files": [
+                "assets/fonts/stamp-web/css/stamp-web-embedded.css",
+                "assets/images${/*}",
+                "LICENSE",
+                "main.js",
+                "index.html",
+                "scripts${/*}",
+                "dist${/*}",
+                "node_modules/bootstrap/dist/css/bootstrap.min.css",
+                "platform${/*}",
+                "locales${/*}",
+                "!assets/sketches",
+                "!build${/*}",
+                "!test${/*}",
+                "!target${/*}",
+                "!node_modules/aurelia*/${/*}",
+                "!node_modules/bootstrap/js/${/*}",
+                "!node_modules/bootstrap/scss/${/*}",
+                "!node_modules/bootstrap/dist/js/${/*}",
+                "!node_modules/bootstrap/dist/css/bootstrap-grid*",
+                "!node_modules/bootstrap/dist/css/bootstrap-reboot*",
+                "!node_modules/bootstrap/dist/css/bootstrap-css*",
+                "!nbproject${/*}",
+                "!aurelia_project${/*}",
+                "!java${/*}",
+                "!build.xml",
+                "!pom.xml",
+                "!gulpfile.js",
+                "!karma.conf.js",
+                "!.babelrc",
+                "!.editorconfig",
+                "!.eslintrc.json",
+                "!.gitignore",
+                "!src${/*}"
+            ]
+        },
+        "asar": true,
+        "asarUnpack": [
+            "dist/*"
+        ],
+        "icon": "assets/win/icon.ico",
+        "nsis": {
+            "oneClick": true,
+            "allowToChangeInstallationDirectory": false,
+            "artifactName": "stamp-imageparsing-install.${ext}"
+        },
+        "directories": {
+            "output": "release-builds",
+            "buildResources": "assets"
+        },
+        "extraFiles": [
+            "dist/**"
+        ]
     },
     "dependencies": {
         "aurelia-fetch-client": "^1.8.2",
@@ -23,8 +88,10 @@
         "lodash": "^4.17.15",
         "requirejs": "^2.3.2",
         "sharp": "^0.20.8",
+        "sockjs-client": "^1.3.0",
         "text": "github:requirejs/text#latest",
         "url": "^0.11.0",
+        "webstomp-client": "^1.2.6",
         "when": "^3.7.8"
     },
     "devDependencies": {
@@ -47,6 +114,11 @@
         "babel-register": "^6.9.0",
         "browser-sync": "^2.26.3",
         "common-css": "0.0.1",
+        "electron": "^3.0.7",
+        "electron-builder": "^20.28.4",
+        "electron-packager": "^12.1.0",
+        "electron-rebuild": "^1.8.2",
+        "electron-winstaller": "^2.6.4",
         "gulp": "4.0.0",
         "gulp-babel": "^6.1.2",
         "gulp-changed-in-place": "^2.0.3",

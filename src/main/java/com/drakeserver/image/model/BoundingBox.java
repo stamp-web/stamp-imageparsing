@@ -15,13 +15,9 @@
  */
 package com.drakeserver.image.model;
 
-import java.awt.Rectangle;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-
 
 /**
  * A Bounding Box is like a java.awt.Rectangle but without the Rectangle2D Overhead

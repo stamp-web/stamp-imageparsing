@@ -101,7 +101,7 @@ export class ImageHandler {
         });
     }
 
-    process(options, inputBytes) {
+    process(inputBytes, options) {
         let q = new Promise((resolve, reject) => {
             let statusCallback = (msg) => {
                 this.eventAggregator.publish(EventNames.STATUS_MESSAGE, {
@@ -111,7 +111,7 @@ export class ImageHandler {
                 });
             };
             this.eventAggregator.publish(EventNames.STATUS_MESSAGE, {message: this.i18n.tr('messages.processing'), showBusy: true});
-            this.imageProcessor.process(inputBytes).then(result => {
+            this.imageProcessor.process(inputBytes, options).then(result => {
                 statusCallback(null);
                 resolve({
                     boxes: result
