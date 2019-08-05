@@ -1,5 +1,5 @@
 /*
- Copyright 2018 Jason Drake (jadrake75@gmail.com)
+ Copyright 2019 Jason Drake (jadrake75@gmail.com)
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -28,17 +28,16 @@ import ij.ImagePlus;
 import ij.measure.Measurements;
 import ij.measure.ResultsTable;
 import ij.plugin.filter.ParticleAnalyzer;
+import lombok.NoArgsConstructor;
 
 import java.awt.image.BufferedImage;
 //import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.URL;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +46,6 @@ import java.util.Set;
 import java.util.logging.Level;
 //import java.util.logging.LogManager;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 
@@ -57,6 +55,7 @@ import org.springframework.stereotype.Service;
 /**
  */
 @Service
+@NoArgsConstructor
 public class ImageProcessorService {
 
     static final Logger LOGGER = Logger.getLogger(ImageProcessorService.class.getName());
@@ -71,11 +70,6 @@ public class ImageProcessorService {
     @Autowired
     private MessageHelper messageHelper;
     
-    public ImageProcessorService() {
-     
-    }
-
-
     public void cleanup() {
         System.gc();
     }
@@ -223,7 +217,8 @@ public class ImageProcessorService {
         return r;
     }
 
-    private BufferedImage getBufferedImage(String file) {
+    @SuppressWarnings("unused")
+	private BufferedImage getBufferedImage(String file) {
         try {
         	
         	//return ImageIO.read(ImageProcessorService.class.getClassLoader().getResourceAsStream("p:/Stamps/_Temp/Japan/jap-001.jpg"));
