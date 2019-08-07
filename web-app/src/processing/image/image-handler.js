@@ -20,6 +20,7 @@ import {ImageProcessor} from './image-processor';
 import {log} from 'util/log';
 import {EventNames} from 'util/constants';
 import _ from 'lodash';
+import {remote} from "electron";
 
 export class ImageHandler {
 
@@ -29,27 +30,27 @@ export class ImageHandler {
         this.eventAggregator = eventAggregator;
         this.i18n = i18n;
         this.imageProcessor = imageProcessor;
+        this.remoteImageProcessor = remote.require('./platform/image-processing');
     }
 
     readImage(fileBlob) {
         let t = new Date().getTime();
-        /*let q = new Promise((resolve, reject) => {
+        let q = new Promise((resolve, reject) => {
             try {
                 let reader = new FileReader();
                 reader.onload = () => {
                     log.info('Time to read image: ', (new Date().getTime() - t), 'ms');
                     resolve({
-                        data: reader.result //Buffer.from(reader.result)
+                        data: Buffer.from(reader.result)
                     });
                 };
                 reader.readAsArrayBuffer(fileBlob);
             } catch (e) {
                 reject(e);
             }
-        });*/
+        });
         let d = this.asDataUrl(fileBlob);
-        return d;
-        //return Promise.all([q,d]);
+        return Promise.all([q,d]);
     }
 
     asObjectUrl(imageArr, options = {}) {
@@ -84,7 +85,7 @@ export class ImageHandler {
         return q;
     }
 
-    saveRegions(imageBuffer, regions, options) {
+    saveRegions(data, regions, options) {
         let opts = _.cloneDeep(options);
         _.forEach(regions, region => {
             this.eventAggregator.publish(EventNames.STATUS_MESSAGE, {
@@ -92,11 +93,11 @@ export class ImageHandler {
                 showBusy: true
             });
             opts.mimeType = region.imageType ? this._imageToMimeType(region.imageType) : options.mimeType;
-            /*this.imageProcessor.saveImages(imageBuffer, region, opts,).then(() => {
+            this.remoteImageProcessor.saveImages(data, region, opts,).then(() => {
                 log.info("saved -> " + region.filename);
             }).catch(e => {
                 log.error(e);
-            });*/
+            });
             this.eventAggregator.publish(EventNames.STATUS_MESSAGE, {dismiss: true});
         });
     }

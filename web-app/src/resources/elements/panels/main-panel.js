@@ -183,8 +183,8 @@ export class MainPanel {
             };
             this.clear();
             let fn = (b) => {
-                this.handler.readImage(b).then((dataURI) => {
-                    //this.data = result.data;
+                this.handler.readImage(b).then(([result, dataURI]) => {
+                    this.data = result.data;
                     this.dataURI = dataURI;
                     this.image = this.handler.asObjectUrl(this.handler.dataUrlToBinary(dataURI), this.meta);
                     this.inputFile = f.path;
