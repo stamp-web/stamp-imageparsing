@@ -28,6 +28,7 @@ $color-blue: #005580;
 $color-blue-bright: #0088f0;
 $color-green-bright: #00e077;
 $color-white: #fefefe;
+$color-red: #aa0000;
 
 
 $image-background: #121212;
@@ -72,3 +73,6 @@ $legend-color: $pallet-primary-medium;
 $panel-bg: $pallet-base-light;
 $panel-border: 1px solid $pallet-base-medium;
 $panel-overlay: $color-gray-dark;
+
+$success: $color-green-bright;
+$failure: $color-red;

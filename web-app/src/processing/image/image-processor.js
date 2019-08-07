@@ -27,11 +27,11 @@ export class ImageProcessor {
         this.eventAggregator = eventAggregrator;
     }
 
-    process(inputFile, options) {
+    process(inputData, options, asDataURL = true) {
         let payload = {
-            file:    inputFile,
             options: options
         };
+        _.set(payload, ((asDataURL) ? 'file' : 'filename'), inputData);
         this.eventAggregator.publish(EventNames.REMOTE_MESSAGING);
         return this.connectionService.post('/api/svc/process-image', payload);
     }

@@ -73,9 +73,17 @@ main-panel {
 
     .footer-pane {
         border-top: $panel-border;
+        display:    flex;
         flex:       0 0 auto;
         height:     30px;
         padding:    $padding-thick;
+
+        .connected {
+            color: $success;
+        }
+        .not-connected {
+            color: $failure;
+        }
     }
 
 }

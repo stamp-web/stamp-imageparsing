@@ -19,7 +19,9 @@
         "processing": "Processing image",
         "processing-status": "Processing image: {{status}}",
         "processing-failed": "Processing failure",
-        "saving-file" : "Saving {{filename}}"
+        "saving-file" : "Saving {{filename}}",
+        "connected-true": "Connected",
+        "connected-false": "No Connection"
     },
 
     "tooltips": {

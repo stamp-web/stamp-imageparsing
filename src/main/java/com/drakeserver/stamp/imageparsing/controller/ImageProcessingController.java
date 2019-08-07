@@ -16,7 +16,6 @@
 package com.drakeserver.stamp.imageparsing.controller;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,11 +39,9 @@ public class ImageProcessingController {
 		return true;
 	}
 	
-	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/api/svc/process-image", method = RequestMethod.POST)
-	public List<BoundingBox> processImage(@RequestBody Map<String, Object> payload) throws IOException {
-		Map<String,Object> opts = (payload.containsKey("options")) ? (Map<String, Object>)payload.get("options") : new HashMap<>();
-		List<BoundingBox> bounds = imageProcessorService.process((String) payload.get("file"), opts);
+	public List<BoundingBox> processImage(@RequestBody Map<String, ?> payload) throws IOException {
+		List<BoundingBox> bounds = imageProcessorService.process(payload);
 		return bounds;
 	}
 	

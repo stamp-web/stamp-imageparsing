@@ -34,7 +34,7 @@ export class ConnectionService {
     }
 
 
-    checkAlive() {
+    isAlive() {
         return this.get('/api/svc/alive');
     }
 

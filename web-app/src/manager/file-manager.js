@@ -13,18 +13,20 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-package com.drakeserver.stamp.imageparsing;
+import {remote} from "electron";
 
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
+export class FileManager {
 
-@SpringBootApplication(scanBasePackages = {"com.drakeserver"})
-public class StampImageParsingApplication {
+    constructor() {
+        this.folderHandler = remote.require('./platform/file-utilities');
+    }
 
-	public static void main(String[] args) {
-		System.setProperty("java.awt.headless", "false");
-		SpringApplicationBuilder builder = new SpringApplicationBuilder(StampImageParsingApplication.class);
-		builder.headless(false).run(args);
-	}
-
+    /**
+     * Returns an array of folder information at a given path.  The results are {name|path}
+     * @param path
+     * @returns {*|Array}
+     */
+    getFolders(path) {
+        return this.folderHandler.getFolders(path);
+    }
 }

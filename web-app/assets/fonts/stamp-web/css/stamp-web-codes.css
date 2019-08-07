@@ -61,5 +61,6 @@
 .sw-icon-zoom-out:before { content: '\e83b'; } /* '' */
 .sw-icon-rotate:before { content: '\e83c'; } /* '' */
 .sw-icon-download:before { content: '\e83d'; } /* '' */
+.sw-icon-unlink:before { content: '\f127'; } /* '' */
 .sw-icon-eraser:before { content: '\f12d'; } /* '' */
 .sw-icon-used:before { content: '\f192'; } /* '' */

@@ -22,6 +22,7 @@ import com.drakeserver.messaging.MessageConstants;
 import com.drakeserver.messaging.MessageHelper;
 import com.drakeserver.messaging.MessageStatus;
 import com.drakeserver.messaging.model.Message;
+import com.drakeserver.util.FileUtilities;
 
 import ij.IJ;
 import ij.ImagePlus;
@@ -67,10 +68,14 @@ public class ImageProcessorService {
     public static final float MAXIMUM_AREA_PERCENTAGE = 0.85f;
     public static final float MINIMUM_OVERLAP_PERCENTAGE = 0.25f;
 
+    private static final String ENCODING_PREFIX = "base64,";
+    private static final String FILENAME = "filename";
+    private static final String FILE = "file";
+    
     @Autowired
     private MessageHelper messageHelper;
-    
-    public void cleanup() {
+       
+    private void cleanup() {
         System.gc();
     }
 
@@ -78,9 +83,26 @@ public class ImageProcessorService {
    		messageHelper.dispatchMessage(new Message(MessageConstants.STATUS_MESSAGE, msg, MessageStatus.STATUS));
     }
     
-    public List<BoundingBox> process(String dataUrl, Map<String, Object> opts) throws IOException {
+    private BufferedImage getImage(Map<String, ?> opts) throws IOException {
+    	BufferedImage image = null;
+    	if (opts.containsKey(FILENAME)) {
+    		String filename = ((String) opts.get(FILENAME));
+    		File f = FileUtilities.getFile(filename);
+    		image = ImageIO.read(f);
+    	} else if (opts.containsKey(FILE)) {
+    		String data = (String) opts.get(FILE);
+            int contentStartIndex = data.indexOf(ENCODING_PREFIX) + ENCODING_PREFIX.length();
+            byte[] imageData = Base64.getMimeDecoder().decode(data.substring(contentStartIndex));
+            image = ImageIO.read(new ByteArrayInputStream(imageData)); 
+          	imageData = null;
+          	cleanup();
+    	}
+    	return image;
+    }
+    
+    public List<BoundingBox> process(Map<String, ?> opts) throws IOException {
 		Properties options = new Properties();
-		options.putAll(opts);
+		options.putAll((Map<?,?>) opts.get("options"));
 		
         int image_padding = Integer.valueOf(options.getProperty(ImageConstants.BOX_PADDING, Integer.toString(PADDING_DEFAULT)));
         int minimum_size = Integer.valueOf(options.getProperty(ImageConstants.MIN_BOUNDING_AREA, Integer.toString(MINIMUM_AREA_DEFAULT)));
@@ -90,26 +112,12 @@ public class ImageProcessorService {
         LOGGER.log(Level.INFO, "Padding: {0}, Minimum Size: {1}, Minimum Intercepting Area: {2}, Dilation Count: {3}",
                    new Object[] {image_padding, minimum_size, min_percentage, dilationCount});
         
-        String encodingPrefix = "base64,";
-        int contentStartIndex = dataUrl.indexOf(encodingPrefix) + encodingPrefix.length();
-        byte[] imageData = Base64.getMimeDecoder().decode(dataUrl.substring(contentStartIndex));
-        
-        BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageData)); 
-        
+        BufferedImage image = getImage(opts);
         ImagePlus the_image = new ImagePlus("imported image...", image);
 
         ArrayList<BoundingBox> boxes = new ArrayList<>();
         try {
-            sendMessage("Smoothing Image...");
-            IJ.run(the_image, "Smooth", "");
-            sendMessage("Enhancing Image Constrast...");
-            IJ.run(the_image, "Enhance Contrast", "saturated=0.4");
-            IJ.run(the_image, "8-bit", "");
-            //handleLightBackground(the_image);
-            sendMessage("Despeckling Image...");
-            IJ.run(the_image, "Despeckle", "");
-            IJ.run(the_image, "Remove Outliers...", "radius=5 threshold=50 which=Bright");
-            IJ.run(the_image, "Make Binary", "");
+            prepareImage(the_image);
 /*            if (Resources.getPreferencesNode().getBoolean(ImageConstants.STAMP_AGE, false)) {
                 EventBus.publish(new StatusEvent(StatusType.Message, Resources.getString("message.boundingBoxes.modernConvert")));
                 IJ.run(the_image, "Make Binary", "");
@@ -155,16 +163,27 @@ public class ImageProcessorService {
         } finally {
             the_image.flush();
             the_image.close();
-
             image.flush();
             image = null;
-            imageData = null;
             the_image = null;
             cleanup();
         }
 
         return boxes;
     }
+
+	private void prepareImage(ImagePlus the_image) {
+		sendMessage("Smoothing Image...");
+		IJ.run(the_image, "Smooth", "");
+		sendMessage("Enhancing Image Constrast...");
+		IJ.run(the_image, "Enhance Contrast", "saturated=0.4");
+		IJ.run(the_image, "8-bit", "");
+		//handleLightBackground(the_image);
+		sendMessage("Despeckling Image...");
+		IJ.run(the_image, "Despeckle", "");
+		IJ.run(the_image, "Remove Outliers...", "radius=5 threshold=50 which=Bright");
+		IJ.run(the_image, "Make Binary", "");
+	}
 
     protected void postProcessBoundingBoxes(List<BoundingBox> rectangles, float min_percentage) {
         Collections.sort(rectangles, new BoundingBoxesComparator());

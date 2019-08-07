@@ -23,7 +23,17 @@ let folderUtilities = function () {
 
     return {
         isDirectory: source => {
-            return fs.lstatSync(source).isDirectory();
+            try {
+                return fs.lstatSync(source).isDirectory();
+            } catch(err) {
+                return false;
+            }
+
+        },
+
+
+        isNotReservedDirectory: source => {
+            return !/([A-Za-z]:\\)?[\$.](.*)/.test(source);
         },
 
         /**
@@ -38,7 +48,8 @@ let folderUtilities = function () {
             let folders = fs.readdirSync(source)
                 .filter(name => (includeInternalDir) ? name: !name.startsWith('.'))
                 .map(name => path.join(source, name))
-                .filter(folderUtilities.isDirectory);
+                .filter(folderUtilities.isDirectory)
+                .filter(folderUtilities.isNotReservedDirectory);
             _.forEach(folders, f => {
                 output.push({
                     name: path.basename(f),
