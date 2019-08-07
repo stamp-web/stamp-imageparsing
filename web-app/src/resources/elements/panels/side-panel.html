@@ -1,0 +1,57 @@
+<template>
+
+    <require from="resources/elements/panels/side-panel.css"></require>
+    <div class="action-list">
+        <button class="btn btn-primary" click.delegate="saveValues()" disabled.bind="!validForSave" title="${'tooltips.save'|t}"><i class="sw-icon-download"></i></button>
+        <button class="btn btn-secondary" click.delegate="setDefaults()"><i class="sw-icon-settings" title="${'tooltips.region-settings'|t}"></i></button>
+        <button class="btn btn-secondary" click.delegate="clearValues()"><i class="sw-icon-eraser" title="${'tooltips.reset'|t}"></i></button>
+    </div>
+    <div class="section-list panel">
+        <section repeat.for="region of boundRegions" class="${region.expanded ? 'selected' : ''}">
+            <h4 click.trigger="expand(region)">${region.name}<i class="valid-region sw-icon-select-all" if.bind="region.valid"></i></h4>
+            <div class="bound-details au-animate" show.bind="region.expanded">
+                <form autocomplete="off">
+                    <label>${'labels.folder'|t}</label>
+                    <select class="form-control" value.bind="region.folder">
+                        <option repeat.for="folder of folders" model.bind="folder">${folder.name}</option>
+                    </select>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>${'labels.filename'|t}</label>
+                            <input name="filename"
+                                   class="form-control"
+                                   autocomplete="image-file"
+                                   focus.bind="region.hasFocus"
+                                   value.bind="region.filename"
+                                   blur.trigger="filenameUpdated($event, region)"
+                                   keydown.delegate="checkTab($event, region)"
+                                   keyup.delegate="filenameUpdated($event, region)">
+                        </div>
+                        <div class="form-group">
+                            <label>&nbsp;</label>
+                            <select class="form-control image-type"
+                                    value.bind="region.imageType"
+                                    change.delegate="updateFilePath(region)">
+                                <option repeat.for="imageType of imageTypes" model.bind="imageType">
+                                    ${'labels.image.' + imageType|t}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>&nbsp;</label>
+                            <button class="btn btn-secondary" click.delegate="rotate(region)" title="${'tooltips.rotate'|t}">
+                                <i class="sw-icon-rotate"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                </form>
+                <div class="image-preview" show.bind="region.image" >
+                    <img class="${region.rotate ? rotationClass(region) : ''}" src.bind="region.image">
+                </div>
+            </div>
+        </section>
+    </div>
+
+</template>

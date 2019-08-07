@@ -1,0 +1,10 @@
+node_modules
+.idea
+.DS_STORE
+target
+dist
+release-builds
+installers
+nbproject
+scripts
+test/coverage

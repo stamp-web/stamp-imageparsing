@@ -1,10 +1,8 @@
-node_modules
+web-app/node_modules
+web-app/scripts
+src/main/resources/web-app
 .idea
 .DS_STORE
+.factorypath
 target
-dist
-release-builds
-installers
-nbproject
-scripts
 test/coverage

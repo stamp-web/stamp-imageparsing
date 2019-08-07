@@ -1,0 +1,72 @@
+{
+    "title": "Stamp Image Bursting Application",
+
+    "titles": {
+        "default-region": "Region Defaults",
+        "dpi": "DPI Settings",
+        "jpeg": "JPEG Settings",
+        "bounding-box": "Bounding Box Configuration",
+        "image-settings": "Image Settings",
+        "image-processing": "Image Processing Settings"
+
+    },
+
+    "messages": {
+        "dpi": "Images output using jpeg or png file types will only utilize the horizontal DPI value for both DPI values in the output file. The value will only take effect after loading the next jpeg or png image file.",
+        "finished": "Finished.",
+        "loading": "Loading image...",
+        "loading-done": "Loading finished.",
+        "processing": "Processing image",
+        "processing-status": "Processing image: {{status}}",
+        "processing-failed": "Processing failure",
+        "saving-file" : "Saving {{filename}}",
+        "connected-true": "Connected",
+        "connected-false": "No Connection"
+    },
+
+    "tooltips": {
+        "region-settings": "Configure region defaults",
+        "reset": "Clear regions",
+        "rotate": "Rotate 90 degrees clockwise",
+        "save": "Save valid regions"
+    },
+
+    "actions": {
+        "apply": "Apply",
+        "cancel": "Cancel",
+        "ok": "Ok"
+    },
+    "labels": {
+        "box-padding": "Box padding",
+        "default-image-type": "Default Image Type",
+        "default-folder-path": "Default Folder",
+        "dilation-count": "Filter Pass Count",
+        "dpi-default-usage": "Default DPI Usage",
+        "dpi-image": "Use DPI values from loading image",
+        "dpi-output": "Use output DPI values from settings",
+        "dpi-horizontal": "Horizontal DPI",
+        "dpi-vertical": "Vertical DPI",
+        "exclude-maximum-bounding": "Exclude Maximum bounding area boxes",
+        "jpeg-quality": "Output Quality",
+        "jpeq-quality-subtext": "JPEG is a lossy format and there will always be some level of fidelity loss on saving bursting images.  In general a range of 75-95% will provide the best balance between quality and file size.",
+        "filename": "Filename",
+        "folder": "Folder",
+        "min-bounding-area": "Minimum bounding area",
+        "min-intercepting-area": "Minimum intercepting area",
+        "max-bounding-area": "Maximum bounding percentage",
+        "tiff-compression": "TIFF Compression Mode",
+        "zoom": "Zoom",
+
+        "image": {
+            "jpg": "JPEG (.jpg)",
+            "png": "PNG (.png)",
+            "tiff": "TIFF (.tiff)"
+        },
+
+        "compression": {
+            "lzw": "LZW",
+            "jpeg": "JPEG",
+            "deflate": "Deflate"
+        }
+    }
+}

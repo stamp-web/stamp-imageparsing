@@ -1,0 +1,9 @@
+<service>
+      <id>stamp-services</id>
+      <name>Stamp Image Services</name>
+      <description>This service processes images for stamp scans.</description>
+      <env name="STAMP_PROCESSING_HOME" value="%BASE%"/>
+      <executable>java</executable>
+      <arguments>-Xrs -Xms64m -Xmx768m -XX:+PrintGCDetails -jar "%BASE%\stamp-imageparsing-3.0.0-SNAPSHOT.jar"</arguments>
+      <logmode>rotate</logmode>
+    </service>

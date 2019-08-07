@@ -2,8 +2,7 @@
 
 ## Supported Versions
 
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
+The following is a list of versions that are currently being supported with security updates.
 
 | Version | Supported          |
 | ------- | ------------------ |
@@ -12,8 +11,6 @@ currently being supported with security updates.
 
 ## Reporting a Vulnerability
 
-Use this section to tell people how to report a vulnerability.
-
-Tell them where to go, how often they can expect to get an update on a
-reported vulnerability, what to expect if the vulnerability is accepted or
-declined, etc.
+To report a vulnerability, open up an issue ticket and apply the label SECURITY to it.  
+The project owners will examine the issue, determine the impact and provide closure to the issue for the currently
+supported version as noted above.  As this project is community run, there is no set timeframe for resolutions.
