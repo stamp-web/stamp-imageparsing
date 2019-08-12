@@ -17,6 +17,6 @@ package com.drakeserver.messaging;
 
 public interface MessageConstants {
 
-	public static final String STATUS_MESSAGE = "/status/status-msg";
+	public static final String STATUS_MESSAGE = "/data/status-msg";
 }
 

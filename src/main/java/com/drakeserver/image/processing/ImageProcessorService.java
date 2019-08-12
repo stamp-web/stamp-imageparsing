@@ -20,8 +20,6 @@ import com.drakeserver.image.model.BoundingBox;
 import com.drakeserver.image.model.BoundingBoxesComparator;
 import com.drakeserver.messaging.MessageConstants;
 import com.drakeserver.messaging.MessageHelper;
-import com.drakeserver.messaging.MessageStatus;
-import com.drakeserver.messaging.model.Message;
 import com.drakeserver.util.FileUtilities;
 
 import ij.IJ;
@@ -32,7 +30,6 @@ import ij.plugin.filter.ParticleAnalyzer;
 import lombok.NoArgsConstructor;
 
 import java.awt.image.BufferedImage;
-//import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -45,7 +42,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Level;
-//import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
@@ -74,13 +70,9 @@ public class ImageProcessorService {
     
     @Autowired
     private MessageHelper messageHelper;
-       
-    private void cleanup() {
-        System.gc();
-    }
 
     private void sendMessage(String msg) {
-   		messageHelper.dispatchMessage(new Message(MessageConstants.STATUS_MESSAGE, msg, MessageStatus.STATUS));
+   		messageHelper.dispatchMessage(MessageConstants.STATUS_MESSAGE, msg);
     }
     
     private BufferedImage getImage(Map<String, ?> opts) throws IOException {
@@ -95,7 +87,6 @@ public class ImageProcessorService {
             byte[] imageData = Base64.getMimeDecoder().decode(data.substring(contentStartIndex));
             image = ImageIO.read(new ByteArrayInputStream(imageData)); 
           	imageData = null;
-          	cleanup();
     	}
     	return image;
     }
@@ -152,7 +143,6 @@ public class ImageProcessorService {
             table.reset();
             table = null;
 
-            cleanup();
             //  logger.log(Level.INFO, "createBoundingBoxes() - memory after completion of bounding box creation: {0}MB", UIHelper.getUsedMemory());
             LOGGER.log(Level.INFO, "Number of rectangles found before post-processing: {0}", new Object[]{boxes.size()});
             sendMessage("Post-Processing Image...");
@@ -166,7 +156,6 @@ public class ImageProcessorService {
             image.flush();
             image = null;
             the_image = null;
-            cleanup();
         }
 
         return boxes;
@@ -236,14 +225,4 @@ public class ImageProcessorService {
         return r;
     }
 
-    @SuppressWarnings("unused")
-	private BufferedImage getBufferedImage(String file) {
-        try {
-        	
-        	//return ImageIO.read(ImageProcessorService.class.getClassLoader().getResourceAsStream("p:/Stamps/_Temp/Japan/jap-001.jpg"));
-            return ImageIO.read(new File(file));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

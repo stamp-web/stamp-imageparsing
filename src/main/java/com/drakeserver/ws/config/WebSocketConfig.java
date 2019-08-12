@@ -27,7 +27,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 	
 	@Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/status");
+        config.enableSimpleBroker("/data");
         config.setApplicationDestinationPrefixes("/api/svc");
     }
 

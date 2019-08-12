@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import com.drakeserver.messaging.model.Message;
 
 @Service
 public class MessageHelper {
@@ -27,7 +26,7 @@ public class MessageHelper {
 	@Autowired
 	private SimpMessagingTemplate template;
 	
-	public void dispatchMessage(Message message) {
-		template.convertAndSend(message.getChannel(), message);
+	public void dispatchMessage(String destination, String msg) {
+		template.convertAndSend(destination, msg);
 	}
 }

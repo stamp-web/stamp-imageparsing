@@ -113,11 +113,9 @@ export class MessageManager {
 
     connectedChanged() {
         if (this.stompClient && this.connected) {
-            this.stompClient.subscribe('/status/status-msg', msg => {
-                let data = JSON.parse(msg.body);
-                if (data.status === 'STATUS') {
-                    this._notifyMessage(data);
-                }
+            this.stompClient.subscribe('/data/status-msg', msg => {
+                let data = {message: msg.body};
+                this._notifyMessage(data);
             });
         }
     }

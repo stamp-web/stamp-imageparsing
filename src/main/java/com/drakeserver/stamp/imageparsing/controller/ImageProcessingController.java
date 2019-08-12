@@ -34,11 +34,6 @@ public class ImageProcessingController {
 	@Autowired
 	private ImageProcessorService imageProcessorService;
 
-	@RequestMapping(value = "/api/svc/alive")
-	public boolean checkAlive() {
-		return true;
-	}
-	
 	@RequestMapping(value = "/api/svc/process-image", method = RequestMethod.POST)
 	public List<BoundingBox> processImage(@RequestBody Map<String, ?> payload) throws IOException {
 		List<BoundingBox> bounds = imageProcessorService.process(payload);
