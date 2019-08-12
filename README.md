@@ -1,5 +1,9 @@
 # Stamp Image Parsing Application
 
+## Build Status
+
+[![Build Status](http://drake-server.ddns.net:9000/job/stamp-image-processing/badge/icon)](http://drake-server.ddns.net:9000/job/stamp-image-processing/)
+
 ## Progress Videos
 
 This video was made when the application was Electron-JS based.  Currently due to continued complexities interfacing with the
