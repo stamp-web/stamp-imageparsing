@@ -157,7 +157,6 @@ public class ImageProcessorService {
             image = null;
             the_image = null;
         }
-
         return boxes;
     }
 
