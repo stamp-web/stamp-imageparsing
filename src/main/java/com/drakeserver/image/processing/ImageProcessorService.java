@@ -135,7 +135,7 @@ public class ImageProcessorService {
             int w = image.getWidth();
             int size_min = (int) Math.sqrt(minimum_size);
             for (int row = 0; row < total; row++) {
-            	BoundingBox r = createRectangle(table, h, w, row, image_padding);
+            	BoundingBox r = createBoundingBox(table, h, w, row, image_padding);
                 if (r.getWidth() > size_min && r.getHeight() > size_min) {
                     boxes.add(r);
                 }
@@ -208,7 +208,7 @@ public class ImageProcessorService {
         }
     }
 
-    private BoundingBox createRectangle(ResultsTable table, int h, int w, int row, int image_padding) {
+    protected BoundingBox createBoundingBox(ResultsTable table, int h, int w, int row, int image_padding) {
     	BoundingBox r = new BoundingBox();
 
         r.setX(Math.max(0, Double.valueOf(table.getValueAsDouble(ResultsTable.ROI_X, row)).intValue() - image_padding));
