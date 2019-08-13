@@ -1,5 +1,9 @@
 # Stamp Image Parsing Application
 
+## Build Status
+
+[![Build Status](http://drake-server.ddns.net:9000/job/stamp-image-processing/badge/icon)](http://drake-server.ddns.net:9000/job/stamp-image-processing/)
+
 ## Progress Videos
 
 This video was made when the application was Electron-JS based.  Currently due to continued complexities interfacing with the
@@ -12,7 +16,7 @@ Here is a short video showing the application in action (Note the window frame a
 
 Due to the complex environment, the pre-requisites to build are extensive.  
 
-- Java 1.12 or higher using the 64-bit JVM
+- Java 1.8 or higher using the 64-bit JVM
 - NodeJS 10.x or higher
 - Aurelia CLI (install with "npm install -g aurelia-cli")
 - Maven 3.x+ (optional if using Maven Supported IDE)
