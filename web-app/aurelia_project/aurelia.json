@@ -149,9 +149,9 @@
                         "main": "sockjs.min.js"
                     },
                     {
-                        "name": "webstomp-client",
-                        "path": "../node_modules/webstomp-client/dist",
-                        "main": "webstomp.min.js"
+                        "name": "@stomp/stompjs",
+                        "path": "../node_modules/@stomp/stompjs/bundles",
+                        "main": "stomp.umd.js"
                     }
                 ]
             }

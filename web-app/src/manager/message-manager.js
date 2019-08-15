@@ -13,20 +13,17 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-import {observable, LogManager} from 'aurelia-framework';
+import {LogManager} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {DialogService} from 'aurelia-dialog';
 import {StatusDialog} from 'resources/elements/dialogs/status-dialog';
-import {EventNames, StorageKeys} from 'util/constants';
-import SockJS from 'sockjs-client';
-import Stomp from 'webstomp-client';
+import {EventNames} from 'util/constants';
+import {ConnectionManager} from "./connection-manager";
 import _ from 'lodash';
-
-const MAX_CONNECTION_TRIES = 3;
 
 export class MessageManager {
 
-    static inject = [DialogService, EventAggregator];
+    static inject = [DialogService, EventAggregator, ConnectionManager];
 
     messages = [];
     subscribers = [];
@@ -34,103 +31,30 @@ export class MessageManager {
     shown = false;
     messageData = {};
 
-    @observable connected;
-
-    connectionAttempts = 0;
-
-    options = {};
-    stompClient;
-
-    constructor(dialogService, eventAggregator) {
+    constructor(dialogService, eventAggregator, connectionManager) {
         this.dialogService = dialogService;
         this.eventAggregator = eventAggregator;
+        this.connectionManager = connectionManager;
         this.logger = LogManager.getLogger('message-manager');
         this.initialize();
     }
 
     initialize() {
         this.subscribers.push(this.eventAggregator.subscribe(EventNames.STATUS_MESSAGE, this._notifyMessage.bind(this)));
-        this.subscribers.push(this.eventAggregator.subscribe(EventNames.REMOTE_MESSAGING, this._socketConnect.bind(this)));
+        this.subscribers.push(this.eventAggregator.subscribe(EventNames.REMOTE_MESSAGING, this.connect.bind(this)));
+
+        this.connectionManager.addSubscriber('/data/status-msg', this._handleMessage.bind(this));
     }
 
     dispose() {
         _.forEach(this.subscribers, subscriber => {
             subscriber.dispose();
         });
+        this.connectionManager.dispose();
     }
 
-    _getServerURL() {
-        let opts = localStorage.getItem(StorageKeys.SERVER_INFO);
-        if (!_.isNil(opts)) {
-            this.options = _.assign(this.options, JSON.parse(opts));
-        }
-        return _.get(this.options, 'server-address', 'http://localhost:9000');
-    }
-
-    _socketConnect() {
-        if (this.connected) {
-            return;
-        }
-        let socket = new SockJS(this._getServerURL() + '/api/svc/gs-guide-websocket');
-        this.stompClient = Stomp.over(socket, {protocols: ['v11.stomp', 'v12.stomp']});
-        this.stompClient.debug = msg => {
-            this.logger.debug(msg);
-        }
-        _.set(this.stompClient, 'heartbeat.outgoing', 1000);
-        _.set(this.stompClient, 'heartbeat.incoming', 1000);
-        this.stompClient.connect({}, frame => {
-            this.connected = true;
-            this.connectionAttempts = 0;
-        }, () => {
-            this.connected = false;
-            this.connectionAttempts++;
-            if (this.connectionAttempts < MAX_CONNECTION_TRIES) {
-                _.delay(() => {
-                    this.logger.info('Attempting to reconnect message service...');
-                    this._socketConnect();
-                }, 1000);
-            }
-
-        });
-        socket.onclose = () => {
-            if (this.stompClient) {
-                this.connected = false;
-                try {
-                    if (this.stompClient.connected) {
-                        this.stompClient.disconnect();
-                    }
-                } finally {
-                    this.connectionAttempts++;
-                    if (this.connectionAttempts < MAX_CONNECTION_TRIES) {
-                        _.delay(() => {
-                            this._socketConnect();
-                        }, 1000);
-                    }
-                };
-            }
-        }
-    }
-
-    connectedChanged() {
-        if (this.stompClient && this.connected) {
-            this.stompClient.subscribe('/data/status-msg', msg => {
-                let data = {message: msg.body};
-                this._notifyMessage(data);
-            });
-        }
-    }
-
-    _notifyMessage(data) {
-        _.assign(this.messageData, data);
-        if (data.message) {
-            this.messages.push(data.message);
-            if (!this.shown) {
-                this.showStatus();
-            }
-        }
-        if (data.dismiss) {
-            _.delay(this.clearStatus.bind(this), 500);
-        }
+    connect() {
+        this.connectionManager.connect();
     }
 
     clearStatus( ) {
@@ -151,5 +75,23 @@ export class MessageManager {
             this.dialogHandler = dialogResult;
             return dialogResult.closeResult;
         });
+    }
+
+    _handleMessage(msg) {
+        let data = {message: msg.body};
+        this._notifyMessage(data);
+    }
+
+    _notifyMessage(data) {
+        _.assign(this.messageData, data);
+        if (data.message) {
+            this.messages.push(data.message);
+            if (!this.shown) {
+                this.showStatus();
+            }
+        }
+        if (data.dismiss) {
+            _.delay(this.clearStatus.bind(this), 500);
+        }
     }
 }
