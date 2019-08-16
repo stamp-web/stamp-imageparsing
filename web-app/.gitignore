@@ -7,4 +7,5 @@ release-builds
 installers
 nbproject
 scripts
+test/junit-report
 test/coverage

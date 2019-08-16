@@ -141,6 +141,8 @@
         "karma-chrome-launcher": "^1.0.1",
         "karma-coverage": "^1.1.2",
         "karma-jasmine": "^1.0.2",
+        "karma-junit-reporter": "^1.2.0",
+        "karma-phantomjs-launcher": "^1.0.4",
         "karma-remap-istanbul": "^0.6.0",
         "minimatch": "^3.0.2",
         "popper.js": "^1.14.4",

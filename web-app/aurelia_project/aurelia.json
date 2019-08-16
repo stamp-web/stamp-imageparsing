@@ -90,6 +90,24 @@
                 ]
             },
             {
+                "name": "websocket-tools-bundle.js",
+                "dependencies": [
+                    {
+                        "name": "sockjs-client",
+                        "path": "../node_modules/sockjs-client/dist",
+                        "main": "sockjs"
+                    },
+                    {
+                        "name": "@stomp/stompjs",
+                        "path": "../node_modules/@stomp/stompjs/esm5",
+                        "main": "index.js",
+                        "deps": [
+                            "sockjs-client"
+                        ]
+                    }
+                ]
+            },
+            {
                 "name": "vendor-bundle.js",
                 "prepend": [
                     "node_modules/bluebird/js/browser/bluebird.core.js",
@@ -137,21 +155,6 @@
                         "name": "changedpi",
                         "path": "../node_modules/changedpi/dist",
                         "main": "index"
-                    }
-                ]
-            },
-            {
-                "name": "websocket-tools-bundle.js",
-                "dependencies": [
-                    {
-                        "name": "sockjs-client",
-                        "path": "../node_modules/sockjs-client/dist",
-                        "main": "sockjs.min.js"
-                    },
-                    {
-                        "name": "@stomp/stompjs",
-                        "path": "../node_modules/@stomp/stompjs/bundles",
-                        "main": "stomp.umd.js"
                     }
                 ]
             }
