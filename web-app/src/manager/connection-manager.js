@@ -40,7 +40,7 @@ export class ConnectionManager {
         sub.push(fn);
         _.set(this.subscribers, subscription, sub);
 
-        if (this.connected && this.stompClient) {
+        if (this.connected && this.stompClient && this.stompClient.connected) {
             this.stompClient.subscribe(subscription, fn);
         }
     }
@@ -61,6 +61,7 @@ export class ConnectionManager {
                         this.stompClient.subscribe(sub, cb);
                     })
                 });
+
             } else {
                 this.stompClient.deactivate();
                 this.stompClient = undefined;
@@ -77,7 +78,7 @@ export class ConnectionManager {
     }
 
     connect() {
-        if (this.connected) {
+        if (_.get(this, 'stompClient.connected')) {
             return;
         }
 
@@ -87,9 +88,7 @@ export class ConnectionManager {
                 this.logger.debug(str);
             },
             onConnect: frame => {
-                _.defer(() => {
-                    this.connected = true;
-                });
+                this._checkConnection(0);
             },
             onDisconnect: () => {
                 this.connected = false;
@@ -113,6 +112,17 @@ export class ConnectionManager {
         this.stompClient.activate();
     }
 
+    _checkConnection(count) {
+        if (count > 10) {
+            this.logger.error("Unable to establish a web-socket connection after 2500ms");
+            return;
+        }
+        if(_.get(this,'stompClient.connected')) {
+            this.connected = true;
+            return;
+        }
+        _.delay(this._checkConnection.bind(this), 250, ++count);
+    };
 
     _initialize() {
         this.listeners.push(this.eventAggregator.subscribe(EventNames.REMOTE_MESSAGING, this.connect.bind(this)));

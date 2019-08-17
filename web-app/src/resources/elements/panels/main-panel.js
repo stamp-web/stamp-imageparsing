@@ -17,6 +17,7 @@
 import {customElement, computedFrom, inject, bindable, observable, LogManager, BindingEngine} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {I18N} from 'aurelia-i18n';
+import {Router} from 'aurelia-router';
 import {changeDpiDataUrl, changeDpiBlob} from 'changedpi';
 import {ImageHandler} from 'processing/image/image-handler';
 import {MessageManager} from 'manager/message-manager';
@@ -27,7 +28,7 @@ import _ from 'lodash';
 import {ConnectionService} from "processing/connection-service";
 
 @customElement('main-panel')
-@inject(Element, I18N, ImageHandler, EventAggregator, BindingEngine, MessageManager, FileManager, ConnectionService)
+@inject(Element, I18N, Router, ImageHandler, EventAggregator, BindingEngine, MessageManager, FileManager, ConnectionService)
 export class MainPanel {
 
     @observable boxes = [];
@@ -55,9 +56,10 @@ export class MainPanel {
     _MAX_ZOOM = 4.0;
     _MIN_ZOOM = 0.125;
 
-    constructor(element, i18n, imageHandler, eventAggregator, bindingEngine, messageManager, fileManager, connectionService) {
+    constructor(element, i18n, router, imageHandler, eventAggregator, bindingEngine, messageManager, fileManager, connectionService) {
         this.element = element;
         this.i18n = i18n;
+        this.router = router;
         this.handler = imageHandler;
         this.eventAggregator = eventAggregator;
         this.bindingEngine = bindingEngine;
@@ -86,6 +88,10 @@ export class MainPanel {
             sub.dispose();
         });
         this.messageManager.dispose();
+    }
+
+    home() {
+        this.router.navigateToRoute('welcome');
     }
 
     _startPing() {

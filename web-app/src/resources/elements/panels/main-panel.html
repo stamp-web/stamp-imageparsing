@@ -6,6 +6,7 @@
     <require from="resources/elements/panels/settings-panel"></require>
 
     <div class="header-pane">
+        <button class="btn-secondary" click.delegate="home()"><img src="assets/svg/home.svg"></button>
         <input type="file" files.bind="chosenFile" change.delegate="fileSelected($event)" disabled.bind="processing">
         <button class="btn btn-secondary" click.trigger="process()" disabled.bind="!image || processing || !connected"><i class="sw-icon-stamp"></i></button>
 

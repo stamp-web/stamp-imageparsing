@@ -1,5 +1,5 @@
 {
-    "title": "Stamp Image Bursting Application",
+    "title": "Stamp Image Processing Application",
 
     "titles": {
         "default-region": "Region Defaults",
@@ -8,7 +8,11 @@
         "bounding-box": "Bounding Box Configuration",
         "image-settings": "Image Settings",
         "image-processing": "Image Processing Settings"
+    },
 
+    "route": {
+        "image-manage": "Image Manipulation",
+        "welcome": "Home"
     },
 
     "messages": {

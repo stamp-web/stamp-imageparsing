@@ -14,11 +14,35 @@
  limitations under the License.
  */
 import {LogManager} from 'aurelia-framework';
+import {I18N} from 'aurelia-i18n';
 
 export class App {
 
-  constructor() {
-      this.logger = LogManager.getLogger('app');
-  }
+    static inject = [I18N];
+
+    constructor(i18n) {
+        this.i18n = i18n;
+        console.log(i18n);
+        this.logger = LogManager.getLogger('app');
+    }
+
+    configureRouter(config, router) {
+        this.router = router;
+        config.title = this.i18n.tr('title');
+        config.map([
+            {
+                route: ['', 'welcome'],
+                name: 'welcome',
+                title: this.i18n.tr('route.welcome'),
+                moduleId: 'resources/elements/panels/welcome-panel'
+            },
+            {
+                route: ['image-manage'],
+                name: 'image-manage',
+                title: this.i18n.tr('route.image-manage'),
+                moduleId: 'resources/elements/panels/main-panel'
+            }
+        ]);
+    }
 
 }

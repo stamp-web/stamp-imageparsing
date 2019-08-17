@@ -104,6 +104,15 @@
                         "deps": [
                             "sockjs-client"
                         ]
+                    },
+                    {
+                        "name": "uuid/v1",
+                        "path": "../node_modules/uuid",
+                        "main": "v1.js",
+                        "resources": [
+                            "lib/bytesToUuid.js",
+                            "lib/rng-browser.js"
+                        ]
                     }
                 ]
             },
