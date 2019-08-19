@@ -31,6 +31,7 @@ describe('ConnectionManager', () => {
         it('verify stomp subscriber bound', () => {
             let stompSpy = jasmine.createSpyObj('stompClient', ['subscribe']);
             let fn = () => { };
+            stompSpy.connected = true;
             connectionMgr.connected = true;
             connectionMgr.stompClient = stompSpy;
             connectionMgr.addSubscriber('channel1', fn);

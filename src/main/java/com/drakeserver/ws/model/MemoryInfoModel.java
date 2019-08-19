@@ -13,20 +13,18 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-import {remote} from 'electron';
+package com.drakeserver.ws.model;
 
-export class FileManager {
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-    constructor() {
-        this.folderHandler = remote.require('./platform/file-utilities');
-    }
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 
-    /**
-     * Returns an array of folder information at a given path.  The results are {name|path}
-     * @param path
-     * @returns {*|Array}
-     */
-    getFolders(path) {
-        return this.folderHandler.getFolders(path);
-    }
+public class MemoryInfoModel {
+
+	private long freeMemory;
+	private long maxMemory;
 }

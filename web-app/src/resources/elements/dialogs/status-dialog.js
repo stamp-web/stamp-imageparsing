@@ -23,6 +23,7 @@ export class StatusDialog {
     constructor(controller){
         this.controller = controller;
     }
+
     activate(data){
         this.data = data;
     }

@@ -5,11 +5,5 @@
             <h3 if.bind="data.title">${data.title} ha</h3>
             <span><img src="assets/images/loading-icon.gif" if.bind="data.showBusy">${data.message}</span>
         </ux-dialog-body>
-
-        <!--
-        <ux-dialog-footer>
-            <button click.trigger="controller.cancel()">Close</button>
-        </ux-dialog-footer>
-        -->
     </ux-dialog>
 </template>

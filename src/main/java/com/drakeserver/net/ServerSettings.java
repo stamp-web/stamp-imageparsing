@@ -41,6 +41,9 @@ public class ServerSettings implements ApplicationRunner {
 			List<String> values = args.getOptionValues(HttpConstants.APPLICATION_KEY);
 			if (!values.isEmpty()) {
 				this.val = values.iterator().next();
+				if(this.val.startsWith("\"") && this.val.endsWith("\"")) {
+					this.val = this.val.substring(1,this.val.length() - 1);
+				}
 			}	
 		}
 	}

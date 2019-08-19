@@ -14,9 +14,9 @@
  limitations under the License.
  */
 import {EventAggregator} from 'aurelia-event-aggregator';
-import {EventNames, StorageKeys} from "../../util/constants";
-import _ from "lodash";
-import {ConnectionService} from "../connection-service";
+import {EventNames, StorageKeys} from 'util/constants';
+import _ from 'lodash';
+import {ConnectionService} from 'processing/connection-service';
 
 export class ImageProcessor {
 
@@ -32,7 +32,6 @@ export class ImageProcessor {
             options: options
         };
         _.set(payload, ((asDataURL) ? 'file' : 'filename'), inputData);
-        this.eventAggregator.publish(EventNames.REMOTE_MESSAGING);
         return this.connectionService.post('/api/svc/process-image', payload);
     }
 

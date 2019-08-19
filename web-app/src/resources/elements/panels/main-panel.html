@@ -4,11 +4,11 @@
     <require from="resources/value-converters/as-percentage"></require>
     <require from="resources/elements/panels/side-panel"></require>
     <require from="resources/elements/panels/settings-panel"></require>
-
+<div class="main-panel">
     <div class="header-pane">
-        <button class="btn-secondary" click.delegate="home()"><img src="assets/svg/home.svg"></button>
+        <button class="btn btn-secondary" click.delegate="home()"><i class="sw-icon-home"></button>
         <input type="file" files.bind="chosenFile" change.delegate="fileSelected($event)" disabled.bind="processing">
-        <button class="btn btn-secondary" click.trigger="process()" disabled.bind="!image || processing || !connected"><i class="sw-icon-stamp"></i></button>
+        <button class="btn btn-secondary" click.trigger="process()" disabled.bind="!image || processing"><i class="sw-icon-stamp"></i></button>
 
         <button class="btn btn-secondary" click.trigger="addRectangle()" disabled.bind="!image || processing"><i class="sw-icon-plus"></i></button>
         <button class="btn btn-secondary" click.trigger="deleteSelected()" disabled.bind="!selectedRegion || processing"><i class="sw-icon-delete"></i></button>
@@ -38,5 +38,5 @@
         <label>${'labels.zoom'|t}:</label> ${scalingFactor|asPercentage}
         <div><i class="${connected ? 'connected sw-icon-select-all-2' : 'not-connected sw-icon-unlink'}"></i>${`messages.connected-${connected}`|t}</div>
     </div>
-
+</div>
 </template>

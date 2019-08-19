@@ -16,7 +16,10 @@
 @import '../../themes/variables';
 
 .welcome-panel {
+    background: $pallet-base-light;
     display: flex;
+    height: 100%;
+
 
     .card-wrapper {
         margin: $margin-thick;

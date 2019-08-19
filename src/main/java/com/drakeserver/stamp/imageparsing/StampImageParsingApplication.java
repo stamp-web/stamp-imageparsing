@@ -15,6 +15,7 @@
  */
 package com.drakeserver.stamp.imageparsing;
 
+import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
@@ -24,6 +25,7 @@ public class StampImageParsingApplication {
 	public static void main(String[] args) {
 		System.setProperty("java.awt.headless", "false");
 		SpringApplicationBuilder builder = new SpringApplicationBuilder(StampImageParsingApplication.class);
+		builder.bannerMode(Banner.Mode.OFF);
 		builder.headless(false).run(args);
 	}
 

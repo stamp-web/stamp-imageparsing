@@ -20,15 +20,15 @@ import {I18N} from 'aurelia-i18n';
 import {Router} from 'aurelia-router';
 import {changeDpiDataUrl, changeDpiBlob} from 'changedpi';
 import {ImageHandler} from 'processing/image/image-handler';
-import {MessageManager} from 'manager/message-manager';
 import {FileManager} from 'manager/file-manager';
 import {ImageBounds} from 'model/image-bounds';
 import {DefaultOptions, EventNames, StorageKeys, ImageTypes} from 'util/constants';
 import _ from 'lodash';
-import {ConnectionService} from "processing/connection-service";
+import {ConnectionManager} from 'manager/connection-manager';
+import {ConnectionService} from 'processing/connection-service';
 
 @customElement('main-panel')
-@inject(Element, I18N, Router, ImageHandler, EventAggregator, BindingEngine, MessageManager, FileManager, ConnectionService)
+@inject(Element, I18N, Router, ImageHandler, EventAggregator, BindingEngine, FileManager, ConnectionService, ConnectionManager)
 export class MainPanel {
 
     @observable boxes = [];
@@ -56,7 +56,7 @@ export class MainPanel {
     _MAX_ZOOM = 4.0;
     _MIN_ZOOM = 0.125;
 
-    constructor(element, i18n, router, imageHandler, eventAggregator, bindingEngine, messageManager, fileManager, connectionService) {
+    constructor(element, i18n, router, imageHandler, eventAggregator, bindingEngine, fileManager, connectionService, connectionManager) {
         this.element = element;
         this.i18n = i18n;
         this.router = router;
@@ -64,9 +64,9 @@ export class MainPanel {
         this.eventAggregator = eventAggregator;
         this.bindingEngine = bindingEngine;
         this.logger = LogManager.getLogger('main-panel');
-        this.messageManager = messageManager;
         this.fileManager = fileManager;
         this.connectionService = connectionService;
+        this.connectionManager = connectionManager;
     }
 
     attached() {
@@ -87,7 +87,6 @@ export class MainPanel {
         _.forEach(this.subscribers, sub => {
             sub.dispose();
         });
-        this.messageManager.dispose();
     }
 
     home() {
@@ -96,13 +95,8 @@ export class MainPanel {
 
     _startPing() {
         let f = () => {
-            this.connectionService.isAlive().then(result => {
-               this.connected = true;
-                _.delay(f, 10000);
-            }).catch(err => {
-                this.connected = false;
-                _.delay(f, 3000);
-            });
+            this.connected = this.connectionManager.isConnected();
+            _.delay(f, 1000);
         }
         f();
     }

@@ -4,7 +4,7 @@
 
     <div class="welcome-panel">
         <div class="card-wrapper" repeat.for="card of cardActions">
-            <card-panel label.bind="card.label" icon.bind="card.icon" click.delegate="handleAction(card)"></card-panel>
+            <card-panel label="${card.label|t}" icon.bind="card.icon" click.delegate="handleAction(card)"></card-panel>
         </div>
     </div>
 </template>

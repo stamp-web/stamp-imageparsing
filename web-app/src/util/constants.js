@@ -62,3 +62,11 @@ export const StorageKeys = {
     OUTPUT_PATH: 'output-path',
     SERVER_INFO: 'server-info'
 }
+
+export const ChannelNames = {
+    MEMORY_STATS: '/data/memory-stats'
+};
+
+export const PublishAPI = {
+    MEMORY_STATS: '/api/svc/memory-info'
+};

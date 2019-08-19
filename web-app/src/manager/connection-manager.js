@@ -102,7 +102,7 @@ export class ConnectionManager {
                 this.connected = false;
             },
             onWebSocketClose: () => {
-                this.connected = false;
+                this.disconnect();
             },
             reconnectDelay: 5000,
             heartbeatIncoming: 1000,
@@ -110,6 +110,18 @@ export class ConnectionManager {
         });
 
         this.stompClient.activate();
+    }
+
+
+    isConnected() {
+        return _.get(this, 'stompClient.connected', false);
+    }
+
+    send(channel, data) {
+        if (!this.connected) {
+            return;
+        }
+        this.stompClient.publish({destination: channel, body: data});
     }
 
     _checkConnection(count) {
@@ -129,10 +141,8 @@ export class ConnectionManager {
     }
 
     _enureSettings() {
-        if (!this.options) {
-            let opts = localStorage.getItem(StorageKeys.SERVER_INFO);
-            this.options = !_.isNil(opts) ? _.assign(this.options, JSON.parse(opts)) : {};
-        }
+        let opts = localStorage.getItem(StorageKeys.SERVER_INFO);
+        this.options = !_.isNil(opts) ? _.assign(this.options, JSON.parse(opts)) : {};
     }
 
     _getServerURL() {
@@ -142,7 +152,8 @@ export class ConnectionManager {
 
     _getApplicationKey() {
         this._enureSettings();
-        return _.get(this.options, 'application-key', 'ABC');
+        let apiKey =  _.get(this.options, 'application-key');
+        return apiKey;
     }
 
     /**
@@ -151,7 +162,8 @@ export class ConnectionManager {
      * @private
      */
     _getSocket() {
-        let socket = new SockJS(this._getServerURL() + '/ws?apiKey=' + this._getApplicationKey());
+        let apiKey = this._getApplicationKey();
+        let socket = new SockJS(this._getServerURL() + '/ws?apiKey=' + apiKey);
 
         if (!this.patched) {
             let that = this;

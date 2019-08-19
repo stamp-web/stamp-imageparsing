@@ -18,7 +18,7 @@ import {EventAggregator} from 'aurelia-event-aggregator';
 import {DialogService} from 'aurelia-dialog';
 import {StatusDialog} from 'resources/elements/dialogs/status-dialog';
 import {EventNames} from 'util/constants';
-import {ConnectionManager} from "./connection-manager";
+import {ConnectionManager} from './connection-manager';
 import _ from 'lodash';
 
 export class MessageManager {
@@ -41,8 +41,6 @@ export class MessageManager {
 
     initialize() {
         this.subscribers.push(this.eventAggregator.subscribe(EventNames.STATUS_MESSAGE, this._notifyMessage.bind(this)));
-        this.subscribers.push(this.eventAggregator.subscribe(EventNames.REMOTE_MESSAGING, this.connect.bind(this)));
-
         this.connectionManager.addSubscriber('/data/status-msg', this._handleMessage.bind(this));
     }
 
@@ -50,11 +48,6 @@ export class MessageManager {
         _.forEach(this.subscribers, subscriber => {
             subscriber.dispose();
         });
-        this.connectionManager.dispose();
-    }
-
-    connect() {
-        this.connectionManager.connect();
     }
 
     clearStatus( ) {
@@ -79,7 +72,12 @@ export class MessageManager {
 
     _handleMessage(msg) {
         let data = {message: msg.body};
-        this._notifyMessage(data);
+        if (this.shown) {
+            this._notifyMessage(data);
+        } else {
+            this.logger.debug('recieved message after status dismissal ', data.message);
+        }
+
     }
 
     _notifyMessage(data) {

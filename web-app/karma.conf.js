@@ -23,7 +23,7 @@ let isWindows = /^win/.test(process.platform);
 let browser = 'PhantomJS';
 let reporters = ['progress', 'junit', 'coverage'];
 if (isWindows) {
-    reporters.push('karma-remap-istanbul');
+//    reporters.push('karma-remap-istanbul');
     browser = 'Chrome';
 }
 
@@ -34,11 +34,9 @@ module.exports = function (config) {
         browserNoActivityTimeout: 60000,
         files:                    files,
         exclude:                  [],
+
         remapIstanbulReporter: {
-            remapOptions: { },
-            reportOptions: { }, //additional report options
             reports: {
-             //   lcovonly: 'test/coverage/lcov.info',
                 html: 'test/coverage/mapped'
             }
         },
@@ -47,8 +45,7 @@ module.exports = function (config) {
             'scripts/app-bundle.js':         ['coverage']
         },
         coverageReporter:         {
-            type: 'html',
-            dir:  'test/coverage/bundled'
+            type: 'in-memory'
         },
         junitReporter:            {
             outputDir: 'test/junit-report/'

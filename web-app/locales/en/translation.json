@@ -38,7 +38,11 @@
     "actions": {
         "apply": "Apply",
         "cancel": "Cancel",
-        "ok": "Ok"
+        "generate-key": "Generate Security Key",
+        "ok": "Ok",
+        "open-image": "Open Image",
+        "settings": "Settings",
+        "start-processor": "Start Image Processor"
     },
     "labels": {
         "box-padding": "Box padding",

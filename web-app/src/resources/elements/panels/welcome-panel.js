@@ -16,46 +16,55 @@
 import {customElement, inject, computedFrom, bindable} from 'aurelia-framework';
 import {I18N} from 'aurelia-i18n';
 import {Router} from 'aurelia-router';
+import {ProcessManager} from 'manager/process-manager';
+import {IdentityHelper} from 'util/identity-helper';
 
 @customElement('welcome-panel')
-@inject(Element, I18N, Router)
+@inject(Element, I18N, Router, ProcessManager)
 export class WelcomePanel {
 
 
     cardActions = [
         {
             id: 'open-image',
-            label: 'Open Image',
+            label: 'actions.open-image',
             icon: 'assets/svg/photo.svg',
             route: 'image-manage'
         },
         {
             id: 'start-image-processor',
-            label: 'Start Image Processor',
+            label: 'actions.start-processor',
             icon: 'assets/svg/process.svg'
         },
         {
             id: 'settings',
-            label: 'Settings',
+            label: 'actions.settings',
             icon: 'assets/svg/settings.svg'
         },
         {
-            id: 'retrieve-uuid',
-            label: 'Generate Application Key',
+            id: 'regen-uuid',
+            label: 'actions.generate-key',
             icon: 'assets/svg/app-key.svg'
         }
     ]
 
-    constructor(element, i18n, router) {
+    constructor(element, i18n, router, processManager) {
         this.element = element;
         this.i18n = i18n;
         this.router = router;
+        this.processManager = processManager;
     }
 
     handleAction(action) {
         switch(action.id) {
             case 'open-image':
                 this.router.navigate(action.route);
+                break;
+            case 'start-image-processor':
+                this.processManager.start();
+                break;
+            case 'regen-uuid':
+                IdentityHelper.generateUUID(true/* forced */);
                 break;
         }
     }

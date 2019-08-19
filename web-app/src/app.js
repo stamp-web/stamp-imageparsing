@@ -13,17 +13,18 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-import {LogManager} from 'aurelia-framework';
 import {I18N} from 'aurelia-i18n';
+import {ConnectionManager} from './manager/connection-manager';
+import {MessageManager} from './manager/message-manager';
 
 export class App {
 
-    static inject = [I18N];
+    static inject = [I18N, ConnectionManager, MessageManager];
 
-    constructor(i18n) {
+    constructor(i18n, connectionManager, messageManager) {
         this.i18n = i18n;
-        console.log(i18n);
-        this.logger = LogManager.getLogger('app');
+        this.connectionManager = connectionManager;
+        this.messageManager = messageManager;
     }
 
     configureRouter(config, router) {
@@ -43,6 +44,15 @@ export class App {
                 moduleId: 'resources/elements/panels/main-panel'
             }
         ]);
+    }
+
+    activate() {
+        this.connectionManager.connect();
+    }
+
+    deactivate() {
+        this.connectionManager.disconnect();
+        this.messageManager.dispose();
     }
 
 }

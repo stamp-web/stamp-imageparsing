@@ -19,6 +19,7 @@ card-panel {
 
     > div {
         align-items: center;
+        background: $color-white;
         border: 2px $pallet-primary-medium solid;
         border-radius: 0.5rem;
         display: flex;
@@ -29,6 +30,7 @@ card-panel {
 
         span {
             font-size: $font-size-title;
+            margin-top: $margin-med;
             text-overflow: ellipsis;
         }
 

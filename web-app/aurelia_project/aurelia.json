@@ -126,6 +126,7 @@
                 ],
                 "dependencies": [
                     "jquery",
+                    "jquery-sparkline",
                     "aurelia-animator-css",
                     "aurelia-bootstrapper",
                     "aurelia-loader-default",
