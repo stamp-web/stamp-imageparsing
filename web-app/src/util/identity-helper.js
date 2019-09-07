@@ -21,11 +21,11 @@ export class IdentityHelper {
 
     static generateUUID(forceNewKey = false) {
 
-        let opts = localStorage.getItem(StorageKeys.SERVER_INFO);
+        let opts = sessionStorage.getItem(StorageKeys.SERVER_INFO);
         let options = !_.isNil(opts) ? _.assign(this.options, JSON.parse(opts)) : {};
         let id = (forceNewKey) ? uuid() : _.get(options, 'application-key', uuid());
         _.set(options, 'application-key', id);
-        localStorage.setItem(StorageKeys.SERVER_INFO, JSON.stringify(options));
+        sessionStorage.setItem(StorageKeys.SERVER_INFO, JSON.stringify(options));
         return id;
     }
 }

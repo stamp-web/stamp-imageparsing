@@ -26,11 +26,11 @@ export class ConnectionService {
     }
 
     _getServerURL() {
-        let opts = localStorage.getItem(StorageKeys.SERVER_INFO);
+        let opts = sessionStorage.getItem(StorageKeys.SERVER_INFO);
         if (!_.isNil(opts)) {
             this.options = _.assign(this.options, JSON.parse(opts));
         }
-        return _.get(this.options, 'server-address', 'http://localhost:9000');
+        return _.get(this.options, 'server-address', 'http://localhost:9007');
     }
 
 

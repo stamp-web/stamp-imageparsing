@@ -141,13 +141,13 @@ export class ConnectionManager {
     }
 
     _enureSettings() {
-        let opts = localStorage.getItem(StorageKeys.SERVER_INFO);
+        let opts = sessionStorage.getItem(StorageKeys.SERVER_INFO);
         this.options = !_.isNil(opts) ? _.assign(this.options, JSON.parse(opts)) : {};
     }
 
     _getServerURL() {
         this._enureSettings();
-        return _.get(this.options, 'server-address', 'http://localhost:9000');
+        return _.get(this.options, 'server-address', 'http://localhost:9007');
     }
 
     _getApplicationKey() {

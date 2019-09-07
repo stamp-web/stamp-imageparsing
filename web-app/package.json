@@ -99,7 +99,7 @@
     "devDependencies": {
         "aurelia-animator-css": "^1.0.1",
         "aurelia-bootstrapper": "^2.1.0",
-        "aurelia-cli": "^1.0.0-beta.1",
+        "aurelia-cli": "^1.1.0",
         "aurelia-dialog": "^2.0.0-rc.3",
         "aurelia-i18n": "2.3.1",
         "aurelia-testing": "^1.0.0-beta.2.0.1",

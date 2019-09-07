@@ -27,6 +27,7 @@ export class ProcessManager {
     running = false;
 
     uuid;
+    serverPort;
     memoryStats = {
         freeMemory: -1,
         maxMemory: -1
@@ -40,7 +41,7 @@ export class ProcessManager {
 
     start() {
         if (!this.running) {
-            this.processHandler.start(this.uuid, this._handleProcessStatus.bind(this));
+            this.processHandler.start(this.uuid, this.serverPort, this._handleProcessStatus.bind(this));
         }
 
     }
@@ -69,6 +70,7 @@ export class ProcessManager {
     _initialize() {
         this._importProcessHandler();
         this.uuid = IdentityHelper.generateUUID();
+        this.serverPort = 9007;
         this.logger.info('UUID for application key is ', this.uuid);
         this.connectionManager.addSubscriber(ChannelNames.MEMORY_STATS, this._handleMemoryStats.bind(this));
         _.defer(() => {
