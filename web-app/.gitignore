@@ -2,7 +2,7 @@ node_modules
 .idea
 .DS_STORE
 target
-dist
+lib
 release-builds
 installers
 nbproject

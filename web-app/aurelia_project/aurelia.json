@@ -40,7 +40,7 @@
         "source": "test/unit/**/*.js"
     },
     "paths": {
-        "deploy": "../src/main/resources/web-app",
+        "stage": "lib",
         "root": "src",
         "resources": "resources",
         "elements": "resources/elements",

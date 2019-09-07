@@ -23,7 +23,8 @@ export class IdentityHelper {
 
         let opts = sessionStorage.getItem(StorageKeys.SERVER_INFO);
         let options = !_.isNil(opts) ? _.assign(this.options, JSON.parse(opts)) : {};
-        let id = (forceNewKey) ? uuid() : _.get(options, 'application-key', uuid());
+        let id = _.get(options, 'application-key', uuid());
+        id = (forceNewKey || !id) ? uuid() : id;
         _.set(options, 'application-key', id);
         sessionStorage.setItem(StorageKeys.SERVER_INFO, JSON.stringify(options));
         return id;

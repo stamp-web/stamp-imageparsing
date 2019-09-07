@@ -13,6 +13,7 @@
     "scripts": {
         "build": "au build",
         "watch": "au run --watch",
+        "prewin32": "au build",
         "win32": "build --x64",
         "start": "electron .",
         "postinstall": "electron-builder install-app-deps",
@@ -28,11 +29,12 @@
             "files": [
                 "assets/fonts/stamp-web/css/stamp-web-embedded.css",
                 "assets/images${/*}",
+                "assets/svg${/*}",
                 "LICENSE",
                 "main.js",
                 "index.html",
                 "scripts${/*}",
-                "dist${/*}",
+                "lib{/*}",
                 "node_modules/bootstrap/dist/css/bootstrap.min.css",
                 "platform${/*}",
                 "locales${/*}",
@@ -63,20 +65,22 @@
         },
         "asar": true,
         "asarUnpack": [
-            "dist/*"
+            "lib/*"
         ],
-        "icon": "assets/win/icon.ico",
+        "icon": "assets/icons/win/icon.ico",
         "nsis": {
-            "oneClick": true,
-            "allowToChangeInstallationDirectory": false,
-            "artifactName": "stamp-imageparsing-install.${ext}"
+            "oneClick": false,
+            "allowToChangeInstallationDirectory": true,
+            "artifactName": "stamp-imageparsing-install.${ext}",
+            "installerSidebar": "images/sidebar.bmp",
+            "installerLanguages": ["en-US"]
         },
         "directories": {
             "output": "release-builds",
             "buildResources": "assets"
         },
         "extraFiles": [
-            "dist/**"
+            "lib/**"
         ]
     },
     "dependencies": {

@@ -39,7 +39,7 @@ let processHandler = function () {
         processes: {},
 
         start: function(uuid, port, callback) {
-            let cmdLine = ['-jar', '../target/stamp-imageparsing-3.0.0-SNAPSHOT.jar', '--apiKey="' + uuid + '"' ,'--server.port=' + port];
+            let cmdLine = ['-jar', 'lib/stamp-imageparsing-3.0.0-SNAPSHOT.jar', '--apiKey="' + uuid + '"' ,'--server.port=' + port];
             console.log(cmdLine);
             let process = spawn('javaw', cmdLine);
 
