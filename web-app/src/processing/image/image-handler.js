@@ -17,6 +17,7 @@ import {EventAggregator} from 'aurelia-event-aggregator';
 import {I18N} from 'aurelia-i18n';
 import {changeDpiDataUrl, changeDpiBlob} from 'changedpi';
 import {ImageProcessor} from './image-processor';
+import {FileManager} from 'manager/file-manager';
 import {log} from 'util/log';
 import {EventNames} from 'util/constants';
 import _ from 'lodash';
@@ -24,13 +25,14 @@ import {remote} from "electron";
 
 export class ImageHandler {
 
-    static inject = [EventAggregator, I18N, ImageProcessor];
+    static inject = [EventAggregator, I18N, ImageProcessor, FileManager];
 
-    constructor(eventAggregator, i18n, imageProcessor) {
+    constructor(eventAggregator, i18n, imageProcessor, fileManager) {
         this.eventAggregator = eventAggregator;
         this.i18n = i18n;
         this.imageProcessor = imageProcessor;
         this.remoteImageProcessor = remote.require('./platform/image-processing');
+        this.fileManager = fileManager;
     }
 
     readImage(fileBlob) {
@@ -92,6 +94,11 @@ export class ImageHandler {
                 message: this.i18n.tr('messages.saving-file', {filename: region.filePath}),
                 showBusy: true
             });
+            let path = _.get(region, 'folder.path');
+            let filePath = path + this.fileManager.getPathSeparator() + region.filePath;
+            if(this.fileManager.exists(filePath)) {
+                console.log('got a dup' + filePath);
+            }
             opts.mimeType = region.imageType ? this._imageToMimeType(region.imageType) : options.mimeType;
             this.remoteImageProcessor.saveImages(data, region, opts,).then(() => {
                 log.info("saved -> " + region.filename);

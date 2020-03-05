@@ -37,6 +37,26 @@ let folderUtilities = function () {
         },
 
         /**
+         * Determine if the file exists on the target file system.
+         *
+         * @param filePath - the full filepath to the resource
+         * @returns {boolean}
+         */
+        exists: (filePath) => {
+            return fs.existsSync(filePath);
+        },
+
+
+        /**
+         * Retrieve the folder separator
+         *
+         * @returns {"\" | "/"}
+         */
+        getPathSeparator: () => {
+            return path.sep;
+        },
+
+        /**
          * Retrieve the folders of a source path
          *
          * @param source

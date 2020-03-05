@@ -41,7 +41,6 @@ export class ImageCanvas {
         transparency: 0.1
     };
 
-
     _boxStart;
     _offscreenBuffer;
     _clickMode = ClickMode.select;
@@ -146,14 +145,22 @@ export class ImageCanvas {
 
     mouseMoveCanvas(evt) {
         if (this._clickMode === ClickMode.box && this._boxStart) {
-            this.repaint();
+            if(new Date().getTime() % 4 === 0) {
+                return;
+            }
+            //this.repaint();
+            this.paint(this.image);
             _.defer(() => {
+                if (!this._boxStart) {
+                    return;
+                }
                 let ctx = this._getContext();
                 ctx.strokeStyle = this.style.create;
                 ctx.setLineDash([5, 5]);
                 ctx.lineWidth = this.LINE_WIDTH;
                 ctx.strokeRect(this._boxStart.x, this._boxStart.y,
                     evt.offsetX - this._boxStart.x, evt.offsetY - this._boxStart.y);
+                ctx.setLineDash([]);
             });
         } else if (this._clickMode === ClickMode.resize) {
             //  console.log('resizing');
@@ -236,12 +243,16 @@ export class ImageCanvas {
         if (newImage) {
             let img = new Image();
             img.onload = () => {
-                let cvs = this._getCanvas();
-                // We need to set the HTML attributes of the Canvas vs. using CSS since the CSS properties are for the
-                // visible size only
+                if( this.lastScalingFactor !== this.scalingFactor) {
+                    let cvs = this._getCanvas();
+                    // We need to set the HTML attributes of the Canvas vs. using CSS since the CSS properties are for the
+                    // visible size only
+                    cvs.attr('width', img.width * this.scalingFactor);
+                    cvs.attr('height', img.height * this.scalingFactor);
+                    this.lastScalingFactor = this.scalingFactor;
+                }
+
                 this._getContext().lineWidth = 1.0;
-                cvs.attr('width', img.width * this.scalingFactor);
-                cvs.attr('height', img.height * this.scalingFactor);
                 this._getContext().drawImage(img, 0, 0, img.width, img.height, 0, 0,
                     img.width * this.scalingFactor, img.height * this.scalingFactor);
             }
@@ -288,15 +299,9 @@ export class ImageCanvas {
     regionsChanged() {
         if (this.boundRegions) {
             this.repaint();
-            _.forEach(this.boundRegions, (region, index) => {
-                region.image = undefined;
-                let genCrop = (r) => {
-                    r.image = this._generateCropImage(r.rectangle);
-                };
-                if (index === 0) {
-                    genCrop(region);
-                } else {
-                    genCrop(region);
+            _.forEach(this.boundRegions, (region) => {
+                if(!region.image) {
+                    region.image = this._generateCropImage(region.rectangle);
                 }
             });
         }

@@ -29,4 +29,23 @@ export class FileManager {
     getFolders(path) {
         return this.folderHandler.getFolders(path);
     }
+
+    /**
+     * Determine if the path exists.
+     *
+     * @param path
+     * @returns {*}
+     */
+    exists(path) {
+        return this.folderHandler.exists(path);
+    }
+
+    /**
+     * Retrieve the platform path separator
+     *
+     * @returns {"\" | "/"}
+     */
+    getPathSeparator() {
+        return this.folderHandler.getPathSeparator();
+    }
 }

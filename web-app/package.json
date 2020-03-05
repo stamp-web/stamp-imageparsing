@@ -73,7 +73,9 @@
             "allowToChangeInstallationDirectory": true,
             "artifactName": "stamp-imageparsing-install.${ext}",
             "installerSidebar": "images/sidebar.bmp",
-            "installerLanguages": ["en-US"]
+            "installerLanguages": [
+                "en-US"
+            ]
         },
         "directories": {
             "output": "release-builds",
@@ -119,7 +121,6 @@
         "babel-preset-stage-1": "^6.5.0",
         "babel-register": "^6.9.0",
         "browser-sync": "^2.26.3",
-        "common-css": "0.0.1",
         "electron": "^3.0.7",
         "electron-builder": "^20.28.4",
         "electron-packager": "^12.1.0",
@@ -136,6 +137,7 @@
         "gulp-sass": "3.1.0",
         "gulp-shell": "^0.6.5",
         "gulp-sourcemaps": "^2.0.0-alpha",
+        "handlebars": "^4.5.3",
         "html-minifier": "^3.5.19",
         "http-proxy-middleware": "^0.19.1",
         "i18next": "11.3.3",
