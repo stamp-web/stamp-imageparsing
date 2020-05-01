@@ -1,5 +1,5 @@
 /*
- Copyright 2018 Jason Drake (jadrake75@gmail.com)
+ Copyright 2020 Jason Drake (jadrake75@gmail.com)
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -15,21 +15,25 @@
  */
 @import '../../themes/variables';
 
-.welcome-panel-wrapper {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+.manage-folders-contents {
+    overflow-y: auto;
+    padding: $padding-x-thick;
+    padding-right: 0;
 
-    .welcome-panel {
-        background: $pallet-base-light;
-        display: flex;
-        flex: 1 1 auto;
-        height: 100%;
-        width: 100%;
+    ul {
+        cursor: pointer;
+        padding-left: 0;
 
-        .card-wrapper {
-            margin: $margin-thick;
+        li {
+            list-style-type: none;
+            padding: $padding-med $padding-thick;
+            user-select: none;
+
+            &:hover {
+                background-color: $selection-color;
+                color: $selection-text-color;
+            }
         }
     }
-}
 
+}

@@ -14,17 +14,16 @@ let entryIndex = appSrc.indexOf(path.join(output, project.build.loader.configTar
 let entryBundle = appSrc.splice(entryIndex, 1)[0];
 let files = [
     entryBundle,
-    'scripts/websocket-tools-bundle.js',
     'electron-fix.js'
 ].concat(testSrc).concat(appSrc);
 
 let isWindows = /^win/.test(process.platform);
 
-let browser = 'PhantomJS';
+let browsers = ['Chrome'];
 let reporters = ['progress', 'junit', 'coverage'];
 if (isWindows) {
-//    reporters.push('karma-remap-istanbul');
-    browser = 'Chrome';
+   // reporters.push('karma-remap-istanbul');
+    browsers = ['FirefoxHeadless'];
 }
 
 module.exports = function (config) {
@@ -33,24 +32,32 @@ module.exports = function (config) {
         frameworks:               [project.testFramework.id],
         browserNoActivityTimeout: 60000,
         files:                    files,
-        exclude:                  [],
+        exclude:                  ['**/.html'],
 
         remapIstanbulReporter: {
-            reports: {
-                html: 'test/coverage/mapped'
+            remapOptions: {},
+            reports:      {
+                'text-summary': null,
+                html:           'coverage/html/'
             }
         },
-        preprocessors:            {
+        preprocessors:         {
             [project.unitTestRunner.source]: [project.transpiler.id],
-            'scripts/app-bundle.js':         ['coverage']
+            'scripts/app-bundle.js':         ['coverage'],
+            //'src/**/*.js': ['babel']
         },
-        coverageReporter:         {
-            type: 'in-memory'
-        },
-        junitReporter:            {
-            outputDir: 'test/junit-report/'
+        coverageReporter:      {
+            dir:       'test/coverage',
+            reporters: [
+                {type: 'lcov', subdir: 'report-lcov'},
+                {type: 'text-summary'}
+            ]
         },
 
+
+        junitReporter: {
+            outputDir: 'test/junit-report/'
+        },
 
         'babelPreprocessor': {options: project.transpiler.options},
         reporters:           reporters,
@@ -58,7 +65,7 @@ module.exports = function (config) {
         colors:              true,
         logLevel:            config.LOG_INFO,
         autoWatch:           true,
-        browsers:            [browser],
+        browsers:            browsers,
         singleRun:           true,
         client:              {
             args: ['aurelia-root', project.paths.root]

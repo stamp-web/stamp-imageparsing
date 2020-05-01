@@ -1,0 +1,18 @@
+<template>
+    <require from="resources/elements/dialogs/create-folder-dialog.css"></require>
+    <ux-dialog class="create-folder-dialog">
+        <ux-dialog-body>
+            <h3>${'titles.add-folder'|t}</h3>
+            <form>
+                <div class="form-group">
+                    <label>${'labels.folder'|t}</label>
+                    <input class="form-control" tabindex="1" type="text" value.bind="folderName" focus.bind="hasFocus">
+                </div>
+            </form>
+        </ux-dialog-body>
+        <ux-dialog-footer>
+            <button class="btn btn-primary" click.trigger="controller.ok(folderName)">${'actions.ok'|t}</button>
+            <button class="btn btn-secondary" click.trigger="controller.cancel()">${'actions.cancel'|t}</button>
+        </ux-dialog-footer>
+    </ux-dialog>
+</template>

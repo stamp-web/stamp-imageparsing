@@ -35,13 +35,24 @@ export class App {
                 route: ['', 'welcome'],
                 name: 'welcome',
                 title: this.i18n.tr('route.welcome'),
+                label: 'route.welcome',
                 moduleId: 'resources/elements/panels/welcome-panel'
             },
             {
                 route: ['image-manage'],
                 name: 'image-manage',
-                title: this.i18n.tr('route.image-manage'),
+                icon: 'assets/svg/photo.svg',
+                title: this.i18n.tr('actions.open-image'),
+                label: 'actions.open-image',
                 moduleId: 'resources/elements/panels/main-panel'
+            },
+            {
+                route: ['manage-folders'],
+                name: 'manage-folders',
+                icon: 'assets/svg/folder.svg',
+                title: this.i18n.tr('actions.manage-folders'),
+                label: 'actions.manage-folders',
+                moduleId: 'resources/elements/panels/manage-folders'
             }
         ]);
     }

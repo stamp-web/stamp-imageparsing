@@ -2,16 +2,21 @@
     "title": "Stamp Image Processing Application",
 
     "titles": {
+        "add-folder": "Add Folder",
         "default-region": "Region Defaults",
         "dpi": "DPI Settings",
         "jpeg": "JPEG Settings",
         "bounding-box": "Bounding Box Configuration",
         "image-settings": "Image Settings",
-        "image-processing": "Image Processing Settings"
+        "image-processing": "Image Processing Settings",
+        "image-editing": "Image Editing",
+        "manage-folders": "Manage Folders",
+        "welcome": "Welcome"
     },
 
     "route": {
-        "image-manage": "Image Manipulation",
+        "image-manage": "Image Editing",
+        "manage-folders": "Manage Folders",
         "welcome": "Home"
     },
 
@@ -25,7 +30,9 @@
         "processing-failed": "Processing failure",
         "saving-file" : "Saving {{filename}}",
         "connected-true": "Connected",
-        "connected-false": "No Connection"
+        "connected-false": "No Connection",
+        "no-folder-chosen": "No folder chosen",
+        "no-folders": "No child folders available"
     },
 
     "tooltips": {
@@ -36,11 +43,14 @@
     },
 
     "actions": {
+        "add-folder": "Add Folder",
         "apply": "Apply",
         "cancel": "Cancel",
+        "done": "Done",
         "generate-key": "Generate Security Key",
+        "manage-folders": "Manage Folders",
         "ok": "Ok",
-        "open-image": "Open Image",
+        "open-image": "Image Editing",
         "settings": "Settings",
         "start-processor": "Start Image Processor"
     },
@@ -62,6 +72,8 @@
         "min-bounding-area": "Minimum bounding area",
         "min-intercepting-area": "Minimum intercepting area",
         "max-bounding-area": "Maximum bounding percentage",
+        "select-image-placeholder": "Select an image",
+        "output-folder": "Target Folder:",
         "tiff-compression": "TIFF Compression Mode",
         "zoom": "Zoom",
 

@@ -437,6 +437,24 @@
       "src": "fontawesome"
     },
     {
+      "uid": "8e6b311d40f1002fd6de7d1bdfdc7f17",
+      "css": "folder-open",
+      "code": 61544,
+      "src": "mfglabs"
+    },
+    {
+      "uid": "44199a54057e6e264fde61a49b034171",
+      "css": "upload",
+      "code": 59454,
+      "src": "entypo"
+    },
+    {
+      "uid": "4c4bb0011585456def6562bf27186b63",
+      "css": "folder-empty",
+      "code": 61545,
+      "src": "mfglabs"
+    },
+    {
       "uid": "fb41c3a521c66ffd5a8492ee2c53e783",
       "css": "calendar",
       "code": 59427,

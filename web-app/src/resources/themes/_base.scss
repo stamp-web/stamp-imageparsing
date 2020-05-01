@@ -23,6 +23,10 @@ body {
     width:     100%;
 }
 
+h3 {
+    color: $pallet-primary-medium;
+}
+
 fieldset {
     border:        $fieldset-border;
     margin-bottom: $margin-med;
@@ -46,9 +50,19 @@ legend {
     }
 }
 
+.form-control {
+    border-color: $input-border-color;
+    height: $input-height;
+
+    &:focus {
+        border-color: $input-border-focus;
+        box-shadow: none;
+    }
+}
+
 .btn-primary {
     background-color: $button-bg-primary;
-    border-color:     $button-bg-primary;
+    border-color: $button-bg-primary;
 
     &:disabled {
         background-color: $button-bg-disabled;
@@ -59,27 +73,45 @@ legend {
     &:hover {
         background-color: darken($button-bg-primary, 20%);
         border-color:     darken($button-bg-primary, 20%);
+
+        &:disabled {
+            background-color: $button-bg-disabled;
+            color:            $button-color-disabled;
+            border-color:     $button-bg;
+        }
+    }
+}
+
+.btn {
+    border-radius: 0;
+
+    &:focus,
+    &.focus {
+        box-shadow: none;
     }
 }
 
 .btn-secondary {
     background-color: $button-bg;
     color:            $button-color;
-    border-color:     $button-bg;
+    border-color:     $button-border-color;
 
     &:disabled {
         background-color: $button-bg-disabled;
-        color:            $button-color-disabled;
+        border-color: $button-color-disabled;
+        color: $button-color-disabled;
 
         &:hover {
             background-color: $button-bg-disabled;
-            color:            $button-color-disabled;
+            border-color: $button-color-disabled;
+            color: $button-color-disabled;
         }
     }
 
     &:hover {
         background-color: $button-bg-hover;
-        color:            $button-color-hover;
+        border-color: $button-color-hover;
+        color: $button-color-hover;
     }
 }
 

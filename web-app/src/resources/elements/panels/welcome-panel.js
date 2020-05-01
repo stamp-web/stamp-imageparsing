@@ -23,30 +23,23 @@ import {IdentityHelper} from 'util/identity-helper';
 @inject(Element, I18N, Router, ProcessManager)
 export class WelcomePanel {
 
-
     cardActions = [
         {
-            id: 'open-image',
-            label: 'actions.open-image',
-            icon: 'assets/svg/photo.svg',
-            route: 'image-manage'
-        },
-        {
-            id: 'start-image-processor',
+            name: 'start-image-processor',
             label: 'actions.start-processor',
             icon: 'assets/svg/process.svg'
         },
         {
-            id: 'settings',
+            name: 'settings',
             label: 'actions.settings',
             icon: 'assets/svg/settings.svg'
         },
         {
-            id: 'regen-uuid',
+            name: 'regen-uuid',
             label: 'actions.generate-key',
             icon: 'assets/svg/app-key.svg'
         }
-    ]
+    ];
 
     constructor(element, i18n, router, processManager) {
         this.element = element;
@@ -55,11 +48,24 @@ export class WelcomePanel {
         this.processManager = processManager;
     }
 
+    activate() {
+        let routes = _.get(this.router, 'routes');
+        if (_.size(routes) > 0) {
+            _.forEachRight(routes, r => {
+               let route = _.get(r, 'route');
+               if (route !== 'welcome' && !_.isEmpty(route)) {
+                   this.cardActions.unshift(r);
+               }
+            });
+        }
+    }
+
     handleAction(action) {
-        switch(action.id) {
-            case 'open-image':
-                this.router.navigate(action.route);
-                break;
+        if (action.route) {
+            this.router.navigate(action.route);
+            return;
+        }
+        switch(action.name) {
             case 'start-image-processor':
                 this.processManager.start();
                 break;

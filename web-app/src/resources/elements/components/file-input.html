@@ -1,0 +1,13 @@
+<template>
+
+    <require from="resources/elements/components/file-input.css"></require>
+
+    <span class="folder-frame">
+        <span class="${disabled ? 'disabled': ''} name" if.bind="!showPlaceholder">${value}</span>
+        <span show.bind="showPlaceholder" class="placeholder-text">${placeholderText}</span>
+        <span if.bind="showRemoveIcon" click.delegate="remove()"><i class="sw-icon-cancel"></i></span>
+        <button click.delegate="openSelector()" class="btn inputBtn btn-secondary" disabled.bind="disabled"><i class="sw-icon-folder-open"></i></button>
+    </span>
+
+    <input type="file" files.bind="selectedFiles" class="inputFile" change.delegate="selected($event)" disabled.bind="disabled">
+</template>

@@ -1,13 +1,14 @@
 <template>
-    <require from="resources/elements/panels/main-panel.css"></require>
     <require from="resources/elements/image/image-canvas"></require>
+    <require from="resources/elements/components/file-input"></require>
     <require from="resources/value-converters/as-percentage"></require>
-    <require from="resources/elements/panels/side-panel"></require>
-    <require from="resources/elements/panels/settings-panel"></require>
+    <require from="resources/elements/panels/main-panel.css"></require>
+    <require from="./side-panel"></require>
+    <require from="./settings-panel"></require>
+    <require from="./header-pane"></require>
+
 <div class="main-panel">
-    <div class="header-pane">
-        <button class="btn btn-secondary" click.delegate="home()"><i class="sw-icon-home"></button>
-        <input type="file" files.bind="chosenFile" change.delegate="fileSelected($event)" disabled.bind="processing">
+    <header-pane page-title="${'titles.image-editing'|t}">
         <button class="btn btn-secondary" click.trigger="process()" disabled.bind="!image || processing"><i class="sw-icon-stamp"></i></button>
 
         <button class="btn btn-secondary" click.trigger="addRectangle()" disabled.bind="!image || processing"><i class="sw-icon-plus"></i></button>
@@ -16,10 +17,9 @@
         <button class="btn btn-secondary" click.trigger="zoom(1)" disabled.bind="!image || toobig || processing"><i class="sw-icon-zoom-in"></i></button>
         <button class="btn btn-secondary" click.trigger="zoom(-1)" disabled.bind="!image || toosmall || processing"><i class="sw-icon-zoom-out"></i></button>
         <button class="btn btn-secondary" click.trigger="settings()" disabled.bind="processing"><i class="sw-icon-settings"></i></button>
+        <file-input callback.bind="fileSelected" disabled.bind="processing" folder-mode="false" placeholder-text="${'labels.select-image-placeholder'|t}"></file-input>
+    </header-pane>
 
-        <input type="file" files.bind="chosenFolder" change.delegate="folderSelected($event)" webkitdirectory disabled.bind="processing">
-        ${outputPath}
-    </div>
     <div class="content-pane">
         <settings-panel if.bind="showSettings" options.bind="options"></settings-panel>
         <image-canvas class="${imagePanelClassnames}"

@@ -1,5 +1,5 @@
 /*
- Copyright 2018 Jason Drake (jadrake75@gmail.com)
+ Copyright 2020 Jason Drake (jadrake75@gmail.com)
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -13,23 +13,27 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-@import '../../themes/variables';
+import {DialogController} from 'aurelia-dialog';
+import {observable} from 'aurelia-framework';
 
-.welcome-panel-wrapper {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+import _ from 'lodash';
 
-    .welcome-panel {
-        background: $pallet-base-light;
-        display: flex;
-        flex: 1 1 auto;
-        height: 100%;
-        width: 100%;
+export class CreateFolderDialog {
 
-        .card-wrapper {
-            margin: $margin-thick;
-        }
+    static inject = [DialogController];
+
+    @observable folderName = '';
+    hasFocus = false;
+
+    constructor(controller){
+        this.controller = controller;
+    }
+
+    attached() {
+        this.hasFocus = true;
+    }
+
+    folderNameChanged() {
+        this.hasFocus = this.hasFocus || _.isEmpty(this.folderName);
     }
 }
-

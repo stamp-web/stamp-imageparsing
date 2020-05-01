@@ -1,5 +1,5 @@
 /*
- Copyright 2018 Jason Drake (jadrake75@gmail.com)
+ Copyright 2020 Jason Drake (jadrake75@gmail.com)
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -14,21 +14,20 @@
  limitations under the License.
  */
 
-import {customElement, computedFrom, inject, bindable, observable, LogManager, BindingEngine} from 'aurelia-framework';
+import {customElement, computedFrom, inject, bindable, observable, LogManager} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {I18N} from 'aurelia-i18n';
 import {Router} from 'aurelia-router';
-import {changeDpiDataUrl, changeDpiBlob} from 'changedpi';
-import {ImageHandler} from 'processing/image/image-handler';
+import {changeDpiBlob} from 'changedpi';
 import {FileManager} from 'manager/file-manager';
+import {ImageHandler} from 'processing/image/image-handler';
 import {ImageBounds} from 'model/image-bounds';
 import {DefaultOptions, EventNames, StorageKeys, ImageTypes} from 'util/constants';
 import _ from 'lodash';
 import {ConnectionManager} from 'manager/connection-manager';
-import {ConnectionService} from 'processing/connection-service';
 
 @customElement('main-panel')
-@inject(Element, I18N, Router, ImageHandler, EventAggregator, BindingEngine, FileManager, ConnectionService, ConnectionManager)
+@inject(Element, I18N, Router, ImageHandler, EventAggregator, FileManager, ConnectionManager)
 export class MainPanel {
 
     @observable boxes = [];
@@ -41,8 +40,6 @@ export class MainPanel {
     scalingFactor = 1.0;
     image;
     data;
-    chosenFile;
-    chosenFolder;
     meta;
     handler;
     outputPath;
@@ -56,17 +53,17 @@ export class MainPanel {
     _MAX_ZOOM = 4.0;
     _MIN_ZOOM = 0.125;
 
-    constructor(element, i18n, router, imageHandler, eventAggregator, bindingEngine, fileManager, connectionService, connectionManager) {
+    constructor(element, i18n, router, imageHandler, eventAggregator, fileManager, connectionManager) {
         this.element = element;
         this.i18n = i18n;
         this.router = router;
         this.handler = imageHandler;
         this.eventAggregator = eventAggregator;
-        this.bindingEngine = bindingEngine;
         this.logger = LogManager.getLogger('main-panel');
         this.fileManager = fileManager;
-        this.connectionService = connectionService;
         this.connectionManager = connectionManager;
+
+        this.fileSelected = this._fileSelected.bind(this);
     }
 
     attached() {
@@ -78,7 +75,7 @@ export class MainPanel {
         }
         let folder = localStorage.getItem(StorageKeys.OUTPUT_PATH);
         if (!_.isNil(folder)) {
-            this.outputPath = folder;
+            this._handleFolderSelected(folder);
         }
         this._startPing();
     }
@@ -107,9 +104,7 @@ export class MainPanel {
         this.subscribers.push(this.eventAggregator.subscribe(EventNames.NEW_REGION, this._handleNewRegion.bind(this)));
         this.subscribers.push(this.eventAggregator.subscribe(EventNames.SAVE_REGIONS, this._handleSaveRegions.bind(this)));
         this.subscribers.push(this.eventAggregator.subscribe(EventNames.SAVE_SETTINGS, this._handleSaveSettings.bind(this)));
-
-      //  this.subscribers.push(this.bindingEngine.collectionObserver(this.boxes).subscribe(this.boxesChanged.bind(this)));
-        this.subscribers.push(this.bindingEngine.propertyObserver(this, 'outputPath').subscribe(this._handleOutputPath.bind(this)));
+        this.subscribers.push(this.eventAggregator.subscribe(EventNames.FOLDER_SELECTED, this._handleFolderSelected.bind(this)));
     }
 
     _handleSaveSettings(settings) {
@@ -135,6 +130,11 @@ export class MainPanel {
         this.handler.saveRegions(this.data, regions, this.options, this.inputFile);
     }
 
+    _handleFolderSelected(folderName) {
+        this.outputPath = folderName;
+        this.folders = this.fileManager.getFolders(this.outputPath);
+    }
+
     boxesChanged() {
         this.selectedRegion = undefined;
         _.defer(() => {
@@ -152,25 +152,12 @@ export class MainPanel {
     }
 
     _initializeRegion(region) {
-        _.set(region, 'imageType', _.get(this.options, 'image.defaultType', ImageTypes[0]));
+        _.set(region, 'imageType', _.get(this.options, 'image.defaultType', _.first(ImageTypes)));
     }
 
-    _handleOutputPath(newPath) {
-        this.folders = this.fileManager.getFolders(newPath);
-    }
-
-    folderSelected() {
-        if(this.chosenFolder.length > 0) {
-            let dir = this.chosenFolder[0];
-            localStorage.setItem(StorageKeys.OUTPUT_PATH, dir.path);
-            this.outputPath = dir.path;
-
-        }
-    }
-
-    fileSelected() {
-        if (this.chosenFile.length > 0) {
-            let f = this.chosenFile[0];
+    _fileSelected(chosenFile) {
+        if (_.size(chosenFile) > 0) {
+            let f = _.first(chosenFile);
             this.processing = true;
             this.eventAggregator.publish(EventNames.STATUS_MESSAGE, {
                 message: this.i18n.tr('messages.loading'),
@@ -204,6 +191,10 @@ export class MainPanel {
                     fn(b);
                 });
             }
+        } else {
+            this.clear();
+            this.image = undefined;
+            this.data = undefined;
         }
     }
 
@@ -226,7 +217,6 @@ export class MainPanel {
     }
 
     clear() {
-        //this.data = undefined;
         this.dataURI = undefined;
         this.clearBoxes();
     }

@@ -61,6 +61,9 @@
 .sw-icon-zoom-out:before { content: '\e83b'; } /* '' */
 .sw-icon-rotate:before { content: '\e83c'; } /* '' */
 .sw-icon-download:before { content: '\e83d'; } /* '' */
+.sw-icon-upload:before { content: '\e83e'; } /* '' */
+.sw-icon-folder-open:before { content: '\f068'; } /* '' */
+.sw-icon-folder-empty:before { content: '\f069'; } /* '' */
 .sw-icon-unlink:before { content: '\f127'; } /* '' */
 .sw-icon-eraser:before { content: '\f12d'; } /* '' */
 .sw-icon-used:before { content: '\f192'; } /* '' */

@@ -1,0 +1,11 @@
+<template>
+    <require from="../components/file-input"></require>
+    <require from="./header-pane.css"></require>
+    <button class="btn btn-secondary" click.delegate="home()"><i class="sw-icon-home"></button>
+    <span class="page-title">${pageTitle}</span>
+    <slot></slot>
+    <span class="output-folder" if.bind="showOutputFolder">
+        <label>${'labels.output-folder'|t}</label>
+        <file-input value.bind="chosenFolder" disabled.bind="processing" callback.bind="callback" show-remove="false"></file-input>
+    </span>
+</template>

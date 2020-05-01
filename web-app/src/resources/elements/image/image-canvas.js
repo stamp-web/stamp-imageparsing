@@ -35,10 +35,10 @@ export class ImageCanvas {
     @bindable scalingFactor = 1.0;
     @bindable selectedRegion;
     @bindable style = {
-        selected:     '#7cfc00',
+        selected:     '#9ae9bd',
         border:       '#c9c9c9',
-        create:       '#3ddaff',
-        transparency: 0.1
+        create:       '#8abde6',
+        transparency: 0.2
     };
 
     _boxStart;
@@ -118,7 +118,6 @@ export class ImageCanvas {
                         return true;
                     }
                     this.eventAggregator.publish(EventNames.SELECTION_CHANGED, region);
-
                     return false;
                 }
             });
@@ -226,17 +225,20 @@ export class ImageCanvas {
     }
 
     _cleanupImage() {
-        if (this._image && this._image.src) {
+        if (!_.isNil(this._image, 'src')) {
             URL.revokeObjectURL(this._image.src)
+            this._image.src = '';
+            this._image = null;
         }
     }
 
     clear() {
         let canvas = this._getCanvas();
         let ctx = this._getContext();
-        ctx.fillStyle = '#111';
+        ctx.save();
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.restore();
     }
 
     paint(newImage) {
@@ -258,6 +260,11 @@ export class ImageCanvas {
             }
             img.src = newImage;
             this._image = img;
+        } else {
+            let canvas = this._getCanvas();
+            let ctx = this._getContext();
+            ctx.fillStyle = '#111';
+            ctx.fillRect(0, 0, $(canvas).width() / this.scalingFactor, $(canvas).height() / this.scalingFactor);
         }
     }
 
@@ -292,17 +299,20 @@ export class ImageCanvas {
         });
     }
 
-    scalingFactorChanged(newFactor) {
+    scalingFactorChanged() {
+        this.scalingFactor = this.scalingFactor || 1.0
         this.repaint();
     }
 
     regionsChanged() {
         if (this.boundRegions) {
             this.repaint();
-            _.forEach(this.boundRegions, (region) => {
-                if(!region.image) {
-                    region.image = this._generateCropImage(region.rectangle);
-                }
+            _.defer(() => {
+                _.forEach(this.boundRegions, (region) => {
+                    if(!region.image) {
+                        region.image = this._generateCropImage(region.rectangle);
+                    }
+                });
             });
         }
     }
@@ -324,7 +334,7 @@ export class ImageCanvas {
         ctx.strokeStyle = isSelected ? this.style.selected : this.style.border;
         ctx.strokeRect(rect.x * this.scalingFactor, rect.y * this.scalingFactor,
             rect.width * this.scalingFactor, rect.height * this.scalingFactor);
-        /* Will continuously fill
+
         if (isSelected) {
             ctx.globalAlpha = this.style.transparency;
             ctx.fillStyle = this.style.selected;
@@ -332,7 +342,7 @@ export class ImageCanvas {
                 rect.width * this.scalingFactor, rect.height * this.scalingFactor);
             ctx.globalAlpha = 1.0; // revert
         }
-         */
+
         let fontSize = (this.scalingFactor < 0.5) ? '11px': '14px';
         ctx.font = `${fontSize} arial`;
         ctx.lineWidth = 1;
@@ -347,6 +357,7 @@ export class ImageCanvas {
     imageChanged(newImage) {
         this._cleanupImage();
         this.clear();
+        this.paint(undefined);
         this.paint(newImage);
         this.generateOffScreenCanvas(newImage);
     }

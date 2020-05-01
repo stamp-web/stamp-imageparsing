@@ -1,0 +1,15 @@
+
+<template>
+    <require from="resources/elements/panels/manage-folders.css"></require>
+    <require from="./header-pane"></require>
+
+    <header-pane page-title="${'titles.manage-folders'|t}">
+        <button class="btn btn-secondary" click.delegate="createNewFolder()"><i class="sw-icon-plus"></i>${'actions.add-folder'|t}</button>
+    </header-pane>
+    <div class="manage-folders-contents">
+        <span if.bind="folders.length === 0">${'messages.no-folders'|t}</span>
+        <ul>
+            <li repeat.for="folder of folders"><i class="sw-icon-folder-empty"></i> ${folder.name}</li>
+        </ul>
+    </div>
+</template>

@@ -49,6 +49,7 @@ export const KeyCodes = {
 }
 
 export const EventNames = {
+    FOLDER_SELECTED:   'folder-selected',
     NEW_REGION:        'new-image-bounds',
     REMOTE_MESSAGING:  'remote-messaging',
     SAVE_REGIONS:      'save-regions',

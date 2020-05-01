@@ -1,5 +1,5 @@
 /*
- Copyright 2019 Jason Drake (jadrake75@gmail.com)
+ Copyright 2020 Jason Drake (jadrake75@gmail.com)
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -28,6 +28,19 @@ export class FileManager {
      */
     getFolders(path) {
         return this.folderHandler.getFolders(path);
+    }
+
+    /**
+     * Will create a folder given the parent path and the path name.
+     *
+     * @param parent - the parent path name
+     * @param path - the path to create under the parent
+     *
+     * @return promise of the create folder operation
+     */
+    createFolder(parent, path) {
+        let totalPath = [parent, path].join(this.getPathSeparator());
+        return this.folderHandler.createFolder(totalPath);
     }
 
     /**

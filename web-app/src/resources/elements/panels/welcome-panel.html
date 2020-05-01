@@ -1,10 +1,15 @@
 <template>
-    <require from="resources/elements/panels/welcome-panel.css"></require>
-    <require from="../components/card-panel"></require>
+    <require from="resources/elements/panels/header-pane"></require>
+    <require from="resources/elements/components/card-panel"></require>
 
-    <div class="welcome-panel">
-        <div class="card-wrapper" repeat.for="card of cardActions">
-            <card-panel label="${card.label|t}" icon.bind="card.icon" click.delegate="handleAction(card)"></card-panel>
+    <require from="resources/elements/panels/welcome-panel.css"></require>
+
+    <div class="welcome-panel-wrapper">
+        <header-pane page-title="${'titles.welcome'|t}" show-output-folder="false"></header-pane>
+        <div class="welcome-panel">
+            <div class="card-wrapper" repeat.for="card of cardActions">
+                <card-panel label="${card.label|t}" icon.bind="card.icon" click.delegate="handleAction(card)"></card-panel>
+            </div>
         </div>
     </div>
 </template>

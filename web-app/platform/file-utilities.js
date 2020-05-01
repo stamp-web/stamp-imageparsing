@@ -77,6 +77,17 @@ let folderUtilities = function () {
                 });
             });
             return output;
+        },
+
+        createFolder: path => {
+            return new Promise((resolve, reject) => {
+                fs.mkdir(path, {recursive: true}, err => {
+                    if (err) {
+                        reject(err);
+                    }
+                    resolve(true);
+                });
+            });
         }
     }
 }();

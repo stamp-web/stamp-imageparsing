@@ -14,15 +14,6 @@
  limitations under the License.
  */
 
-$pallet-base-dark: #777;
-$pallet-base-medium: #c9c9c9;
-$pallet-base: #e3e3e3;
-$pallet-base-light: #fafafa;
-$pallet-primary: #6EC4A7;
-$pallet-primary-medium: #647F94;
-$pallet-primary-offset: #95AEC2;
-
-
 $color-gray: #ccc;
 $color-gray-dark: #434343;
 $color-blue: #005580;
@@ -31,6 +22,14 @@ $color-green-bright: #00e077;
 $color-white: #fefefe;
 $color-red: #aa0000;
 
+$pallet-base-very-dark: $color-gray-dark;
+$pallet-base-dark: #777;
+$pallet-base-medium: #c9c9c9;
+$pallet-base: #e3e3e3;
+$pallet-base-light: #fafafa;
+$pallet-primary: #6EC4A7;
+$pallet-primary-medium: #647F94;
+$pallet-primary-offset: #95AEC2;
 
 $image-background: #121212;
 
@@ -45,6 +44,10 @@ $margin-thick: 1rem;
 
 $input-margin: 0.25rem;
 $input-fontsize: 1.1rem;
+$input-height: 2.6rem;
+$input-disabled: $pallet-base-medium;
+$input-border-focus: $pallet-base-dark;
+$input-border-color: $pallet-base-medium;
 
 $selection-color: $pallet-primary-medium;
 $selection-text-color: $color-white;
@@ -56,16 +59,14 @@ $section-title-color: $color-gray-dark;
 
 $separator-border: 2px $pallet-base-medium solid;
 
-$button-bg: $pallet-base-dark;
+$button-bg: $pallet-base-light;
 $button-bg-disabled: $pallet-base;
-$button-color: $pallet-base-light;
+$button-border-color: $pallet-base-medium;
+$button-color: $pallet-base-very-dark;
 $button-color-disabled: $pallet-base-medium;
 $button-bg-hover: darken($button-bg, 10%);
-$button-color-hover: $pallet-base-light;
-
-
+$button-color-hover: darken($button-color, 10%);
 $button-bg-primary: $pallet-primary-medium;
-
 
 $fieldset-border: 1px $pallet-base-medium solid;
 
