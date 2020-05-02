@@ -68,12 +68,12 @@ export class ImageCanvas {
     }
 
     _setupListeners() {
-        this._subscribers.push(this.eventAggregator.subscribe('add-rectangle', () => {
+        this._subscribers.push(this.eventAggregator.subscribe(EventNames.ADD_REGION, () => {
             this._clickMode = ClickMode.box;
         }));
         this._subscribers.push(this.eventAggregator.subscribe('delete-selected', this.deleteSelected.bind(this)));
         this._subscribers.push(this.bindingEngine.collectionObserver(this.boundRegions).subscribe(this.regionsChanged.bind(this)));
-        this.repaintDebounced = _.debounce(this.repaint.bind(this), 50);
+        this.repaintDebounced = _.throttle(this.repaint.bind(this), 750);
     }
 
     deleteSelected() {
@@ -101,9 +101,7 @@ export class ImageCanvas {
         }
         if (newSelection) {
             this.filenameListener = this.bindingEngine.propertyObserver(newSelection, 'filePath').subscribe(() => {
-                _.debounce(() => {
-                    this.repaint();
-                }, 750)();
+                this.repaintDebounced();
             });
         }
     }
@@ -301,7 +299,7 @@ export class ImageCanvas {
 
     scalingFactorChanged() {
         this.scalingFactor = this.scalingFactor || 1.0
-        this.repaint();
+        this.repaintDebounced();
     }
 
     regionsChanged() {

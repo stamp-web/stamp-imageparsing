@@ -18,18 +18,18 @@ export const ImageTypes = ['png', 'jpg', 'tiff'];
 export const TIFFCompression = ['lzw', 'jpeg', 'deflate'];
 
 export const DefaultOptions = {
-    image: {
+    image:       {
         defaultType: ImageTypes[1]
     },
-    dpi:  {
+    dpi:         {
         mode:       'image',
         horizontal: 300,
         vertical:   300
     },
-    jpeg: {
+    jpeg:        {
         quality: 85
     },
-    tiff: {
+    tiff:        {
         compression: TIFFCompression[1]
     },
     boundingBox: {
@@ -39,16 +39,26 @@ export const DefaultOptions = {
         maximumBoundingArea:     0.85,
         minimumInterceptingArea: 0.25
     },
-    processing: {
+    processing:  {
         dilationCount: 2
     }
 };
 
 export const KeyCodes = {
-    TAB: 9
+    TAB:             9,
+    DEL:             46,
+    KEY_N:           78,
+    KEY_O:           79,
+    Key_P:           80,
+    NUMPAD_ADD:      107,
+    NUMPAD_SUBTRACT: 109,
+    EQUAL:           187,
+    MINUS:           189
 }
 
 export const EventNames = {
+    ADD_REGION:        'add-rectangle',
+    FILE_OPEN:         'file_open',
     FOLDER_SELECTED:   'folder-selected',
     NEW_REGION:        'new-image-bounds',
     REMOTE_MESSAGING:  'remote-messaging',
@@ -59,7 +69,7 @@ export const EventNames = {
 };
 
 export const StorageKeys = {
-    OPTIONS: 'options',
+    OPTIONS:     'options',
     OUTPUT_PATH: 'output-path',
     SERVER_INFO: 'server-info'
 }

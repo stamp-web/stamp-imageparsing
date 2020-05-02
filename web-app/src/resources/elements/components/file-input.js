@@ -14,12 +14,13 @@
  limitations under the License.
  */
 
-import {EventNames} from '../../../util/constants';
+
 import {customElement, bindable, computedFrom, bindingMode, inject} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import _ from 'lodash';
 import {I18N} from 'aurelia-i18n';
 import {Router} from "aurelia-router";
+import {EventNames} from '../../../util/constants';
 
 @customElement('file-input')
 @inject(Element, I18N, EventAggregator)
@@ -30,8 +31,10 @@ export class FileInput {
     @bindable callback;
     @bindable placeholderText;
     @bindable showRemove = true;
+    @bindable name;
 
     selectedFiles;
+    _subscribers = [];
 
     constructor(element, i18n, eventAggregator) {
         this.eventAggregator = eventAggregator;
@@ -41,10 +44,21 @@ export class FileInput {
 
     attached() {
         this._configureFolderMode();
+        this._subscribers.push(this.eventAggregator.subscribe(EventNames.FILE_OPEN, name => {
+            if(name === this.name) {
+                $(this.element).find('.inputBtn').click();
+            }
+        }));
     }
 
     openSelector() {
         $(this.element).find('input[type="file"]').click();
+    }
+
+    detached() {
+        _.forEach(this._subscribers, sub => {
+            sub.dispose();
+        });
     }
 
     selected($evt) {

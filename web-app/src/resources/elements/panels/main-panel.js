@@ -22,9 +22,15 @@ import {changeDpiBlob} from 'changedpi';
 import {FileManager} from 'manager/file-manager';
 import {ImageHandler} from 'processing/image/image-handler';
 import {ImageBounds} from 'model/image-bounds';
-import {DefaultOptions, EventNames, StorageKeys, ImageTypes} from 'util/constants';
+import {DefaultOptions, EventNames, StorageKeys, ImageTypes, KeyCodes} from 'util/constants';
 import _ from 'lodash';
 import {ConnectionManager} from 'manager/connection-manager';
+
+const ZOOM_IN = 1;
+const ZOOM_OUT = -1;
+
+const MAX_ZOOM = 4.0;
+const MIN_ZOOM = 0.125;
 
 @customElement('main-panel')
 @inject(Element, I18N, Router, ImageHandler, EventAggregator, FileManager, ConnectionManager)
@@ -47,11 +53,11 @@ export class MainPanel {
     folders = [];
 
     showSettings = false;
+    fileInputName = 'file-input-name';
     connected = false;
     subscribers = [];
 
-    _MAX_ZOOM = 4.0;
-    _MIN_ZOOM = 0.125;
+
 
     constructor(element, i18n, router, imageHandler, eventAggregator, fileManager, connectionManager) {
         this.element = element;
@@ -77,10 +83,12 @@ export class MainPanel {
         if (!_.isNil(folder)) {
             this._handleFolderSelected(folder);
         }
+
         this._startPing();
     }
 
     detached() {
+        $(this.element).off('keydown');
         _.forEach(this.subscribers, sub => {
             sub.dispose();
         });
@@ -93,27 +101,56 @@ export class MainPanel {
     _startPing() {
         let f = () => {
             this.connected = this.connectionManager.isConnected();
-            _.delay(f, 1000);
+            _.delay(f, 2000);
         }
         f();
     }
 
     _setupListeners() {
-        this.subscribers.push(this.eventAggregator.subscribe('canvas-click', this._handleCanvasClick.bind(this)));
         this.subscribers.push(this.eventAggregator.subscribe(EventNames.SELECTION_CHANGED, this._handleSelectionChange.bind(this)));
         this.subscribers.push(this.eventAggregator.subscribe(EventNames.NEW_REGION, this._handleNewRegion.bind(this)));
         this.subscribers.push(this.eventAggregator.subscribe(EventNames.SAVE_REGIONS, this._handleSaveRegions.bind(this)));
         this.subscribers.push(this.eventAggregator.subscribe(EventNames.SAVE_SETTINGS, this._handleSaveSettings.bind(this)));
         this.subscribers.push(this.eventAggregator.subscribe(EventNames.FOLDER_SELECTED, this._handleFolderSelected.bind(this)));
+
+        $(this.element).on('keydown', this._handleKeydown.bind(this));
+    }
+
+    _handleKeydown(event) {
+        if (event.ctrlKey) {
+            if (this.image) {
+                switch(event.keyCode) {
+                    case KeyCodes.DEL:
+                        let curIndex = this.getSelectedIndex();
+                        this.deleteSelected();
+                        if (!_.isEmpty(this.boundRegions)) {
+                            this.selectedRegion = this.boundRegions[curIndex];
+                        }
+                        break;
+                    case KeyCodes.NUMPAD_ADD:
+                        this.zoom(ZOOM_IN);
+                        break;
+                    case KeyCodes.NUMPAD_SUBTRACT:
+                        this.zoom(ZOOM_OUT);
+                        break;
+                    case KeyCodes.KEY_N:
+                        this.addRegion();
+                        break;
+                    case KeyCodes.Key_P:
+                        this.process();
+                        break;
+                }
+            }
+            if(event.keyCode === KeyCodes.KEY_O) {
+                this.eventAggregator.publish(EventNames.FILE_OPEN, this.fileInputName);
+            }
+        }
+
     }
 
     _handleSaveSettings(settings) {
         this.options = _.merge(this.options, settings);
         localStorage.setItem(StorageKeys.OPTIONS, JSON.stringify(this.options));
-    }
-
-    _handleCanvasClick(clickData) {
-        console.log(">>> ", clickData.x, ' and ', clickData.y);
     }
 
     _handleNewRegion(boundImage) {
@@ -203,17 +240,21 @@ export class MainPanel {
         return this.boundRegions.length > 0;
     }
 
-    addRectangle() {
-        this.eventAggregator.publish('add-rectangle');
+    addRegion() {
+        this.eventAggregator.publish(EventNames.ADD_REGION);
     }
 
     deleteSelected() {
-        let index = _.findIndex(this.boundRegions, o => { return o === this.selectedRegion});
+        let index = this.getSelectedIndex();
         if (index >= 0) {
             this.boundRegions.splice(index, 1);
             this.eventAggregator.publish('delete-selected', this.selectedRegion);
             this.selectedRegion = undefined;
         }
+    }
+
+    getSelectedIndex() {
+        return _.findIndex(this.boundRegions, o => { return o === this.selectedRegion});
     }
 
     clear() {
@@ -232,13 +273,13 @@ export class MainPanel {
         this.toobig = false;
         this.toosmall = false;
         if (factor > 0) {
-            this.scalingFactor = Math.min(this.scalingFactor / 0.5, this._MAX_ZOOM);
+            this.scalingFactor = Math.min(this.scalingFactor / 0.5, MAX_ZOOM);
         } else {
-            this.scalingFactor = Math.max(this.scalingFactor * 0.5, this._MIN_ZOOM);
+            this.scalingFactor = Math.max(this.scalingFactor * 0.5, MIN_ZOOM);
         }
         if (this.scalingFactor <= this._MIN_ZOOM) {
             this.toosmall = true;
-        } else if (this.scalingFactor >= this._MAX_ZOOM) {
+        } else if (this.scalingFactor >= MAX_ZOOM) {
             this.toobig = true;
         }
     }
@@ -258,7 +299,7 @@ export class MainPanel {
         return classNames;
     }
 
-    process(f) {
+    process() {
         this.processing = true;
         this.clearBoxes();
 
