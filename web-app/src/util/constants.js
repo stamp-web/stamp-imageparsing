@@ -44,6 +44,12 @@ export const DefaultOptions = {
     }
 };
 
+export const ServerConfiguration = {
+    hostname:   'localhost',
+    serverPort: 9007,
+    scheme:     'http'
+}
+
 export const KeyCodes = {
     TAB:             9,
     DEL:             46,
@@ -65,7 +71,8 @@ export const EventNames = {
     SAVE_REGIONS:      'save-regions',
     SAVE_SETTINGS:     'save-settings',
     SELECTION_CHANGED: 'selection-changed',
-    STATUS_MESSAGE:    'status-message'
+    STATUS_MESSAGE:    'status-message',
+    ZOOM:              'zoom'
 };
 
 export const StorageKeys = {

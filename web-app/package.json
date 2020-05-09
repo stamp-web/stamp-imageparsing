@@ -86,6 +86,7 @@
         ]
     },
     "dependencies": {
+        "@fnando/sparkline": "^0.3.10",
         "@stomp/stompjs": "github:stomp-js/stompjs",
         "aurelia-fetch-client": "^1.8.2",
         "bluebird": "^3.4.1",

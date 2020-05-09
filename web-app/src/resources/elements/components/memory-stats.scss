@@ -13,11 +13,12 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-import uuid from 'uuid/v1';
+@import '../../themes/variables';
 
-export class IdentityHelper {
-
-    static generateUUIDKey() {
-        return uuid();
+memory-stats {
+    .sparkline {
+        border: $panel-border;
+        stroke: $pallet-primary-medium;
+        fill: $pallet-primary-offset;
     }
 }

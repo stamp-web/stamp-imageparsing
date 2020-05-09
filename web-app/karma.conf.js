@@ -20,7 +20,7 @@ let files = [
 let isWindows = /^win/.test(process.platform);
 
 let browsers = ['Chrome'];
-let reporters = ['progress', 'junit', 'coverage'];
+let reporters = ['progress', 'junit'/*, 'coverage'*/];
 if (isWindows) {
    // reporters.push('karma-remap-istanbul');
     browsers = ['FirefoxHeadless'];

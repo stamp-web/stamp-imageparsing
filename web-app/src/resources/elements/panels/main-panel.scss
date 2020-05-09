@@ -21,24 +21,26 @@ $settings-panel-width: 45rem;
 $side-panel-width: 30rem;
 
 .main-panel {
-    display:        flex;
+    display: flex;
     flex-direction: column;
-    height:         100%;
-    width:          100%;
+    height: 100%;
+    width: 100%;
 
     .header-pane {
         background-color: $panel-bg;
-        flex:             0 0 auto;
-        height:           30px;
+        flex: 0 0 auto;
+        height: 30px;
     }
 
 
     .content-pane {
-        border-top:     $separator-border;
-        display:        flex;
-        flex:           1 0 auto;
+        border-top: $separator-border;
+        display: flex;
+        flex: 1 0 auto;
         flex-direction: row;
-        height:         calc(100% - #{$footer-height + $header-height});
+        height: calc(100% - #{$footer-height + $header-height});
+        overflow: hidden;
+        width: 100%;
 
         > * {
 
@@ -46,43 +48,68 @@ $side-panel-width: 30rem;
 
         settings-panel {
             border-left: $separator-border;
-            flex:        0 0 auto;
-            width:       $settings-panel-width;
+            flex: 0 0 auto;
+            width: $settings-panel-width;
         }
 
         image-canvas {
-            flex:      1 0 auto;
+            flex: 1 0 auto;
             max-width: 100%;
 
             &.with-side-panel {
                 max-width: calc(100% - #{$side-panel-width});
             }
+
             &.with-settings-panel {
                 max-width: calc(100% - #{$settings-panel-width});
             }
+
             &.with-side-panel.with-settings-panel {
                 max-width: calc(100% - #{$side-panel-width + $settings-panel-width});
             }
         }
 
         side-panel {
-            flex:  0 0 auto;
+            flex: 0 0 auto;
             width: $side-panel-width;
+            height: 100%;
         }
     }
 
     .footer-pane {
+        align-items: center;
         border-top: $panel-border;
-        display:    flex;
-        flex:       0 0 auto;
-        height:     30px;
-        padding:    $padding-thick;
+        display: flex;
+        flex: 0 0 auto;
+        height: 30px;
+        padding: $padding-thick;
 
-        .connected {
-            color: $success;
+        .connection-state {
+            align-items: center;
+            display: inline-flex;
+
+            .connected {
+                color: $success;
+            }
+
+            .not-connected {
+                color: $failure;
+            }
         }
-        .not-connected {
-            color: $failure;
+
+        .zoom-info {
+            align-items: center;
+            display: inline-flex;
+            flex-direction: row;
+            margin-right: $margin-thick;
+        }
+
+        .memory-stats {
+            margin-left: auto;
+
+            memory-stats {
+                margin-left: $margin-med;
+            }
         }
     }
 

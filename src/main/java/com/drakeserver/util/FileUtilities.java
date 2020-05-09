@@ -39,14 +39,14 @@ import com.drakeserver.image.processing.ImageProcessorService;
 @Component
 public class FileUtilities {
 	
-	private static final Logger LOGGER = Logger.getLogger(ImageProcessorService.class.getName());
+	private static final Logger logger = Logger.getLogger(ImageProcessorService.class.getName());
 	
 	private static final String REMOTE_NAME = "Remote name";
 	private static final String DRIVE_LETTER_REGEX = "^[A-Za-z]:(.*)";
 
 	private static final boolean IS_WINDOWS = isWindows();
 
-	private static boolean isWindows() {
+	public static boolean isWindows() {
 		String os = System.getProperty("os.name").toLowerCase();
 		return os.startsWith("windows");
 	}
@@ -58,7 +58,7 @@ public class FileUtilities {
 			String letter = filename.substring(0,2);
 			String networkMapping = FileUtilities.getNetworkMapping(letter);
 			if (networkMapping != null) {
-				LOGGER.log(Level.FINE, "Replacing \"{0}\" with Network Path \"{1}\"", new Object[] {letter, networkMapping});
+				logger.log(Level.FINE, "Replacing \"{0}\" with Network Path \"{1}\"", new Object[] {letter, networkMapping});
 				filename = filename.replace(letter, networkMapping);
 			}
 		}
@@ -93,7 +93,9 @@ public class FileUtilities {
 			}
 			return networkMapping;
 		} catch (Exception e) {
-			throw new IllegalStateException("Unable to run 'net use' on " + driveLetter, e);
+			logger.log(Level.WARNING, "Unable to run 'net use' on " + driveLetter);
+			logger.log(Level.FINER, e.getMessage(), e);
+			return null;
 		}
 	}
 }

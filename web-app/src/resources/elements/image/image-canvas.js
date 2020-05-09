@@ -74,6 +74,7 @@ export class ImageCanvas {
         this._subscribers.push(this.eventAggregator.subscribe('delete-selected', this.deleteSelected.bind(this)));
         this._subscribers.push(this.bindingEngine.collectionObserver(this.boundRegions).subscribe(this.regionsChanged.bind(this)));
         this.repaintDebounced = _.throttle(this.repaint.bind(this), 750);
+        this._zoomDebounced = _.throttle(this._zoom.bind(this), 350);
     }
 
     deleteSelected() {
@@ -139,6 +140,19 @@ export class ImageCanvas {
             }
         }
     }
+
+    mouseWheel($event) {
+        if ($event.ctrlKey && Math.abs($event.wheelDelta) > 100) {
+            this._zoomDebounced($event.wheelDelta);
+            return false;
+        }
+        return true;
+    }
+
+    _zoom(wheelDelta) {
+        this.eventAggregator.publish(EventNames.ZOOM, Math.sign(wheelDelta));
+    }
+
 
     mouseMoveCanvas(evt) {
         if (this._clickMode === ClickMode.box && this._boxStart) {

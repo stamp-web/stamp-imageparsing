@@ -22,7 +22,7 @@ import {changeDpiBlob} from 'changedpi';
 import {FileManager} from 'manager/file-manager';
 import {ImageHandler} from 'processing/image/image-handler';
 import {ImageBounds} from 'model/image-bounds';
-import {DefaultOptions, EventNames, StorageKeys, ImageTypes, KeyCodes} from 'util/constants';
+import {DefaultOptions, EventNames, StorageKeys, ImageTypes, KeyCodes, ChannelNames} from 'util/constants';
 import _ from 'lodash';
 import {ConnectionManager} from 'manager/connection-manager';
 
@@ -56,7 +56,7 @@ export class MainPanel {
     fileInputName = 'file-input-name';
     connected = false;
     subscribers = [];
-
+    memoryStats = [];
 
 
     constructor(element, i18n, router, imageHandler, eventAggregator, fileManager, connectionManager) {
@@ -112,8 +112,19 @@ export class MainPanel {
         this.subscribers.push(this.eventAggregator.subscribe(EventNames.SAVE_REGIONS, this._handleSaveRegions.bind(this)));
         this.subscribers.push(this.eventAggregator.subscribe(EventNames.SAVE_SETTINGS, this._handleSaveSettings.bind(this)));
         this.subscribers.push(this.eventAggregator.subscribe(EventNames.FOLDER_SELECTED, this._handleFolderSelected.bind(this)));
-
+        this.subscribers.push(this.eventAggregator.subscribe(EventNames.ZOOM, this.zoom.bind(this)));
+        this.connectionManager.addSubscriber(ChannelNames.MEMORY_STATS, this._handleMemoryStats.bind(this));
         $(this.element).on('keydown', this._handleKeydown.bind(this));
+    }
+
+    _handleMemoryStats(response) {
+        let stats = JSON.parse(_.get(response, 'body', "{}"));
+        let freeMemory = _.get(stats, 'freeMemory', -1) * 1.0;
+        let totalMemory = _.get(stats, 'totalMemory', -1) * 1.0;
+        let used = freeMemory / totalMemory;
+        let data = _.takeRight(this.memoryStats, 9);
+        data.push(used);
+        this.memoryStats = data;
     }
 
     _handleKeydown(event) {
@@ -288,6 +299,7 @@ export class MainPanel {
         this.showSettings = !this.showSettings;
     }
 
+    @computedFrom('showSettings', 'showSidePanel')
     get imagePanelClassnames() {
         let classNames = '';
         if( this.showSettings ) {

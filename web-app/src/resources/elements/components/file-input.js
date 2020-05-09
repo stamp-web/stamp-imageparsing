@@ -14,7 +14,6 @@
  limitations under the License.
  */
 
-
 import {customElement, bindable, computedFrom, bindingMode, inject} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import _ from 'lodash';

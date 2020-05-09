@@ -1,7 +1,9 @@
 <template>
     <require from="resources/elements/image/image-canvas"></require>
     <require from="resources/elements/components/file-input"></require>
+    <require from="resources/elements/components/memory-stats"></require>
     <require from="resources/value-converters/as-percentage"></require>
+
     <require from="resources/elements/panels/main-panel.css"></require>
     <require from="./side-panel"></require>
     <require from="./settings-panel"></require>
@@ -9,7 +11,7 @@
 
 <div class="main-panel">
     <header-pane page-title="${'titles.image-editing'|t}">
-        <button class="btn btn-secondary" click.trigger="process()" disabled.bind="!image || processing"><i class="sw-icon-stamp"></i></button>
+        <button class="btn btn-secondary" click.trigger="process()" disabled.bind="!image || processing || !connected"><i class="sw-icon-stamp"></i></button>
 
         <button class="btn btn-secondary" click.trigger="addRegion()" disabled.bind="!image || processing"><i class="sw-icon-plus"></i></button>
         <button class="btn btn-secondary" click.trigger="deleteSelected()" disabled.bind="!selectedRegion || processing"><i class="sw-icon-delete"></i></button>
@@ -37,11 +39,14 @@
                     folders.bind="folders"
                     options.bind="options"
                     selected-region.bind="selectedRegion"></side-panel>
-
     </div>
     <div class="footer-pane panel">
-        <label>${'labels.zoom'|t}:</label> ${scalingFactor|asPercentage}
-        <div><i class="${connected ? 'connected sw-icon-select-all-2' : 'not-connected sw-icon-unlink'}"></i>${`messages.connected-${connected}`|t}</div>
+        <div class="zoom-info">
+            ${'labels.zoom'|t}: ${scalingFactor|asPercentage}
+        </div>
+        <div class="connection-state"><i class="${connected ? 'connected sw-icon-select-all-2' : 'not-connected sw-icon-unlink'}"></i>${`messages.connected-${connected}`|t}</div>
+        <div class="memory-stats" show.bind="memoryStats.length > 1">${'labels.memory'|t}<memory-stats data.bind="memoryStats"></memory-stats></div>
+
     </div>
 </div>
 </template>

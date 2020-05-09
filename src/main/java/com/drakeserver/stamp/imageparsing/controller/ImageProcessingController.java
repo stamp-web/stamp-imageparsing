@@ -37,6 +37,7 @@ public class ImageProcessingController {
 	@RequestMapping(value = "/api/svc/process-image", method = RequestMethod.POST)
 	public List<BoundingBox> processImage(@RequestBody Map<String, ?> payload) throws IOException {
 		List<BoundingBox> bounds = imageProcessorService.process(payload);
+		System.gc();
 		return bounds;
 	}
 	

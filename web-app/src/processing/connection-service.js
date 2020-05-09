@@ -1,5 +1,5 @@
 /*
- Copyright 2019 Jason Drake (jadrake75@gmail.com)
+ Copyright 2020 Jason Drake (jadrake75@gmail.com)
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -13,26 +13,21 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-import {StorageKeys} from "../util/constants";
-import _ from "lodash";
-import {HttpClient, json} from 'aurelia-fetch-client';
+import {HttpClient} from 'aurelia-fetch-client';
+import {ServerConfig} from "manager/server-config";
 
 export class ConnectionService {
 
-    static inject = [HttpClient];
+    static inject = [HttpClient, ServerConfig];
 
-    constructor(httpClient) {
+    constructor(httpClient, serverConfig) {
         this.httpClient = httpClient;
+        this.serverConfig = serverConfig;
     }
 
     _getServerURL() {
-        let opts = sessionStorage.getItem(StorageKeys.SERVER_INFO);
-        if (!_.isNil(opts)) {
-            this.options = _.assign(this.options, JSON.parse(opts));
-        }
-        return _.get(this.options, 'server-address', 'http://localhost:9007');
+        return this.serverConfig.buildServerUrl();
     }
-
 
     isAlive() {
         return this.get('/api/svc/alive');

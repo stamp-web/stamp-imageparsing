@@ -1,0 +1,55 @@
+/*
+ Copyright 2020 Jason Drake (jadrake75@gmail.com)
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
+@import '../../themes/variables';
+
+.system-settings {
+    margin: $margin-thick;
+
+    max-width: 50em;
+
+    .port-number {
+        max-width:6rem;
+    }
+
+    .security-key-group {
+        display: flex;
+        flex-direction: column;
+
+        .security-key {
+            align-items: center;
+            display: inline-flex;
+
+            .security-key-value {
+                font-size: $font-size-sm;
+                margin-right: $margin-thick;
+            }
+
+            .generate-security-key {
+                display: inline-flex;
+
+                img {
+                    height: 1.6rem;
+                    margin-right: $margin-med;
+                    width: 1.6rem;
+                }
+            }
+        }
+    }
+
+    form {
+        margin-bottom: $margin-thick * 2;
+    }
+}

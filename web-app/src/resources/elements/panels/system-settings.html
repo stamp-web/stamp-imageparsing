@@ -1,0 +1,40 @@
+<template>
+    <require from="resources/elements/panels/header-pane"></require>
+
+    <require from="resources/elements/panels/system-settings.css"></require>
+
+    <div class="system-settings-wrapper">
+        <header-pane page-title="${'titles.settings'|t}" show-output-folder="false"></header-pane>
+        <div class="system-settings">
+            <form>
+                <div class="form-group">
+                    <label>${'labels.port'|t}</label>
+                    <input type="number" class="form-control port-number" value.bind="port">
+                </div>
+                <div class="form-group">
+                    <label>${'labels.hostname'|t}</label>
+                    <input type="text" class="form-control server-address" value.bind="hostname">
+                </div>
+                <div class="form-group security-key-group">
+                    <label>${'labels.generate-security-key'|t}</label>
+                    <div class="security-key">
+                        <span class="security-key-value">
+                        ${applicationKey}
+                        </span>
+                        <button class="btn btn-secondary generate-security-key" click.delegate="generateSecurityKey()">
+                            <img src="assets/svg/app-key.svg">
+                            ${'actions.generate-key'|t}
+                        </button>
+                    </div>
+
+                </div>
+
+            </form>
+            <div class="button-actions">
+                <button class="btn btn-primary" click.delegate="save()">${'actions.save'|t}</button>
+            </div>
+
+        </div>
+    </div>
+
+</template>

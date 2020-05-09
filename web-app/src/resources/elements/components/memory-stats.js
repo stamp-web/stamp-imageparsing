@@ -13,11 +13,28 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-import uuid from 'uuid/v1';
 
-export class IdentityHelper {
+import {customElement, bindable, inject} from 'aurelia-framework';
+import sparkline from "@fnando/sparkline";
+import _ from 'lodash';
 
-    static generateUUIDKey() {
-        return uuid();
+@inject(Element)
+@customElement('memory-stats')
+export class MemoryStats {
+
+    @bindable width = 75;
+    @bindable height = 20;
+    @bindable data = [];
+
+    constructor(element) {
+        this.element = element;
     }
+
+    dataChanged() {
+        if (_.size(this.data) > 1) {
+            sparkline(this.element.querySelector('.sparkline'), this.data);
+        }
+    }
+
+
 }

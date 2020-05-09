@@ -32,6 +32,7 @@ public class MemoryInfo {
 		Runtime rt = Runtime.getRuntime();
 		model.setFreeMemory(rt.freeMemory());
 		model.setMaxMemory(rt.maxMemory());
+		model.setTotalMemory(rt.totalMemory());
 		return model;
 	}
 }

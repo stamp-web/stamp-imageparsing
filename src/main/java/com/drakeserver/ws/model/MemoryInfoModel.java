@@ -27,4 +27,5 @@ public class MemoryInfoModel {
 
 	private long freeMemory;
 	private long maxMemory;
+	private long totalMemory;
 }

@@ -1,5 +1,5 @@
 /*
- Copyright 2019 Jason Drake (jadrake75@gmail.com)
+ Copyright 2020 Jason Drake (jadrake75@gmail.com)
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -15,22 +15,24 @@
  */
 import {observable, LogManager} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
-import {EventNames, StorageKeys} from '../util/constants';
+import {ServerConfig} from './server-config';
+import {EventNames} from 'util/constants';
 import {Client, Message} from '@stomp/stompjs';
 import _ from 'lodash';
 import SockJS from 'sockjs-client';
 
 export class ConnectionManager {
 
-    static inject = [EventAggregator];
+    static inject = [EventAggregator, ServerConfig];
 
     listeners = [];
     stompClient;
     @observable connected;
     subscribers = {};
 
-    constructor(eventAggregator) {
+    constructor(eventAggregator, serverConfig) {
         this.eventAggregator = eventAggregator;
+        this.serverConfig = serverConfig;
         this.logger = LogManager.getLogger('web-socket-connection');
         this._initialize();
     }
@@ -140,20 +142,12 @@ export class ConnectionManager {
         this.listeners.push(this.eventAggregator.subscribe(EventNames.REMOTE_MESSAGING, this.connect.bind(this)));
     }
 
-    _enureSettings() {
-        let opts = sessionStorage.getItem(StorageKeys.SERVER_INFO);
-        this.options = !_.isNil(opts) ? _.assign(this.options, JSON.parse(opts)) : {};
-    }
-
     _getServerURL() {
-        this._enureSettings();
-        return _.get(this.options, 'server-address', 'http://localhost:9007');
+        return this.serverConfig.buildServerUrl();
     }
 
     _getApplicationKey() {
-        this._enureSettings();
-        let apiKey =  _.get(this.options, 'application-key');
-        return apiKey;
+        return this.serverConfig.getApplicationKey();
     }
 
     /**

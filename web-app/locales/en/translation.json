@@ -11,13 +11,8 @@
         "image-processing": "Image Processing Settings",
         "image-editing": "Image Editing",
         "manage-folders": "Manage Folders",
+        "settings": "Settings",
         "welcome": "Welcome"
-    },
-
-    "route": {
-        "image-manage": "Image Editing",
-        "manage-folders": "Manage Folders",
-        "welcome": "Home"
     },
 
     "messages": {
@@ -47,11 +42,12 @@
         "apply": "Apply",
         "cancel": "Cancel",
         "done": "Done",
-        "generate-key": "Generate Security Key",
+        "generate-key": "Generate new key",
         "manage-folders": "Manage Folders",
         "ok": "Ok",
         "open-image": "Image Editing",
         "settings": "Settings",
+        "save": "Save",
         "start-processor": "Start Image Processor"
     },
     "labels": {
@@ -69,11 +65,15 @@
         "jpeq-quality-subtext": "JPEG is a lossy format and there will always be some level of fidelity loss on saving bursting images.  In general a range of 75-95% will provide the best balance between quality and file size.",
         "filename": "Filename",
         "folder": "Folder",
+        "hostname": "Server hostname",
+        "memory": "Memory usage",
+        "generate-security-key": "Security key",
         "min-bounding-area": "Minimum bounding area",
         "min-intercepting-area": "Minimum intercepting area",
         "max-bounding-area": "Maximum bounding percentage",
         "select-image-placeholder": "Select an image",
         "output-folder": "Target Folder:",
+        "port": "Server port",
         "tiff-compression": "TIFF Compression Mode",
         "zoom": "Zoom",
 

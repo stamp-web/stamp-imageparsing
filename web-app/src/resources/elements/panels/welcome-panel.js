@@ -1,5 +1,5 @@
 /*
- Copyright 2018 Jason Drake (jadrake75@gmail.com)
+ Copyright 2020 Jason Drake (jadrake75@gmail.com)
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -28,16 +28,6 @@ export class WelcomePanel {
             name: 'start-image-processor',
             label: 'actions.start-processor',
             icon: 'assets/svg/process.svg'
-        },
-        {
-            name: 'settings',
-            label: 'actions.settings',
-            icon: 'assets/svg/settings.svg'
-        },
-        {
-            name: 'regen-uuid',
-            label: 'actions.generate-key',
-            icon: 'assets/svg/app-key.svg'
         }
     ];
 
@@ -67,10 +57,7 @@ export class WelcomePanel {
         }
         switch(action.name) {
             case 'start-image-processor':
-                this.processManager.start();
-                break;
-            case 'regen-uuid':
-                IdentityHelper.generateUUID(true/* forced */);
+                this.processManager.start(true);
                 break;
         }
     }
