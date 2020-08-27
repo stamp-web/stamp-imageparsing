@@ -1,5 +1,7 @@
 "use strict";
 const path = require('path');
+const yargs = require('yargs');
+const _ = require('lodash');
 
 const project = require('./aurelia_project/aurelia.json');
 
@@ -19,11 +21,24 @@ let files = [
 
 let isWindows = /^win/.test(process.platform);
 
+let reporters = ['progress', 'junit'];
 let browsers = ['Chrome'];
-let reporters = ['progress', 'junit'/*, 'coverage'*/];
-if (isWindows) {
-   // reporters.push('karma-remap-istanbul');
-    browsers = ['FirefoxHeadless'];
+
+let configureBrowsers = () => {
+    if (isWindows) {
+        //reporters.push('karma-remap-istanbul');
+        browsers = ['FirefoxHeadless'];
+    }
+    if (yargs.argv.chrome && !_.includes(browsers, 'Chrome')) {
+        browsers.push('Chrome');
+    }
+};
+
+configureBrowsers();
+
+// add coverage flag if on command line
+if (yargs.argv.coverage) {
+    reporters.push('coverage');
 }
 
 module.exports = function (config) {
@@ -43,13 +58,13 @@ module.exports = function (config) {
         },
         preprocessors:         {
             [project.unitTestRunner.source]: [project.transpiler.id],
-            'scripts/app-bundle.js':         ['coverage'],
+            'src/**/*.js':                   ['coverage'],
             //'src/**/*.js': ['babel']
         },
         coverageReporter:      {
             dir:       'test/coverage',
             reporters: [
-                {type: 'lcov', subdir: 'report-lcov'},
+                {type: 'lcov'},
                 {type: 'text-summary'}
             ]
         },

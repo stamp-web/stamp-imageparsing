@@ -1,0 +1,75 @@
+/*
+ Copyright 2020 Jason Drake (jadrake75@gmail.com)
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
+@import '../../themes/variables';
+
+toggle-button {
+    display: flex;
+    height: 100%;
+    min-height: $input-height - 0.4rem;
+    min-width: $input-height + 1.2rem;
+
+    [type="checkbox"] {
+        left: -9999px;
+        position: absolute;
+
+        &:checked + label span:last-child {
+            background: $input-toggle-color;
+
+            &::before {
+                background-image: url(assets/images/checkmark.svg);
+                background-repeat: no-repeat;
+                background-position: center;
+                background-size: 70%;
+                transform: translateX(105%);
+            }
+        }
+    }
+
+    label {
+        align-items: center;
+        display: flex;
+        flex: 1 1 auto;
+        height: 100%;
+        justify-content: space-between;
+
+        span:last-child {
+            border-radius: 1.5rem;
+            box-shadow: inset 0 0 0.5rem $input-border-focus;
+            background: $input-border-focus;
+            height: 100%;
+            position: relative;
+            transition: all 0.3s;
+            width: 100%;
+
+            &::before, ::after {
+                content: "";
+                position: absolute;
+            }
+
+            &::before {
+                left: 1px;
+                top: 1px;
+                width: calc(50% - 2px);
+                height: calc(100% - 2px);
+                background: $button-bg;
+                border-radius: 1.5rem;
+                z-index: 1;
+                transition: transform 0.3s;
+            }
+
+        }
+    }
+}

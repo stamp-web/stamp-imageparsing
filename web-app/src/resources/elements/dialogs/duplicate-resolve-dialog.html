@@ -1,0 +1,38 @@
+<template>
+    <require from="../components/toggle-button"></require>
+    <require from="resources/elements/dialogs/duplicate-resolve-dialog.css"></require>
+    <ux-dialog class="duplicate-resolve-dialog">
+        <ux-dialog-body>
+            <h3>${'titles.duplicates-detected'|t}</h3>
+            <p>${'messages.duplicates-msg'|t}</p>
+            <div class="duplicates-wrapper">
+                <div class="duplicates-header">
+                    <span class="name-col">Name</span>
+                    <span class="existing-col">Existing</span>
+                    <span class="proposed-col">Proposed</span>
+                    <span class="overwrite-col">Overwrite?</span>
+                </div>
+                <div class="duplicates-list">
+                    <div class="image-row" repeat.for="duplicate of duplicates">
+                        <span class="name-col">
+                            ${duplicate.name}
+                        </span>
+                        <span class="existing-col">
+                            <img src.bind="duplicate.duplicateImage">
+                        </span>
+                        <span class="proposed-col">
+                            <img class="${duplicate.rotate ? rotationClass(duplicate) : ''}" src.bind="duplicate.image">
+                        </span>
+                        <span class="overwrite-col">
+                            <toggle-button value.bind="duplicate.overwrite"></toggle-button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </ux-dialog-body>
+        <ux-dialog-footer>
+            <button class="btn btn-primary" click.trigger="controller.ok(getChosenDuplicates())">${'actions.ok'|t}</button>
+            <button class="btn btn-secondary" click.trigger="controller.cancel()">${'actions.cancel'|t}</button>
+        </ux-dialog-footer>
+    </ux-dialog>
+</template>

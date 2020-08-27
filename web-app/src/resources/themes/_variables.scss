@@ -18,6 +18,7 @@ $color-gray: #ccc;
 $color-gray-dark: #434343;
 $color-blue: #005580;
 $color-blue-bright: #0088f0;
+$color-green: #21B04B;
 $color-green-bright: #00e077;
 $color-white: #fefefe;
 $color-red: #aa0000;
@@ -48,6 +49,7 @@ $input-height: 2.6rem;
 $input-disabled: $pallet-base-medium;
 $input-border-focus: $pallet-base-dark;
 $input-border-color: $pallet-base-medium;
+$input-toggle-color: $color-green;
 
 $selection-color: $pallet-primary-medium;
 $selection-text-color: $color-white;
@@ -75,6 +77,12 @@ $legend-color: $pallet-primary-medium;
 $panel-bg: $pallet-base-light;
 $panel-border: 1px solid $pallet-base-medium;
 $panel-overlay: $color-gray-dark;
+
+$table-header-bg: $pallet-base-very-dark;
+$table-header-color: $pallet-base-light;
+$table-border: 2px $pallet-base-medium solid;
+$table-row-border: 1px $pallet-base-medium solid;
+$table-row-hover-bg: $pallet-base;
 
 $success: $pallet-primary;
 $failure: $color-red;

@@ -18,6 +18,7 @@ import {customElement, computedFrom, inject, bindable, observable, LogManager} f
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {I18N} from 'aurelia-i18n';
 import {Router} from 'aurelia-router';
+import {DialogService} from 'aurelia-dialog';
 import {changeDpiBlob} from 'changedpi';
 import {FileManager} from 'manager/file-manager';
 import {ImageHandler} from 'processing/image/image-handler';
@@ -25,6 +26,7 @@ import {ImageBounds} from 'model/image-bounds';
 import {DefaultOptions, EventNames, StorageKeys, ImageTypes, KeyCodes, ChannelNames} from 'util/constants';
 import _ from 'lodash';
 import {ConnectionManager} from 'manager/connection-manager';
+import {DuplicateResolveDialog} from "../dialogs/duplicate-resolve-dialog";
 
 const ZOOM_IN = 1;
 const ZOOM_OUT = -1;
@@ -33,7 +35,7 @@ const MAX_ZOOM = 4.0;
 const MIN_ZOOM = 0.125;
 
 @customElement('main-panel')
-@inject(Element, I18N, Router, ImageHandler, EventAggregator, FileManager, ConnectionManager)
+@inject(Element, I18N, Router, ImageHandler, EventAggregator, FileManager, ConnectionManager, DialogService)
 export class MainPanel {
 
     @observable boxes = [];
@@ -59,7 +61,7 @@ export class MainPanel {
     memoryStats = [];
 
 
-    constructor(element, i18n, router, imageHandler, eventAggregator, fileManager, connectionManager) {
+    constructor(element, i18n, router, imageHandler, eventAggregator, fileManager, connectionManager, dialogService) {
         this.element = element;
         this.i18n = i18n;
         this.router = router;
@@ -68,6 +70,7 @@ export class MainPanel {
         this.logger = LogManager.getLogger('main-panel');
         this.fileManager = fileManager;
         this.connectionManager = connectionManager;
+        this.dialogService = dialogService;
 
         this.fileSelected = this._fileSelected.bind(this);
     }
@@ -112,6 +115,7 @@ export class MainPanel {
         this.subscribers.push(this.eventAggregator.subscribe(EventNames.SAVE_REGIONS, this._handleSaveRegions.bind(this)));
         this.subscribers.push(this.eventAggregator.subscribe(EventNames.SAVE_SETTINGS, this._handleSaveSettings.bind(this)));
         this.subscribers.push(this.eventAggregator.subscribe(EventNames.FOLDER_SELECTED, this._handleFolderSelected.bind(this)));
+        this.subscribers.push(this.eventAggregator.subscribe(EventNames.DUPLICATE_DETECTION, this._handleDuplicates.bind(this)));
         this.subscribers.push(this.eventAggregator.subscribe(EventNames.ZOOM, this.zoom.bind(this)));
         this.connectionManager.addSubscriber(ChannelNames.MEMORY_STATS, this._handleMemoryStats.bind(this));
         $(this.element).on('keydown', this._handleKeydown.bind(this));
@@ -125,6 +129,24 @@ export class MainPanel {
         let data = _.takeRight(this.memoryStats, 9);
         data.push(used);
         this.memoryStats = data;
+    }
+
+    _handleDuplicates(event) {
+        this.dialogService.open({
+            viewModel: DuplicateResolveDialog,
+            model: {
+                data: this.data,
+                duplicates: _.cloneDeep(event.duplicates)
+            }
+        }).then(dialogResult => {
+            dialogResult.closeResult.then(result => {
+                if(!result.wasCancelled) {
+                    let duplicates = _.get(result, 'output');
+                    this._handleSaveRegions(duplicates, 'process-duplicates',true);
+                }
+
+            });
+        });
     }
 
     _handleKeydown(event) {
@@ -174,8 +196,8 @@ export class MainPanel {
         this.selectedRegion = region;
     }
 
-    _handleSaveRegions(regions) {
-        this.handler.saveRegions(this.data, regions, this.options, this.inputFile);
+    _handleSaveRegions(regions, evt, overwriteImage = false) {
+        this.handler.saveRegions(this.data, regions, this.options, overwriteImage);
     }
 
     _handleFolderSelected(folderName) {

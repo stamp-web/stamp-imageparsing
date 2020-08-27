@@ -17,7 +17,7 @@
         "win32": "build --x64",
         "start": "electron .",
         "postinstall": "electron-builder install-app-deps",
-        "rebuild-modules": "electron-rebuild && node node_modules/java/postInstall.js",
+        "rebuild-modules": "electron-rebuild",
         "package-win": "electron-packager . stamp-imageparsing --overwrite --platform=win32 --arch=x64 --icon=assets/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Stamp Image Bursting Application\""
     },
     "build": {
@@ -160,6 +160,7 @@
         "through2": "^2.0.1",
         "uglify-js": "^2.6.3",
         "url": "^0.11.0",
-        "vinyl-fs": "^3.0.3"
+        "vinyl-fs": "^3.0.3",
+        "yargs": "^15.4.1"
     }
 }

@@ -87,23 +87,37 @@ export class ImageHandler {
         return q;
     }
 
-    saveRegions(data, regions, options) {
+    asDataUrlFromFile(filePath, filename) {
+        return this.remoteImageProcessor.getDataUrlFromImage(filePath, filename);
+    }
+
+    saveRegions(data, regions, options, overwrite = false) {
         let opts = _.cloneDeep(options);
+        let duplicateRegions = [];
+        let processed = 0;
         _.forEach(regions, region => {
             this.eventAggregator.publish(EventNames.STATUS_MESSAGE, {
                 message: this.i18n.tr('messages.saving-file', {filename: region.filePath}),
                 showBusy: true
             });
-            let path = _.get(region, 'folder.path');
-            let filePath = path + this.fileManager.getPathSeparator() + region.filePath;
-            if(this.fileManager.exists(filePath)) {
-                console.log('got a dup' + filePath);
-            }
             opts.mimeType = region.imageType ? this._imageToMimeType(region.imageType) : options.mimeType;
-            this.remoteImageProcessor.saveImages(data, region, opts,).then(() => {
+            let handleCompletion = (region) => {
+                processed++;
+                if(_.size(regions) === processed && _.size(duplicateRegions) > 0 ) {
+                    this.eventAggregator.publish(EventNames.DUPLICATE_DETECTION, {duplicates: duplicateRegions});
+                }
+            };
+            this.remoteImageProcessor.saveImage(data, region, opts, overwrite).then(() => {
                 log.info("saved -> " + region.filename);
+                handleCompletion();
             }).catch(e => {
-                log.error(e);
+                if(e.exists) {
+                    log.warn('existing -> ', e.exists);
+                    duplicateRegions.push(region);
+                } else {
+                    log.error(e);
+                }
+                handleCompletion();
             });
             this.eventAggregator.publish(EventNames.STATUS_MESSAGE, {dismiss: true});
         });

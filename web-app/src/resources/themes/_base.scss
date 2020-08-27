@@ -80,6 +80,12 @@ legend {
             border-color:     $button-bg;
         }
     }
+
+    &:focus,
+    &:active {
+        background-color: darken($button-bg-primary, 20%);
+        border-color:     darken($button-bg-primary, 20%);
+    }
 }
 
 .btn {

@@ -1,0 +1,120 @@
+/*
+ Copyright 2020 Jason Drake (jadrake75@gmail.com)
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
+@import '../../themes/variables';
+
+.duplicate-resolve-dialog {
+    display: flex;
+    flex-direction: column;
+    max-height: 60rem;
+
+    ux-dialog-body {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+        width: 75rem;
+    }
+
+
+    h3 {
+        margin-bottom: $margin-thick;
+    }
+
+    .duplicates-wrapper {
+        border: $table-border;
+        border-top-color: transparent;
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+
+        *[class*="-col"] {
+            padding: $padding-thick;
+        }
+
+        .existing-col, .proposed-col, .name-col {
+            width: 20rem;
+        }
+
+        .overwrite-col {
+            width: 10rem;
+            justify-content: center;
+        }
+
+        .duplicates-header {
+            background-color: $table-header-bg;
+            color: $table-header-color;
+            display: flex;
+            min-height: 3rem;
+
+            .overwrite-col {
+                width: 12.5rem;
+            }
+        }
+        .duplicates-list {
+            display: flex;
+            flex-direction: column;
+            overflow-y: scroll;
+
+
+            .image-row {
+                border-bottom: $table-row-border;
+                display: flex;
+                min-height: 20rem;
+                max-height: 20rem;
+
+
+                > span {
+                    align-items: center;
+                    display: flex;
+                    vertical-align: middle;
+                }
+
+                &:hover {
+                    background-color: $table-row-hover-bg;
+                }
+
+                &:last-child {
+                    border-bottom-color: transparent;
+                }
+
+                toggle-button {
+                    height: 2.1rem;
+                    width: 4rem;
+                }
+
+                img {
+                    left:       50%;
+                    max-width:  #{20rem - 2 * $padding-thick};
+                    max-height: #{20rem - 2 * $padding-thick};
+                    position:   relative;
+                    transform:  translateX(-50%);
+
+                    &.rotate-90 {
+                        transform: translateX(-50%) rotate(90deg);
+                    }
+
+                    &.rotate-180 {
+                        transform: translateX(-50%) rotate(180deg);
+                    }
+
+                    &.rotate-270 {
+                        transform: translateX(-50%) rotate(270deg);
+                    }
+                }
+            }
+        }
+    }
+
+}

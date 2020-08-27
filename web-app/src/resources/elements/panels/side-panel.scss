@@ -70,7 +70,9 @@ side-panel {
                     animation:                 rollDown 0.5s;
                     animation-timing-function: ease;
                 }
-
+                .form-row {
+                    flex-wrap: nowrap;
+                }
             }
         }
     }

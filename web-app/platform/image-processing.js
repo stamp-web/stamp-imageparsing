@@ -30,7 +30,17 @@ module.exports = function () {
     return {
 
 
-        saveImages: function (data, region, options = {}) {
+        getDataUrlFromImage: function(folderPath, filename) {
+            let fullPath = path.join((folderPath || __dirname), filename);
+            return new Promise(resolve => {
+                let img = new sharp(fullPath);
+                img.png().toBuffer().then(buf => {
+                    resolve('data:image/png;base64,' + buf.toString('base64'));
+                });
+            });
+        },
+
+        saveImage: function (data, region, options = {}, overwrite = false) {
             let mimeType = options.mimeType || jimp.MIME_JPEG;
             let q = new Promise((resolve, reject) => {
                 let img = new sharp(data).withMetadata();
@@ -51,7 +61,12 @@ module.exports = function () {
                         break;
                 }
                 img.toBuffer().then(buf => {
-                    fs.writeFileSync(path.join((region.folder.path || __dirname), region.filePath), buf);
+                    let filename = path.join((region.folder.path || __dirname), region.filePath);
+                    if(fs.existsSync(filename) && !overwrite) {
+                        reject({exists: region});
+                        return;
+                    }
+                    fs.writeFileSync(filename, buf);
                     resolve();
                 });
 

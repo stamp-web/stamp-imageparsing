@@ -63,16 +63,17 @@ export const KeyCodes = {
 }
 
 export const EventNames = {
-    ADD_REGION:        'add-rectangle',
-    FILE_OPEN:         'file_open',
-    FOLDER_SELECTED:   'folder-selected',
-    NEW_REGION:        'new-image-bounds',
-    REMOTE_MESSAGING:  'remote-messaging',
-    SAVE_REGIONS:      'save-regions',
-    SAVE_SETTINGS:     'save-settings',
-    SELECTION_CHANGED: 'selection-changed',
-    STATUS_MESSAGE:    'status-message',
-    ZOOM:              'zoom'
+    ADD_REGION:          'add-rectangle',
+    DUPLICATE_DETECTION: 'duplicates-detected',
+    FILE_OPEN:           'file_open',
+    FOLDER_SELECTED:     'folder-selected',
+    NEW_REGION:          'new-image-bounds',
+    REMOTE_MESSAGING:    'remote-messaging',
+    SAVE_REGIONS:        'save-regions',
+    SAVE_SETTINGS:       'save-settings',
+    SELECTION_CHANGED:   'selection-changed',
+    STATUS_MESSAGE:      'status-message',
+    ZOOM:                'zoom'
 };
 
 export const StorageKeys = {

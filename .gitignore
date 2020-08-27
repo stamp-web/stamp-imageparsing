@@ -1,8 +1,11 @@
 web-app/node_modules
 web-app/scripts
+web-app/coverage/
+web-app/test/coverage
 src/main/resources/web-app
 .idea
 .DS_STORE
 .factorypath
 target
 test/coverage
+

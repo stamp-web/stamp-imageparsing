@@ -5,6 +5,7 @@
         "add-folder": "Add Folder",
         "default-region": "Region Defaults",
         "dpi": "DPI Settings",
+        "duplicates-detected": "Resolve Existing Images",
         "jpeg": "JPEG Settings",
         "bounding-box": "Bounding Box Configuration",
         "image-settings": "Image Settings",
@@ -17,6 +18,7 @@
 
     "messages": {
         "dpi": "Images output using jpeg or png file types will only utilize the horizontal DPI value for both DPI values in the output file. The value will only take effect after loading the next jpeg or png image file.",
+        "duplicates-msg": "The following images already exist in the target folder.  You can overwrite the existing image with the toggle below.",
         "finished": "Finished.",
         "loading": "Loading image...",
         "loading-done": "Loading finished.",
