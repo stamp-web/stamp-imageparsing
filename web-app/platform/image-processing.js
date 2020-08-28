@@ -13,11 +13,12 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
+
 const path = require('path');
 const sharp = require('sharp');
 const _ = require('lodash');
 const fs = require('fs');
-
+const FileReader = require('filereader');
 
 module.exports = function () {
     "use strict";
@@ -32,17 +33,19 @@ module.exports = function () {
 
         getDataUrlFromImage: function(folderPath, filename) {
             let fullPath = path.join((folderPath || __dirname), filename);
-            return new Promise(resolve => {
+            return new Promise((resolve, reject) => {
                 let img = new sharp(fullPath);
                 img.png().toBuffer().then(buf => {
                     resolve('data:image/png;base64,' + buf.toString('base64'));
+                }).catch(err => {
+                    reject(err);
                 });
             });
         },
 
         saveImage: function (data, region, options = {}, overwrite = false) {
             let mimeType = options.mimeType || jimp.MIME_JPEG;
-            let q = new Promise((resolve, reject) => {
+            return new Promise((resolve, reject) => {
                 let img = new sharp(data).withMetadata();
                 let rect = region.rectangle;
                 img = img.extract({left: rect.x, top: rect.y, width: rect.width, height: rect.height});
@@ -62,16 +65,18 @@ module.exports = function () {
                 }
                 img.toBuffer().then(buf => {
                     let filename = path.join((region.folder.path || __dirname), region.filePath);
-                    if(fs.existsSync(filename) && !overwrite) {
-                        reject({exists: region});
-                        return;
+                    let res = {};
+                    if(!fs.existsSync(filename) || overwrite) {
+                        fs.writeFileSync(filename, buf);
+                    } else {
+                        _.set(res, 'exists', region);
                     }
-                    fs.writeFileSync(filename, buf);
-                    resolve();
+                    resolve(res);
+                }).catch(err => {
+                    console.log('save-error', err);
+                    reject({});
                 });
-
             });
-            return q;
         },
 
         _dpiToPixelDensity(val) {
@@ -102,6 +107,33 @@ module.exports = function () {
 
         procesPNG(image, options = {}) {
             return image.png();
+        },
+
+        readImage(file) {
+            let t = new Date().getTime();
+
+            let q = new Promise((resolve, reject) => {
+                try {
+                    let reader = new FileReader();
+                    reader.onload = () => {
+                        console.log('Time to read image: ', (new Date().getTime() - t), 'ms');
+                        resolve({
+                            data: Buffer.from(reader.result)
+                        });
+                    };
+                    reader.readAsArrayBuffer(file);
+                } catch (e) {
+                    reject(e);
+                }
+            });
+            let d = new Promise(resolve => {
+                let reader = new FileReader();
+                reader.onload = e => {
+                    resolve(e.target.result);
+                }
+                reader.readAsDataURL(file);
+            });
+            return Promise.all([q,d]);
         }
 
     };

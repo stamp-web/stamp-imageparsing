@@ -53,7 +53,9 @@ export class MessageManager {
     clearStatus( ) {
         if (this.dialogHandler) {
             this.dialogHandler.controller.cancel().then(() => {
-                this.dialogHandler = undefined;
+                _.defer(() => {
+                    this.dialogHandler = undefined;
+                });
                 this.shown = false;
             });
         }

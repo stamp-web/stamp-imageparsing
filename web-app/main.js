@@ -24,14 +24,22 @@ let mainWindow;
 // Disable for production building
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
 
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.log('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
 function createWindow() {
     // Create the browser window.
     mainWindow = new BrowserWindow({
-        icon:           'assets/icons/png/16x16.png',
-        show:           false,
-        title:          'Stamp Image Parser',
-        webPreferences: {
-            //  nodeIntegration: false
+        backgroundColor: '#fff',
+        icon:            'assets/icons/png/16x16.png',
+        show:            false,
+        title:           'Stamp Image Parser',
+        webPreferences:  {
+              enableRemoteModule: true,
+              contextIsolation: false,
+              nodeIntegration: true
         }
     });
 
@@ -40,7 +48,7 @@ function createWindow() {
     mainWindow.loadFile('index.html')
 
     // Open the DevTools.
-    mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools();
 
     // Emitted when the window is closed.
     mainWindow.on('closed', function () {
@@ -51,9 +59,8 @@ function createWindow() {
     })
 
     mainWindow.once('ready-to-show', () => {
-        mainWindow.show()
-    })
-
+        mainWindow.show();
+    });
 }
 
 // This method will be called when Electron has finished

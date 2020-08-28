@@ -28,7 +28,6 @@ export class HeaderPane {
     @observable chosenFolder;
     @bindable pageTitle;
     @bindable showOutputFolder = true;
-    @bindable callback;
 
     processing = false;
 

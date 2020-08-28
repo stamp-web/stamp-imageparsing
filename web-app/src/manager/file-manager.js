@@ -15,6 +15,7 @@
  */
 import {remote} from 'electron';
 
+
 export class FileManager {
 
     constructor() {
@@ -60,5 +61,13 @@ export class FileManager {
      */
     getPathSeparator() {
         return this.folderHandler.getPathSeparator();
+    }
+
+    getMimeType(path) {
+        return this.folderHandler.getMimeType(path);
+    }
+
+    asFile(path) {
+        return this.folderHandler.asFile(path);
     }
 }

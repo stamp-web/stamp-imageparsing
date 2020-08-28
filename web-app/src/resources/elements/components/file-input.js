@@ -20,6 +20,7 @@ import _ from 'lodash';
 import {I18N} from 'aurelia-i18n';
 import {Router} from "aurelia-router";
 import {EventNames} from '../../../util/constants';
+import {remote} from 'electron';
 
 @customElement('file-input')
 @inject(Element, I18N, EventAggregator)
@@ -33,6 +34,7 @@ export class FileInput {
     @bindable name;
 
     selectedFiles;
+    options = {};
     _subscribers = [];
 
     constructor(element, i18n, eventAggregator) {
@@ -45,13 +47,20 @@ export class FileInput {
         this._configureFolderMode();
         this._subscribers.push(this.eventAggregator.subscribe(EventNames.FILE_OPEN, name => {
             if(name === this.name) {
-                $(this.element).find('.inputBtn').click();
+                this.openSelector();
             }
         }));
     }
 
     openSelector() {
-        $(this.element).find('input[type="file"]').click();
+        if(this.value) {
+            _.set(this.options, 'defaultPath', this.value);
+        }
+        this.selectedFiles = remote.require('./platform/electron-utilities').showFileDialog(this.options);
+        if (this.callback) {
+            this.callback(this.selectedFiles);
+        }
+        this.value = _.head(this.selectedFiles);
     }
 
     detached() {
@@ -60,19 +69,10 @@ export class FileInput {
         });
     }
 
-    selected($evt) {
-        if(_.size(this.selectedFiles) > 0) {
-            if (this.callback) {
-                this.callback(this.selectedFiles);
-            }
-            this.value = _.first(this.selectedFiles).path;
-        }
-    }
-
     remove() {
         this.value = undefined;
         if (this.callback) {
-            this.callback();
+            this.callback(this.value);
         }
     }
 
@@ -90,22 +90,8 @@ export class FileInput {
     }
 
     _configureFolderMode() {
-        let file = $(this.element).find('input[type="file"]');
-        if (_.size(file) > 0) {
-            if (this.folderMode) {
-                file.attr('webkitdirectory', 'true')
-            } else {
-                file.attr('webkitdirectory');
-            }
-        }
-
+        _.set(this.options, 'folderMode', this.folderMode === true);
     }
-
-    @computedFrom('value')
-    get valueMessage() {
-        return (this.value) ? this.value : this.i18n.tr('messages.no-folder-selected');
-    }
-
     @computedFrom('value', 'disabled', 'placeholder')
     get showPlaceholder() {
         return this.placeholderText && !this.disabled && (_.isEmpty(this.value) || _.isNil(this.value))

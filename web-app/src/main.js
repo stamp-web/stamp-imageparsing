@@ -23,13 +23,6 @@ import 'bootstrap';
 
 LogManager.setLevel(LogManager.logLevel.debug);
 
-//Configure Bluebird Promises.
-Promise.config({
-    warnings: {
-        wForgottenReturn: false
-    }
-});
-
 export function configure(aurelia) {
     require(['jquery'], jquery => {
        window.jQuery = jquery;

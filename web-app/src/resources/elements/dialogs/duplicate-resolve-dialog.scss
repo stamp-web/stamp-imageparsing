@@ -65,6 +65,7 @@
         .duplicates-list {
             display: flex;
             flex-direction: column;
+            max-height: 40rem;
             overflow-y: scroll;
 
 

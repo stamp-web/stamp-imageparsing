@@ -120,16 +120,17 @@
             {
                 "name": "vendor-bundle.js",
                 "prepend": [
-                    "node_modules/bluebird/js/browser/bluebird.core.js",
-                    "node_modules/aurelia-cli/lib/resources/scripts/configure-bluebird.js",
                     "node_modules/requirejs/require.js",
                     "node_modules/jquery/dist/jquery.js"
                 ],
                 "dependencies": [
                     "jquery",
-                    "jquery-sparkline",
                     "aurelia-animator-css",
                     "aurelia-bootstrapper",
+                    {
+                        "name": "electron",
+                        "path": "../src/electron-fix"
+                    },
                     "aurelia-loader-default",
                     "aurelia-history-browser",
                     "aurelia-pal-browser",
@@ -157,10 +158,6 @@
                         "path": "../node_modules/aurelia-testing/dist/amd",
                         "main": "aurelia-testing",
                         "env": "dev"
-                    },
-                    {
-	                    "name": "electron",
-	                    "path": "../src/electron-fix"
                     },
                     {
                         "name": "changedpi",

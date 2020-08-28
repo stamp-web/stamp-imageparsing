@@ -35,28 +35,12 @@ export class ImageHandler {
         this.fileManager = fileManager;
     }
 
-    readImage(fileBlob) {
-        let t = new Date().getTime();
-        let q = new Promise((resolve, reject) => {
-            try {
-                let reader = new FileReader();
-                reader.onload = () => {
-                    log.info('Time to read image: ', (new Date().getTime() - t), 'ms');
-                    resolve({
-                        data: Buffer.from(reader.result)
-                    });
-                };
-                reader.readAsArrayBuffer(fileBlob);
-            } catch (e) {
-                reject(e);
-            }
-        });
-        let d = this.asDataUrl(fileBlob);
-        return Promise.all([q,d]);
+    readImage(file) {
+        return this.remoteImageProcessor.readImage(file);
     }
 
     asObjectUrl(imageArr, options = {}) {
-        let mimeType = options.mimeType || 'image/jpeg';
+        let mimeType = options.type || 'image/jpeg';
         let blob = new Blob([Uint8Array.from(imageArr)], {type: mimeType});
         let urlCreator = window.URL || window.webkitURL || {}.createObjectURL;
         return urlCreator.createObjectURL(blob);
@@ -101,24 +85,22 @@ export class ImageHandler {
                 showBusy: true
             });
             opts.mimeType = region.imageType ? this._imageToMimeType(region.imageType) : options.mimeType;
-            let handleCompletion = (region) => {
+
+            this.remoteImageProcessor.saveImage(data, region, opts, overwrite).then(result => {
+                if (result.exists) {
+                    log.warn('duplicate -> ', result.exists.filePath);
+                    duplicateRegions.push(result.exists);
+                } else {
+                    log.info('saved -> ', region.filePath);
+                }
                 processed++;
                 if(_.size(regions) === processed && _.size(duplicateRegions) > 0 ) {
                     this.eventAggregator.publish(EventNames.DUPLICATE_DETECTION, {duplicates: duplicateRegions});
                 }
-            };
-            this.remoteImageProcessor.saveImage(data, region, opts, overwrite).then(() => {
-                log.info("saved -> " + region.filename);
-                handleCompletion();
             }).catch(e => {
-                if(e.exists) {
-                    log.warn('existing -> ', e.exists);
-                    duplicateRegions.push(region);
-                } else {
-                    log.error(e);
-                }
-                handleCompletion();
+                log.error(e);
             });
+
             this.eventAggregator.publish(EventNames.STATUS_MESSAGE, {dismiss: true});
         });
     }

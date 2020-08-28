@@ -41,6 +41,7 @@ export class MainPanel {
     @observable boxes = [];
     @bindable boundRegions = [];
     @bindable selectedRegion;
+    @observable selectedFile;
 
     toobig = false;
     toosmall = false;
@@ -71,8 +72,6 @@ export class MainPanel {
         this.fileManager = fileManager;
         this.connectionManager = connectionManager;
         this.dialogService = dialogService;
-
-        this.fileSelected = this._fileSelected.bind(this);
     }
 
     attached() {
@@ -225,46 +224,50 @@ export class MainPanel {
         _.set(region, 'imageType', _.get(this.options, 'image.defaultType', _.first(ImageTypes)));
     }
 
-    _fileSelected(chosenFile) {
-        if (_.size(chosenFile) > 0) {
-            let f = _.first(chosenFile);
-            this.processing = true;
-            this.eventAggregator.publish(EventNames.STATUS_MESSAGE, {
-                message: this.i18n.tr('messages.loading'),
-                showBusy: true
-            });
-            this.meta = {
-                name:         f.name,
-                originalSize: f.size,
-                mimeType:     f.type
-            };
-            this.clear();
-            let fn = (b) => {
-                this.handler.readImage(b).then(([result, dataURI]) => {
-                    this.data = result.data;
-                    this.dataURI = dataURI;
-                    this.image = this.handler.asObjectUrl(this.handler.dataUrlToBinary(dataURI), this.meta);
-                    this.inputFile = f.path;
-                    this.processing = false;
-                    this.eventAggregator.publish(EventNames.STATUS_MESSAGE, {
-                        message:  this.i18n.tr('messages.loading-done'),
-                        showBusy: false,
-                        dismiss:  true
-                    });
-                });
-            };
-            if(this.meta.mimeType === "image/tiff" || _.get(this.options, 'dpi.mode', 'image') === 'image') {
-                fn(f);
-            } else {
-                let dpi = _.get(this.options, 'dpi.horizontal', 300);
-                changeDpiBlob(f, dpi).then(b => {
-                    fn(b);
-                });
-            }
+    selectedFileChanged() {
+        if (this.selectedFile) {
+            let f = this.fileManager.asFile(this.selectedFile);
+            this._processFile(f);
         } else {
             this.clear();
             this.image = undefined;
             this.data = undefined;
+        }
+
+    }
+
+    _processFile(file) {
+        this.processing = true;
+        this.eventAggregator.publish(EventNames.STATUS_MESSAGE, {
+            message: this.i18n.tr('messages.loading'),
+            showBusy: true
+        });
+        this.meta = {
+            name: file.name,
+            type: file.type
+        };
+
+        this.clear();
+        let fn = (b) => {
+            this.handler.readImage(b).then(([result, dataURI]) => {
+                this.data = result.data;
+                this.dataURI = dataURI;
+                this.image = this.handler.asObjectUrl(this.handler.dataUrlToBinary(dataURI), this.meta);
+                this.processing = false;
+                this.eventAggregator.publish(EventNames.STATUS_MESSAGE, {
+                    message:  this.i18n.tr('messages.loading-done'),
+                    showBusy: false,
+                    dismiss:  true
+                });
+            });
+        };
+        if(this.meta.mimeType === "image/tiff" || _.get(this.options, 'dpi.mode', 'image') === 'image') {
+            fn(file);
+        } else {
+            let dpi = _.get(this.options, 'dpi.horizontal', 300);
+            changeDpiBlob(file, dpi).then(b => {
+                fn(file);
+            });
         }
     }
 
@@ -292,6 +295,7 @@ export class MainPanel {
 
     clear() {
         this.dataURI = undefined;
+        this.selectedFile = undefined;
         this.clearBoxes();
     }
 
@@ -338,9 +342,9 @@ export class MainPanel {
         this.clearBoxes();
 
         _.defer(() => {
-            if (this.dataURI || this.inputFile) {
-                let asData = !this.inputFile && this.dataURI;
-                this.handler.process((asData ? this.dataURI : this.inputFile), this.options, asData).then(info => {
+            if (this.dataURI || this.selectedFile) {
+                let asData = !this.selectedFile && this.dataURI;
+                this.handler.process((asData ? this.dataURI : this.selectedFile.path), this.options, asData).then(info => {
                     this.boxes = info.boxes;
                     this.processing = false;
                 }).catch(err => {

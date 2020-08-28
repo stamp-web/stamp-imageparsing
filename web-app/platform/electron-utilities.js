@@ -13,16 +13,23 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-define('electron', ['exports'], function (exports) {
-    if (window.nodeRequire) {
-        let electron = window.nodeRequire('electron');
-        exports['default'] = electron;
+const {dialog} = require('electron');
+const _ = require('lodash');
 
-        for (let key in electron) {
-            exports[key] = electron[key];
-        }
-        if (!electron) {
-            console.log('WARNING: electron supporting remote module not found - check the configuration.')
+module.exports = function () {
+
+    return {
+
+        showFileDialog: (opts = {}) => {
+            let mode = _.get(opts, 'folderMode', false) === true ? 'openDirectory' : 'openFile';
+            let properties = [mode];
+            let options = {
+                properties: properties
+            };
+            if(_.includes(opts, 'defaultPath')) {
+                _.set(options, 'defaultPath', _.get(opts, 'defaultPath'));
+            }
+            return dialog.showOpenDialogSync(options);
         }
     }
-});
+}();

@@ -6,6 +6,7 @@
     <slot></slot>
     <span class="output-folder" if.bind="showOutputFolder">
         <label>${'labels.output-folder'|t}</label>
-        <file-input value.bind="chosenFolder" disabled.bind="processing" callback.bind="callback" show-remove="false"></file-input>
+        <file-input folder-mode="true" value.bind="chosenFolder" disabled.bind="processing" show-remove="false">
+        </file-input>
     </span>
 </template>
