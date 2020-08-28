@@ -22,13 +22,9 @@ let files = [
 let isWindows = /^win/.test(process.platform);
 
 let reporters = ['progress', 'junit'];
-let browsers = ['Chrome'];
+let browsers = ['FirefoxHeadless'];
 
 let configureBrowsers = () => {
-    if (isWindows) {
-        //reporters.push('karma-remap-istanbul');
-        browsers = ['FirefoxHeadless'];
-    }
     if (yargs.argv.chrome && !_.includes(browsers, 'Chrome')) {
         browsers.push('Chrome');
     }
