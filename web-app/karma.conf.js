@@ -16,7 +16,7 @@ let entryIndex = appSrc.indexOf(path.join(output, project.build.loader.configTar
 let entryBundle = appSrc.splice(entryIndex, 1)[0];
 let files = [
     entryBundle,
-    'electron-fix.js'
+    'src/electron-fix.js'
 ].concat(testSrc).concat(appSrc);
 
 let isWindows = /^win/.test(process.platform);
