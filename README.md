@@ -2,7 +2,7 @@
 
 ## Build Status
 
-[![Build Status](http://drake-server.ddns.net:9000/job/stamp-image-processing/badge/icon)](http://drake-server.ddns.net:9000/job/stamp-image-processing/)
+![Build Status](https://drake-server.ddns.net:9443/build/stamp-imageparsing.svg)
 
 ## Progress Videos
 
