@@ -74,7 +74,11 @@ export class ImageCanvas {
         this._subscribers.push(this.eventAggregator.subscribe('delete-selected', this.deleteSelected.bind(this)));
         this._subscribers.push(this.bindingEngine.collectionObserver(this.boundRegions).subscribe(this.regionsChanged.bind(this)));
         this.repaintDebounced = _.throttle(this.repaint.bind(this), 750);
-        this._zoomDebounced = _.throttle(this._zoom.bind(this), 350);
+        this._zoomDebounced = _.debounce(this._zoom.bind(this), 125);
+
+        // Need to add listener directly to set the passive = false flag and avoid chromium warning
+        $(this.element)[0].addEventListener('wheel', this.mouseWheel.bind(this), {passive: false});
+
     }
 
     deleteSelected() {

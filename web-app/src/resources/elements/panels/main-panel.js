@@ -260,11 +260,15 @@ export class MainPanel {
         this.handler.readImage(file).then(dataURI => {
             this.dataURI = dataURI;
             this.processing = false;
-            this.eventAggregator.publish(EventNames.STATUS_MESSAGE, {
-                message:  this.i18n.tr('messages.loading-done'),
-                showBusy: false,
-                dismiss:  true
+            _.defer(() => { // some time this message does not get through if called directly
+                this.eventAggregator.publish(EventNames.STATUS_MESSAGE, {
+                    message:  this.i18n.tr('messages.loading-done'),
+                    showBusy: false,
+                    dismiss:  true
+                });
             });
+
+
         });
     }
 

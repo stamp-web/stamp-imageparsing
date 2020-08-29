@@ -83,7 +83,7 @@ You can add the ``--watch`` flag if you want to keep the tests harness running a
 
 The following is a sketch created for the concept art for the project
 
-![Concept Sketch](https://github.com/jadrake75/stamp-imageparsing/raw/master/assets/sketches/image-bursting-sketch.png)
+![Concept Sketch](https://github.com/jadrake75/stamp-imageparsing/raw/master/web-app/assets/sketches/image-bursting-sketch.png)
 
 
 ## License
