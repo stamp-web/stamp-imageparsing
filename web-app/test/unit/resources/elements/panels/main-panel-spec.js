@@ -11,9 +11,10 @@ describe('WelcomePanel', () => {
     let elementSpy = jasmine.createSpy('element');
     let i18nSpy = jasmine.createSpyObj('i18n', ['tr']);
     let routerSpy = jasmine.createSpyObj('router', ['navigate']);
+    let fileManager = jasmine.createSpyObj('fileManager', ['getMimeType']);
 
     beforeEach(() => {
-        mainpanel = new MainPanel(elementSpy, i18nSpy, routerSpy /* Does not include others yet */);
+        mainpanel = new MainPanel(elementSpy, i18nSpy, routerSpy, undefined, undefined, fileManager /* Does not include others yet */);
     });
 
     describe('_handleMemoryStats', () => {

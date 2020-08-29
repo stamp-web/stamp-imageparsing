@@ -1,5 +1,5 @@
 /*
- Copyright 2019 Jason Drake (jadrake75@gmail.com)
+ Copyright 2020 Jason Drake (jadrake75@gmail.com)
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -18,11 +18,12 @@ const path = require('path');
 const sharp = require('sharp');
 const _ = require('lodash');
 const fs = require('fs');
+const mime = require('mime-types');
 const FileReader = require('filereader');
+const fileUtilities = require('./file-utilities');
 
 module.exports = function () {
     "use strict";
-
 
     let calcPixelPerMillimeter = function(dpi) {
         return dpi * 0.3937;
@@ -36,15 +37,26 @@ module.exports = function () {
             return new Promise((resolve, reject) => {
                 let img = new sharp(fullPath);
                 img.png().toBuffer().then(buf => {
-                    resolve('data:image/png;base64,' + buf.toString('base64'));
+                    resolve('data:' + mime.lookup('png') + ';base64,' + buf.toString('base64'));
                 }).catch(err => {
                     reject(err);
                 });
             });
         },
 
-        saveImage: function (data, region, options = {}, overwrite = false) {
-            let mimeType = options.mimeType || jimp.MIME_JPEG;
+        saveImages: function(data, regions, options = {}, overwrite = false) {
+            let duplicates = [];
+            let savePromises = [];
+            _.forEach(regions, region => {
+                let opts = _.cloneDeep(options);
+                opts.mimeType = fileUtilities.getMimeType(region.imageType);
+                savePromises.push(this._saveImage(data, region, opts, overwrite));
+            });
+            return Promise.all(savePromises);
+        },
+
+        _saveImage: function (data, region, options = {}, overwrite = false) {
+            let mimeType = options.mimeType;
             return new Promise((resolve, reject) => {
                 let img = new sharp(data).withMetadata();
                 let rect = region.rectangle;
@@ -53,13 +65,13 @@ module.exports = function () {
                     img = img.rotate(region.rotate);
                 }
                 switch(mimeType) {
-                    case 'image/tiff':
+                    case mime.lookup('tiff'):
                         img = this.processTIFF(img, options);
                         break;
-                    case 'image/jpeg':
+                    case mime.lookup('jpeg'):
                         img = this.processJPEG(img, options);
                         break;
-                    case 'image/png':
+                    case mime.lookup('png'):
                         img = this.procesPNG(img, options);
                         break;
                 }
@@ -73,7 +85,7 @@ module.exports = function () {
                     }
                     resolve(res);
                 }).catch(err => {
-                    console.log('save-error', err);
+                    console.log('_saveImage error', err);
                     reject({});
                 });
             });
@@ -109,31 +121,33 @@ module.exports = function () {
             return image.png();
         },
 
-        readImage(file) {
+        readImage(file, asBuffer = false) {
             let t = new Date().getTime();
 
-            let q = new Promise((resolve, reject) => {
-                try {
+            if (asBuffer) {
+                return new Promise((resolve, reject) => {
+                    try {
+                        let reader = new FileReader();
+                        reader.onload = () => {
+                            console.log('Time to read image: ', (new Date().getTime() - t), 'ms');
+                            resolve({
+                                data: Buffer.from(reader.result)
+                            });
+                        };
+                        reader.readAsArrayBuffer(file);
+                    } catch (e) {
+                        reject(e);
+                    }
+                });
+            } else {
+                return new Promise(resolve => {
                     let reader = new FileReader();
-                    reader.onload = () => {
-                        console.log('Time to read image: ', (new Date().getTime() - t), 'ms');
-                        resolve({
-                            data: Buffer.from(reader.result)
-                        });
-                    };
-                    reader.readAsArrayBuffer(file);
-                } catch (e) {
-                    reject(e);
-                }
-            });
-            let d = new Promise(resolve => {
-                let reader = new FileReader();
-                reader.onload = e => {
-                    resolve(e.target.result);
-                }
-                reader.readAsDataURL(file);
-            });
-            return Promise.all([q,d]);
+                    reader.onload = e => {
+                        resolve(e.target.result);
+                    }
+                    reader.readAsDataURL(file);
+                });
+            }
         }
 
     };

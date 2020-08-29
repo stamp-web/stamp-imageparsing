@@ -11,13 +11,13 @@
 
 <div class="main-panel">
     <header-pane page-title="${'titles.image-editing'|t}">
-        <button class="btn btn-secondary" click.trigger="process()" disabled.bind="!image || processing || !connected"><i class="sw-icon-stamp"></i></button>
+        <button class="btn btn-secondary" click.trigger="process()" disabled.bind="!dataURI || processing || !connected"><i class="sw-icon-stamp"></i></button>
 
-        <button class="btn btn-secondary" click.trigger="addRegion()" disabled.bind="!image || processing"><i class="sw-icon-plus"></i></button>
+        <button class="btn btn-secondary" click.trigger="addRegion()" disabled.bind="!dataURI || processing"><i class="sw-icon-plus"></i></button>
         <button class="btn btn-secondary" click.trigger="deleteSelected()" disabled.bind="!selectedRegion || processing"><i class="sw-icon-delete"></i></button>
 
-        <button class="btn btn-secondary" click.trigger="zoom(1)" disabled.bind="!image || toobig || processing"><i class="sw-icon-zoom-in"></i></button>
-        <button class="btn btn-secondary" click.trigger="zoom(-1)" disabled.bind="!image || toosmall || processing"><i class="sw-icon-zoom-out"></i></button>
+        <button class="btn btn-secondary" click.trigger="zoom(1)" disabled.bind="!dataURI || toobig || processing"><i class="sw-icon-zoom-in"></i></button>
+        <button class="btn btn-secondary" click.trigger="zoom(-1)" disabled.bind="!dataURI || toosmall || processing"><i class="sw-icon-zoom-out"></i></button>
         <button class="btn btn-secondary" click.trigger="settings()" disabled.bind="processing"><i class="sw-icon-settings"></i></button>
         <file-input value.bind="selectedFile"
                     disabled.bind="processing"
@@ -30,7 +30,7 @@
     <div class="content-pane">
         <settings-panel if.bind="showSettings" options.bind="options"></settings-panel>
         <image-canvas class="${imagePanelClassnames}"
-                      image.bind="image"
+                      image.bind="dataURI"
                       bound-regions.bind="boundRegions"
                       selected-region.bind="selectedRegion"
                       scaling-factor.bind="scalingFactor"></image-canvas>

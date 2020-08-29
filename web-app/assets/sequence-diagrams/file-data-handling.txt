@@ -1,0 +1,8 @@
+title Image File Data Handling
+
+
+readImage()->dataURI:dataURI
+dataURI->[image-canvas]:bind:image
+dataURI->process():
+readImage()->data:data
+data->saveRegions():

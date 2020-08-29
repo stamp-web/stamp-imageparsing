@@ -26,6 +26,7 @@
         "processing-status": "Processing image: {{status}}",
         "processing-failed": "Processing failure",
         "saving-file" : "Saving {{filename}}",
+        "saving-files": "Saving files",
         "connected-true": "Connected",
         "connected-false": "No Connection",
         "no-folder-chosen": "No folder chosen",

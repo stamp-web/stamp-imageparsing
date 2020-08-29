@@ -19,7 +19,7 @@ import {EventAggregator} from 'aurelia-event-aggregator';
 import {I18N} from 'aurelia-i18n';
 import {Router} from 'aurelia-router';
 import {DialogService} from 'aurelia-dialog';
-import {changeDpiBlob} from 'changedpi';
+import {changeDpiDataUrl} from 'changedpi';
 import {FileManager} from 'manager/file-manager';
 import {ImageHandler} from 'processing/image/image-handler';
 import {ImageBounds} from 'model/image-bounds';
@@ -47,10 +47,10 @@ export class MainPanel {
     toosmall = false;
 
     scalingFactor = 1.0;
-    image;
+
     data;
-    meta;
-    handler;
+    dataURI;
+
     outputPath;
     processing = false;
     folders = [];
@@ -58,9 +58,11 @@ export class MainPanel {
     showSettings = false;
     fileInputName = 'file-input-name';
     connected = false;
+
     subscribers = [];
     memoryStats = [];
 
+    tiffMetaType;
 
     constructor(element, i18n, router, imageHandler, eventAggregator, fileManager, connectionManager, dialogService) {
         this.element = element;
@@ -72,6 +74,8 @@ export class MainPanel {
         this.fileManager = fileManager;
         this.connectionManager = connectionManager;
         this.dialogService = dialogService;
+
+        this.tiffMetaType = this.fileManager.getMimeType('tiff');
     }
 
     attached() {
@@ -125,16 +129,15 @@ export class MainPanel {
         let freeMemory = _.get(stats, 'freeMemory', -1) * 1.0;
         let totalMemory = _.get(stats, 'totalMemory', -1) * 1.0;
         let used = freeMemory / totalMemory;
-        let data = _.takeRight(this.memoryStats, 9);
-        data.push(used);
-        this.memoryStats = data;
+        let mem = _.takeRight(this.memoryStats, 9);
+        mem.push(used);
+        this.memoryStats = mem;
     }
 
     _handleDuplicates(event) {
         this.dialogService.open({
             viewModel: DuplicateResolveDialog,
             model: {
-                data: this.data,
                 duplicates: _.cloneDeep(event.duplicates)
             }
         }).then(dialogResult => {
@@ -196,7 +199,20 @@ export class MainPanel {
     }
 
     _handleSaveRegions(regions, evt, overwriteImage = false) {
-        this.handler.saveRegions(this.data, regions, this.options, overwriteImage);
+        if (!this.data) {
+            let f = this.fileManager.asFile(this.selectedFile);
+            this.handler.readImage(f, true).then(i_data => {
+                this.data = i_data.data;
+                this._saveRegions(this.data, regions, this.options, overwriteImage);
+            });
+        } else {
+            this.logger.debug('Using cached data of the image');
+            this._saveRegions(this.data, regions, this.options, overwriteImage);
+        }
+    }
+
+    _saveRegions(data, regions, options, overwriteImage = false) {
+        this.handler.saveRegions(data, regions, options, overwriteImage);
     }
 
     _handleFolderSelected(folderName) {
@@ -225,15 +241,11 @@ export class MainPanel {
     }
 
     selectedFileChanged() {
+        this.clear();
         if (this.selectedFile) {
             let f = this.fileManager.asFile(this.selectedFile);
             this._processFile(f);
-        } else {
-            this.clear();
-            this.image = undefined;
-            this.data = undefined;
         }
-
     }
 
     _processFile(file) {
@@ -242,33 +254,26 @@ export class MainPanel {
             message: this.i18n.tr('messages.loading'),
             showBusy: true
         });
-        this.meta = {
-            name: file.name,
-            type: file.type
-        };
 
-        this.clear();
-        let fn = (b) => {
-            this.handler.readImage(b).then(([result, dataURI]) => {
-                this.data = result.data;
-                this.dataURI = dataURI;
-                this.image = this.handler.asObjectUrl(this.handler.dataUrlToBinary(dataURI), this.meta);
-                this.processing = false;
-                this.eventAggregator.publish(EventNames.STATUS_MESSAGE, {
-                    message:  this.i18n.tr('messages.loading-done'),
-                    showBusy: false,
-                    dismiss:  true
-                });
+        let mime = this.fileManager.getMimeType(file.path);
+        _.set(this.options, 'mimeType', mime);
+        this.handler.readImage(file).then(dataURI => {
+            this.dataURI = dataURI;
+            this.processing = false;
+            this.eventAggregator.publish(EventNames.STATUS_MESSAGE, {
+                message:  this.i18n.tr('messages.loading-done'),
+                showBusy: false,
+                dismiss:  true
             });
-        };
-        if(this.meta.mimeType === "image/tiff" || _.get(this.options, 'dpi.mode', 'image') === 'image') {
-            fn(file);
-        } else {
+        });
+    }
+
+    changeDpiIfNeeded(dataURI, options) {
+        if(_.get(options, 'mimeType') !== this.tiffMetaType || _.get(options, 'dpi.mode', 'image') !== 'image') {
             let dpi = _.get(this.options, 'dpi.horizontal', 300);
-            changeDpiBlob(file, dpi).then(b => {
-                fn(file);
-            });
+            dataURI = changeDpiDataUrl(dataURI, dpi);
         }
+        return dataURI;
     }
 
     @computedFrom('boundRegions.length')
@@ -294,8 +299,8 @@ export class MainPanel {
     }
 
     clear() {
+        this.data = undefined;
         this.dataURI = undefined;
-        this.selectedFile = undefined;
         this.clearBoxes();
     }
 
@@ -342,9 +347,9 @@ export class MainPanel {
         this.clearBoxes();
 
         _.defer(() => {
-            if (this.dataURI || this.selectedFile) {
-                let asData = !this.selectedFile && this.dataURI;
-                this.handler.process((asData ? this.dataURI : this.selectedFile.path), this.options, asData).then(info => {
+            if (this.dataURI) {
+                let asData = !_.isNil(this.dataURI);
+                this.handler.process(this.dataURI, this.options, asData).then(info => {
                     this.boxes = info.boxes;
                     this.processing = false;
                 }).catch(err => {
@@ -358,6 +363,5 @@ export class MainPanel {
                 });
             }
         });
-
     }
 }
