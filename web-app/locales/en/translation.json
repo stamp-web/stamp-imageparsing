@@ -30,10 +30,13 @@
         "connected-true": "Connected",
         "connected-false": "No Connection",
         "no-folder-chosen": "No folder chosen",
-        "no-folders": "No child folders available"
+        "no-folders": "No child folders available",
+        "no-stamps": "No stamp regions",
+        "showing-filtered": "(Showing {{count}} of {{total}})"
     },
 
     "tooltips": {
+        "filter-processed": "Filter previously processed images",
         "region-settings": "Configure region defaults",
         "reset": "Clear regions",
         "rotate": "Rotate 90 degrees clockwise",

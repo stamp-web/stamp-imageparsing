@@ -47,6 +47,7 @@ export class ImageCanvas {
     _ctx;   // 2d canvas context
     _image; // HTMLImageElement
     _subscribers = [];
+    _lastCoords = {x:0, y:0};
 
     constructor(element, eventAggregator, bindingEngine) {
         this.element = element;
@@ -137,6 +138,7 @@ export class ImageCanvas {
                 x: evt.offsetX,
                 y: evt.offsetY
             };
+            this._lastCoords = _.clone(this._boxStart);
         } else if (this._clickMode == ClickMode.select && this.selectedRegion) {
             //   console.log("near?", this._isNearSelectionEdge(this.selectedBox, evt.offsetX, evt.offsetY));
             if (this._isNearSelectionEdge(this.selectedRegion.rectangle, evt.offsetX, evt.offsetY)) {
@@ -160,7 +162,7 @@ export class ImageCanvas {
 
     mouseMoveCanvas(evt) {
         if (this._clickMode === ClickMode.box && this._boxStart) {
-            if(new Date().getTime() % 4 === 0) {
+            if(this._lastCoords.x === evt.offsetX && this._lastCoords.y === evt.offsetY) {
                 return;
             }
             //this.repaint();
@@ -176,6 +178,7 @@ export class ImageCanvas {
                 ctx.strokeRect(this._boxStart.x, this._boxStart.y,
                     evt.offsetX - this._boxStart.x, evt.offsetY - this._boxStart.y);
                 ctx.setLineDash([]);
+                this._lastCoords = {x :evt.offsetX, y: evt.offsetY};
             });
         } else if (this._clickMode === ClickMode.resize) {
             //  console.log('resizing');

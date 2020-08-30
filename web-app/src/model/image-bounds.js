@@ -22,6 +22,7 @@ export class ImageBounds {
     rectangle;
     name;
     image;
+    imageType;
 
     constructor(opts = {}) {
         this.name = 'Region-' + (++ImageBounds.lastCount);
@@ -33,4 +34,13 @@ export class ImageBounds {
         return 'Region-' + (++ImageBounds.lastCount);
     }
 
+    static getMatcher(b) {
+        return {
+            name: _.get(b, 'name'),
+            imageType: _.get(b, 'imageType'),
+            folder: {
+                name: _.get(b, 'folder.name')
+            }
+        };
+    }
 }

@@ -82,7 +82,8 @@ legend {
     }
 
     &:focus,
-    &:active {
+    &:active,
+    &.active {
         background-color: darken($button-bg-primary, 20%);
         border-color:     darken($button-bg-primary, 20%);
     }
@@ -118,6 +119,13 @@ legend {
         background-color: $button-bg-hover;
         border-color: $button-color-hover;
         color: $button-color-hover;
+    }
+
+    &:focus,
+    &:active,
+    &.active {
+        background-color: darken($button-bg, 20%);
+        border-color:     darken($button-bg, 20%);
     }
 }
 

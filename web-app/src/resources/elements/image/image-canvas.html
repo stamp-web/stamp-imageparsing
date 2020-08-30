@@ -1,10 +1,10 @@
 <template>
     <require from="resources/elements/image/image-canvas.css"></require>
     <div class="canvas-wrapper">
-        <canvas mousedown.delegate="mouseDownCanvas($event)"
+        <canvas mousedown.delegate="mouseDownCanvas($event) & throttle"
                 click.delegate="clickCanvas($event)"
-                mouseup.delegate="mouseUpCanvas($event)"
-                mousemove.delegate="mouseMoveCanvas($event)">
+                mouseup.delegate="mouseUpCanvas($event) & throttle"
+                mousemove.delegate="mouseMoveCanvas($event) & throttle:150">
         </canvas>
     </div>
 

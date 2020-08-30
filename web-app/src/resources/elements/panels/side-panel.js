@@ -13,7 +13,7 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-import {customElement, bindable, BindingEngine} from 'aurelia-framework';
+import {customElement, bindable, BindingEngine, computedFrom} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {DialogService} from 'aurelia-dialog';
 import {ImageBounds} from 'model/image-bounds';
@@ -36,6 +36,7 @@ export class SidePanel {
 
     subscribers = [];
     validForSave = false;
+    toggled = false;
 
     imageTypes = ImageTypes;
 
@@ -65,6 +66,24 @@ export class SidePanel {
         }, 0);
         if (count > 0) {
             this._setDefaultFolder();
+        }
+    }
+
+    toggleProcessed() {
+        this.toggled = !this.toggled;
+    }
+
+    @computedFrom('toggled', 'boundRegions')
+    get filteredRegions() {
+        if (!this.toggled) {
+            this.selectedRegion = _.find(this.boundRegions, this.selectedRegion) || _.first(this.boundRegions);
+            return this.boundRegions;
+        } else {
+            let filtered = _.filter(this.boundRegions, r => {
+                return !r.saved;
+            });
+            this.selectedRegion = _.find(filtered, this.selectedRegion) || _.first(filtered);
+            return filtered;
         }
     }
 
@@ -108,7 +127,7 @@ export class SidePanel {
 
     saveValues() {
         let saveRegions = [];
-        _.each(this.boundRegions, region => {
+        _.each(this.filteredRegions, region => {
             if(this.isValidRegion(region)) {
                 saveRegions.push(region);
             }

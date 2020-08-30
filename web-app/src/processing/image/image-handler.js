@@ -17,6 +17,7 @@ import {LogManager} from "aurelia-framework";
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {I18N} from 'aurelia-i18n';
 import {ImageProcessor} from './image-processor';
+import {ImageBounds} from '../../model/image-bounds';
 import {EventNames} from 'util/constants';
 import _ from 'lodash';
 import {remote} from "electron";
@@ -38,14 +39,17 @@ export class ImageHandler {
         return this.remoteImageProcessor.readImage(file, asBuffer);
     }
 
+    toObjectUrl(dataURI, options = {}) {
+        return this._asObjectUrl(this._dataUrlToBinary(dataURI), options);
+    }
+
     /**
-     * @deprecated - not currently used
      *
      * @param imageArr
      * @param options
      * @returns {string}
      */
-    asObjectUrl(imageArr, options = {}) {
+    _asObjectUrl(imageArr, options = {}) {
         let mimeType = options.mimeType;
         let blob = new Blob([Uint8Array.from(imageArr)], {type: mimeType});
         let urlCreator = window.URL || window.webkitURL || {}.createObjectURL;
@@ -53,12 +57,11 @@ export class ImageHandler {
     }
 
     /**
-     * @deprecated - not currently used
      *
      * @param dataURI
      * @returns {Uint8Array}
      */
-    dataUrlToBinary(dataURI) {
+    _dataUrlToBinary(dataURI) {
         let encodingPrefix = "base64,";
         let base64Index = dataURI.indexOf(encodingPrefix) + encodingPrefix.length;
         let raw = window.atob(dataURI.substring(base64Index));
@@ -93,16 +96,24 @@ export class ImageHandler {
                 showBusy: true
         });
         let duplicateRegions = [];
-        this.remoteImageProcessor.saveImages(data, regions, options, overwrite).then(results => {
-            duplicateRegions = _.map(_.filter(results, r => { return r.exists ? true: false}), 'exists');
-            this.eventAggregator.publish(EventNames.STATUS_MESSAGE, {dismiss: true});
-            if(_.size(duplicateRegions) > 0) {
-                this.eventAggregator.publish(EventNames.DUPLICATE_DETECTION, {duplicates: duplicateRegions});
-            }
-        }).catch(err => {
-            this.logger.warn('Save image error', err);
-            this.eventAggregator.publish(EventNames.STATUS_MESSAGE, {dismiss: true});
+        return new Promise((resolve, reject) => {
+            this.remoteImageProcessor.saveImages(data, regions, options, overwrite).then(results => {
+                duplicateRegions = _.filter(results, {exists: true});
+                let hasDuplicates = _.size(duplicateRegions) > 0;
+                _.defer(() => { // ensure messages are sent
+                    this.eventAggregator.publish(EventNames.STATUS_MESSAGE, {dismiss: true});
+                    if (hasDuplicates) {
+                        this.eventAggregator.publish(EventNames.DUPLICATE_DETECTION, {duplicates: duplicateRegions});
+                    }
+                });
+                resolve();
+            }).catch(err => {
+                this.logger.warn('Save image error', err);
+                this.eventAggregator.publish(EventNames.STATUS_MESSAGE, {dismiss: true});
+                reject(err);
+            });
         });
+
     }
 
     process(data, options, asDataURL) {

@@ -30,8 +30,6 @@ module.exports = function () {
     }
 
     return {
-
-
         getDataUrlFromImage: function(folderPath, filename) {
             let fullPath = path.join((folderPath || __dirname), filename);
             return new Promise((resolve, reject) => {
@@ -77,13 +75,14 @@ module.exports = function () {
                 }
                 img.toBuffer().then(buf => {
                     let filename = path.join((region.folder.path || __dirname), region.filePath);
-                    let res = {};
+                    _.set(region, 'saved', false);
                     if(!fs.existsSync(filename) || overwrite) {
                         fs.writeFileSync(filename, buf);
+                        _.set(region, 'saved', true);
                     } else {
-                        _.set(res, 'exists', region);
+                        _.set(region, 'exists', true);
                     }
-                    resolve(res);
+                    resolve(region);
                 }).catch(err => {
                     console.log('_saveImage error', err);
                     reject({});

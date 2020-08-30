@@ -18,7 +18,7 @@
 
         <button class="btn btn-secondary" click.trigger="zoom(1)" disabled.bind="!dataURI || toobig || processing"><i class="sw-icon-zoom-in"></i></button>
         <button class="btn btn-secondary" click.trigger="zoom(-1)" disabled.bind="!dataURI || toosmall || processing"><i class="sw-icon-zoom-out"></i></button>
-        <button class="btn btn-secondary" click.trigger="settings()" disabled.bind="processing"><i class="sw-icon-settings"></i></button>
+        <button class="btn btn-secondary ${showSettings ? 'active': ''}" click.trigger="settings()" disabled.bind="processing"><i class="sw-icon-settings"></i></button>
         <file-input value.bind="selectedFile"
                     disabled.bind="processing"
                     folder-mode="false"

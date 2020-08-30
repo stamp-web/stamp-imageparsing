@@ -2,12 +2,16 @@
 
     <require from="resources/elements/panels/side-panel.css"></require>
     <div class="action-list">
-        <button class="btn btn-primary" click.delegate="saveValues()" disabled.bind="!validForSave" title="${'tooltips.save'|t}"><i class="sw-icon-download"></i></button>
+        <button class="btn btn-primary" click.delegate="saveValues()" disabled.bind="!validForSave && filteredRegions.length > 0" title="${'tooltips.save'|t}"><i class="sw-icon-download"></i></button>
         <button class="btn btn-secondary" click.delegate="setDefaults()"><i class="sw-icon-settings" title="${'tooltips.region-settings'|t}"></i></button>
         <button class="btn btn-secondary" click.delegate="clearValues()"><i class="sw-icon-eraser" title="${'tooltips.reset'|t}"></i></button>
+        <button class="btn btn-secondary ${toggled ? 'active': ''}" click.delegate="toggleProcessed()">
+            <i class="sw-icon-filter" title="${'tooltips.filter-processed'|t}"></i>
+        </button>
+        <span if.bind="toggled">${'messages.showing-filtered'|t:{count: filteredRegions.length, total: boundRegions.length}}</span>
     </div>
     <div class="section-list panel">
-        <section repeat.for="region of boundRegions" class="${region.expanded ? 'selected' : ''}">
+        <section repeat.for="region of filteredRegions" class="${region.expanded ? 'selected' : ''}">
             <h4 click.trigger="expand(region)">${region.name}<i class="valid-region sw-icon-select-all" if.bind="region.valid"></i></h4>
             <div class="bound-details au-animate" show.bind="region.expanded">
                 <form autocomplete="off">
@@ -52,6 +56,9 @@
                 </div>
             </div>
         </section>
+        <span if.bind="filteredRegions.length === 0">
+            ${'messages.no-stamps'|t}
+        </span>
     </div>
 
 </template>

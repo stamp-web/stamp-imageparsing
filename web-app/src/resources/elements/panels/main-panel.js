@@ -50,6 +50,7 @@ export class MainPanel {
 
     data;
     dataURI;
+    image;
 
     outputPath;
     processing = false;
@@ -138,7 +139,7 @@ export class MainPanel {
         this.dialogService.open({
             viewModel: DuplicateResolveDialog,
             model: {
-                duplicates: _.cloneDeep(event.duplicates)
+                duplicates: event.duplicates
             }
         }).then(dialogResult => {
             dialogResult.closeResult.then(result => {
@@ -212,7 +213,17 @@ export class MainPanel {
     }
 
     _saveRegions(data, regions, options, overwriteImage = false) {
-        this.handler.saveRegions(data, regions, options, overwriteImage);
+        this.handler.saveRegions(data, regions, options, overwriteImage).then(() => {
+            _.forEach(_.filter(regions, {saved: true}), result => {
+                let match = _.find(this.boundRegions, ImageBounds.getMatcher(result));
+                if (match) {
+                    _.assign(match, result);
+                    _.unset(match, 'overwrite');
+                    _.unset(match, 'exists');
+                }
+            });
+        });
+
     }
 
     _handleFolderSelected(folderName) {
@@ -248,6 +259,13 @@ export class MainPanel {
         }
     }
 
+    /**
+     * for performance reasons we need to convert the dataURI to a objectURL.  The string size
+     * on a typical dataURI is 8-64Mb in size and this is not performant on the canvas.
+     *
+     * @param file
+     * @private
+     */
     _processFile(file) {
         this.processing = true;
         this.eventAggregator.publish(EventNames.STATUS_MESSAGE, {
@@ -257,18 +275,17 @@ export class MainPanel {
 
         let mime = this.fileManager.getMimeType(file.path);
         _.set(this.options, 'mimeType', mime);
-        this.handler.readImage(file).then(dataURI => {
+        this.handler.readImage(file, false).then(dataURI => {
             this.dataURI = dataURI;
+            this.image = this.handler.toObjectUrl(dataURI, this.options);
             this.processing = false;
-            _.defer(() => { // some time this message does not get through if called directly
+            _.defer(() => { // defer till event processing is complete
                 this.eventAggregator.publish(EventNames.STATUS_MESSAGE, {
                     message:  this.i18n.tr('messages.loading-done'),
                     showBusy: false,
                     dismiss:  true
                 });
             });
-
-
         });
     }
 
