@@ -39,6 +39,11 @@ export class SidePanel {
     toggled = false;
 
     imageTypes = ImageTypes;
+    altPaths = [
+        {label: ' ', value: ''},
+        {label: 'used', value: 'used'},
+        {label: 'Reference', value: 'reference'}
+    ];
 
     constructor(eventAggregator, bindingEngine, dialogService) {
         this.eventAggregator = eventAggregator;
@@ -178,7 +183,7 @@ export class SidePanel {
 
     updateFilePath(region) {
         if (region.filename) {
-            region.filePath = region.filename + "." + region.imageType;
+            region.filePath =  region.filename + "." + region.imageType;
             region.name = region.filePath;
             this.eventAggregator.publish(EventNames.SELECTION_CHANGED, region);
         } else if (!region.name) {

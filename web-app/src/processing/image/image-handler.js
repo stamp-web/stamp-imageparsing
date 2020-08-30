@@ -31,8 +31,11 @@ export class ImageHandler {
         this.eventAggregator = eventAggregator;
         this.i18n = i18n;
         this.imageProcessor = imageProcessor;
-        this.remoteImageProcessor = remote.require('./platform/image-processing');
         this.logger = LogManager.getLogger('image-handler');
+    }
+
+    get remoteImageProcessor( ) {
+        return remote.require('./platform/image-processing');
     }
 
     readImage(file, asBuffer = false) {
@@ -95,10 +98,9 @@ export class ImageHandler {
                 message: this.i18n.tr('messages.saving-files'),
                 showBusy: true
         });
-        let duplicateRegions = [];
         return new Promise((resolve, reject) => {
             this.remoteImageProcessor.saveImages(data, regions, options, overwrite).then(results => {
-                duplicateRegions = _.filter(results, {exists: true});
+                let duplicateRegions = this._processSavedRegions(regions, results);
                 let hasDuplicates = _.size(duplicateRegions) > 0;
                 _.defer(() => { // ensure messages are sent
                     this.eventAggregator.publish(EventNames.STATUS_MESSAGE, {dismiss: true});
@@ -136,6 +138,21 @@ export class ImageHandler {
             });
         });
         return q;
+    }
+
+    _processSavedRegions(regions, results) {
+        let duplicateRegions = [];
+        let savedRegions = _.clone(regions);
+        _.forEach(_.filter(results, {exists: true, saved: false}), result => {
+            duplicateRegions.push(result);
+            this.logger.info('duplicate ->', result.filePath);
+            let match = _.find(savedRegions, ImageBounds.getMatcher(result));
+            if (match) {
+                _.remove(savedRegions, match);
+            }
+        });
+        _.forEach(savedRegions, r => this.logger.info('saved ->', r.filePath));
+        return duplicateRegions;
     }
 
     _imageToMimeType(imgType) {

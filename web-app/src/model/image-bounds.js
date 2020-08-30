@@ -40,7 +40,8 @@ export class ImageBounds {
             imageType: _.get(b, 'imageType'),
             folder: {
                 name: _.get(b, 'folder.name')
-            }
+            },
+            altPath: _.get(b, 'altPath')
         };
     }
 }

@@ -16,18 +16,20 @@
 import {DialogController} from 'aurelia-dialog';
 import {observable} from 'aurelia-framework';
 import {ImageHandler} from "../../../processing/image/image-handler";
+import {FileManager} from "../../../manager/file-manager";
 
 import _ from 'lodash';
 
 export class DuplicateResolveDialog {
 
-    static inject = [DialogController, ImageHandler];
+    static inject = [DialogController, ImageHandler, FileManager];
 
     duplicates = [];
 
-    constructor(controller, imageHandler){
+    constructor(controller, imageHandler, fileManager){
         this.controller = controller;
         this.imageHandler = imageHandler;
+        this.fileManager = fileManager;
     }
 
     activate(model){
@@ -39,19 +41,24 @@ export class DuplicateResolveDialog {
 
     getImage(duplicate) {
         return new Promise(resolve => {
-            if(!duplicate.duplicateImage) {
-                this.imageHandler.asDataUrlFromFile(duplicate.folder.path, duplicate.filePath).then(dataUrl => {
-                    duplicate.duplicateImage = dataUrl;
-                    resolve();
-                });
-            } else {
-                resolve();
+            let path = [duplicate.folder.path];
+            if (duplicate.altPath) {
+                path.push(duplicate.altPath);
             }
+            let fullPath = path.join(this.fileManager.getPathSeparator());
+            this.imageHandler.asDataUrlFromFile(fullPath, duplicate.filePath).then(dataUrl => {
+                duplicate.duplicateImage = dataUrl;
+                resolve();
+            });
         });
     }
 
     getChosenDuplicates() {
         return _.filter(this.duplicates, {overwrite: true});
+    }
+
+    showAltPath(duplicate) {
+        return (duplicate.altPath) ? '(' + duplicate.altPath + ')' : '';
     }
 
     rotationClass(duplicate) {

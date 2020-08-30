@@ -67,6 +67,7 @@
         "dpi-horizontal": "Horizontal DPI",
         "dpi-vertical": "Vertical DPI",
         "exclude-maximum-bounding": "Exclude Maximum bounding area boxes",
+        "generate-thumbnail": "Generate Thumbnail",
         "jpeg-quality": "Output Quality",
         "jpeq-quality-subtext": "JPEG is a lossy format and there will always be some level of fidelity loss on saving bursting images.  In general a range of 75-95% will provide the best balance between quality and file size.",
         "filename": "Filename",
@@ -77,6 +78,7 @@
         "min-bounding-area": "Minimum bounding area",
         "min-intercepting-area": "Minimum intercepting area",
         "max-bounding-area": "Maximum bounding percentage",
+        "options": "Options",
         "select-image-placeholder": "Select an image",
         "output-folder": "Target Folder:",
         "port": "Server port",
@@ -94,5 +96,9 @@
             "jpeg": "JPEG",
             "deflate": "Deflate"
         }
+    },
+
+    "placeholders": {
+        "altPath": "Select path"
     }
 }

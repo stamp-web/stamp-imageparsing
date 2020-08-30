@@ -15,7 +15,7 @@
                 <div class="duplicates-list">
                     <div class="image-row" repeat.for="duplicate of duplicates">
                         <span class="name-col">
-                            ${duplicate.name}
+                            ${duplicate.name} ${showAltPath(duplicate)}
                         </span>
                         <span class="existing-col">
                             <img src.bind="duplicate.duplicateImage">

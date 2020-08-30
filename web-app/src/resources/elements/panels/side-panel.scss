@@ -93,15 +93,38 @@ side-panel {
         }
 
         .image-type {
-            max-width: 8.5rem;
+            max-width: 9.2rem;
         }
 
         .form-row {
+            margin-bottom: $margin-med;
             margin-left:  0;
             margin-right: 0;
 
             .form-group {
+                margin-bottom: 0;
                 margin-right: $margin-med;
+            }
+        }
+
+        .thumbnail-options {
+            align-items: center;
+            display: flex;
+            flex-direction: row;
+            height: $input-height;
+            margin-left: $margin-med;
+
+            input {
+                margin-bottom: 0;
+                margin-right: $margin-thin;
+            }
+
+            label {
+                margin-bottom: 0;
+
+                &.disabled {
+                    color: $input-disabled;
+                }
             }
         }
 
@@ -110,7 +133,6 @@ side-panel {
     .image-preview {
         background-color: $image-background;
         height:           24rem;
-        margin-bottom:    $margin-med;
 
         img {
             left:       50%;

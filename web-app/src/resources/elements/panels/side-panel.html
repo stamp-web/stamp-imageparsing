@@ -15,11 +15,14 @@
             <h4 click.trigger="expand(region)">${region.name}<i class="valid-region sw-icon-select-all" if.bind="region.valid"></i></h4>
             <div class="bound-details au-animate" show.bind="region.expanded">
                 <form autocomplete="off">
-                    <label>${'labels.folder'|t}</label>
-                    <select class="form-control" value.bind="region.folder">
-                        <option repeat.for="folder of folders" model.bind="folder">${folder.name}</option>
-                    </select>
-
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>${'labels.folder'|t}</label>
+                            <select class="form-control" value.bind="region.folder">
+                                <option repeat.for="folder of folders" model.bind="folder">${folder.name}</option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="form-row">
                         <div class="form-group">
                             <label>${'labels.filename'|t}</label>
@@ -47,6 +50,25 @@
                             <button class="btn btn-secondary" click.delegate="rotate(region)" title="${'tooltips.rotate'|t}">
                                 <i class="sw-icon-rotate"></i>
                             </button>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>${'labels.options'|t}</label>
+                            <select class="form-control alt-type"
+                                    value.bind="region.altPath"
+                                    change.delegate="updateFilePath(region)">
+                                <option repeat.for="altPath of altPaths" model.bind="altPath.value">
+                                    ${altPath.label}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>&nbsp;</label>
+                            <span class="thumbnail-options">
+                                <input type="checkbox" disabled value.bind="region.generateThumbnail" checked.bind="region.generateThumbnail">
+                                <label class="disabled">${'labels.generate-thumbnail'|t}</label>
+                            </span>
                         </div>
                     </div>
 

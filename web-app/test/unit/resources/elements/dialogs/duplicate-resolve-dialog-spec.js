@@ -18,16 +18,38 @@ import _ from 'lodash';
 
 describe('DuplicateResolveDialog', () => {
 
-    let dialog;
-    let imageHandlerSpy;
+    let dialog, imageHandlerSpy, fileManagerSpy;
+
 
     beforeEach(() => {
         let dialogControllerSpy = jasmine.createSpy('dialogController');
         imageHandlerSpy = jasmine.createSpyObj('imageHandler', ['asDataUrlFromFile']);
-        dialog = new DuplicateResolveDialog(dialogControllerSpy, imageHandlerSpy);
+        fileManagerSpy = jasmine.createSpyObj('fileManager', ['getPathSeparator']);
+        dialog = new DuplicateResolveDialog(dialogControllerSpy, imageHandlerSpy, fileManagerSpy);
+
+        fileManagerSpy.getPathSeparator.and.returnValue('/');
+    });
+
+    describe('activate', () => {
+
+        it('standard activation', () => {
+            let duplicate = {
+                folder: {
+                    path: 'c:/test'
+                },
+                filePath: 'image1.png'
+            };
+            let model = {
+                duplicates: [duplicate]
+            };
+
+            dialog.activate(model);
+            expect(_.size(dialog.duplicates)).toBe(1);
+        });
     });
 
     describe('getImage', () => {
+
         it('returns dataURL', done => {
             let data = 'data:image/png;base64,012345ABCDEFABCDEF';
             let duplicate = {
@@ -44,17 +66,19 @@ describe('DuplicateResolveDialog', () => {
             });
         });
 
-        it('cached dataURL used', done => {
+
+        it('returns dataURL with altPath', done => {
             let data = 'data:image/png;base64,012345ABCDEFABCDEF';
             let duplicate = {
-                duplicateImage: data,
                 folder: {
-                    path: 'c:/test'
+                    path: 'c:/images'
                 },
-                filePath: 'image1.png'
+                altPath:  'used',
+                filePath: '123-stamp.png'
             };
+            imageHandlerSpy.asDataUrlFromFile.and.returnValue(Promise.resolve(data));
             dialog.getImage(duplicate).then(() => {
-                expect(imageHandlerSpy.asDataUrlFromFile).not.toHaveBeenCalled();
+                expect(imageHandlerSpy.asDataUrlFromFile).toHaveBeenCalledWith('c:/images/used', '123-stamp.png');
                 expect(duplicate.duplicateImage).toBe(data);
                 done();
             });
@@ -128,6 +152,25 @@ describe('DuplicateResolveDialog', () => {
         it('rotate', () => {
             let rotate = dialog.rotationClass(dialog.duplicates[2]);
             expect(rotate).toBe('');
+        });
+    });
+
+    describe('showAltPath', () => {
+       it('No alternative path', () => {
+           let duplicate = {
+               name: '123-stamp',
+               filePath: '123-stamp.jpg'
+           };
+           expect(dialog.showAltPath(duplicate)).toBe('');
+       });
+
+        it('Has alternative path', () => {
+            let duplicate = {
+                name: '456-stamp',
+                filePath: '456-stamp.png',
+                altPath: 'used'
+            };
+            expect(dialog.showAltPath(duplicate)).toBe('(used)');
         });
     });
 

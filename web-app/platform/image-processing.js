@@ -74,10 +74,14 @@ module.exports = function () {
                         break;
                 }
                 img.toBuffer().then(buf => {
-                    let filename = path.join((region.folder.path || __dirname), region.filePath);
+                    let basePath = (region.folder.path || __dirname);
+                    let fullPath = region.altPath ? path.join(basePath, region.altPath) : basePath;
+                    let filename = path.join(fullPath, region.filePath);
                     _.set(region, 'saved', false);
                     if(!fs.existsSync(filename) || overwrite) {
+                        fs.mkdirSync(fullPath, {recursive: true});
                         fs.writeFileSync(filename, buf);
+                        _.unset(region, 'exists');
                         _.set(region, 'saved', true);
                     } else {
                         _.set(region, 'exists', true);
