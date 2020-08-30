@@ -52,9 +52,9 @@ module.exports = function (config) {
                 html:           'coverage/html/'
             }
         },
-        preprocessors:         {
+        preprocessors: {
             [project.unitTestRunner.source]: [project.transpiler.id],
-            'src/**/*.js':                   ['coverage'],
+            'src/[!app.js]**/*.js':          ['coverage'], // app.js is causing problems with coverage
             //'src/**/*.js': ['babel']
         },
         coverageReporter:      {
