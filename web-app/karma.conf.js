@@ -41,7 +41,7 @@ module.exports = function (config) {
     config.set({
         basePath:                 '',
         frameworks:               [project.testFramework.id],
-        browserNoActivityTimeout: 60000,
+        browserNoActivityTimeout: 90000,
         files:                    files,
         exclude:                  ['**/.html'],
 
