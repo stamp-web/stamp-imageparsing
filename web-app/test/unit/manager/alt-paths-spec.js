@@ -18,7 +18,7 @@
 import {AltPaths} from 'manager/alt-paths';
 import {StorageKeys} from 'util/constants';
 
-describe('addSubscriber', () => {
+describe('AltPaths', () => {
     let altPaths;
 
     beforeEach(() => {
