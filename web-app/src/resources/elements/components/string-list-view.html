@@ -1,0 +1,32 @@
+<template>
+    <require from="resources/elements/components/string-list-view.css"></require>
+
+    <div class="action-bar">
+        <span class="form-inline new-entry">
+            <input placeholder="${'placeholders.addItem'|t}"  id="add-text" type="text" value.bind="addText" class="form-control">
+            <button class="btn btn-secondary" disabled.bind="invalid" click.delegate="add(addText)">
+                <i class="sw-icon-plus"></i>
+            </button>
+            <label for="add-text" class="invalid-text" if.bind="invalid && addText.length > 0">${'labels.invalid-name'|t}</label>
+        </span>
+        <span class="right-pane">
+            <button class="btn btn-secondary" disabled.bind="selected <= 0" click.delegate="move(selected, -1)">
+                <i class="sw-icon-up"></i>
+            </button>
+            <button class="btn btn-secondary" disabled.bind="selected < 0 || selected === items.length -1" click.delegate="move(selected, 1)">
+                <i class="sw-icon-down"></i>
+            </button>
+        </span>
+    </div>
+    <div class="list-scroller">
+        <ul>
+            <li repeat.for="item of items" click.delegate="selectRow($index)" class="${$index === selected ? 'selected' : ''}">
+                <span class="item-name">${item}</span>
+                <i class="sw-icon-delete" click.delegate="remove($index)"></i>
+            </li>
+        </ul>
+        <div class="no-items" if.bind="items.length === 0">
+            ${'messages.no-values'|t}
+        </div>
+    </div>
+</template>

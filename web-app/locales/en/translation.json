@@ -32,6 +32,7 @@
         "no-folder-chosen": "No folder chosen",
         "no-folders": "No child folders available",
         "no-stamps": "No stamp regions",
+        "no-values": "No items",
         "showing-filtered": "(Showing {{count}} of {{total}})"
     },
 
@@ -57,6 +58,7 @@
         "start-processor": "Start Image Processor"
     },
     "labels": {
+        "alt-path": "Alternative path values",
         "box-padding": "Box padding",
         "default-image-type": "Default Image Type",
         "default-folder-path": "Default Folder",
@@ -73,6 +75,7 @@
         "filename": "Filename",
         "folder": "Folder",
         "hostname": "Server hostname",
+        "invalid-name": "Invalid name",
         "memory": "Memory usage",
         "generate-security-key": "Security key",
         "min-bounding-area": "Minimum bounding area",
@@ -99,6 +102,7 @@
     },
 
     "placeholders": {
-        "altPath": "Select path"
+        "altPath": "Select path",
+        "addItem": "Add new..."
     }
 }

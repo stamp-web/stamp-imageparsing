@@ -1,6 +1,6 @@
 <template>
     <require from="resources/elements/panels/header-pane"></require>
-
+    <require from="resources/elements/components/string-list-view"></require>
     <require from="resources/elements/panels/system-settings.css"></require>
 
     <div class="system-settings-wrapper">
@@ -26,9 +26,11 @@
                             ${'actions.generate-key'|t}
                         </button>
                     </div>
-
                 </div>
-
+                <div class="form-group altPath-list">
+                    <label>${'labels.alt-path'|t}</label>
+                    <string-list-view items.bind="altPath"></string-list-view>
+                </div>
             </form>
             <div class="button-actions">
                 <button class="btn btn-primary" click.delegate="save()">${'actions.save'|t}</button>

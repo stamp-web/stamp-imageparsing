@@ -1,0 +1,125 @@
+/*
+ Copyright 2020 Jason Drake (jadrake75@gmail.com)
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
+@import '../../themes/variables';
+
+string-list-view {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    width: 100%;
+
+    .action-bar {
+        display: flex;
+        flex: 0 0 auto;
+        flex-direction: row;
+        margin-bottom: $margin-med;
+        width: 100%;
+
+        .form-inline {
+            .btn {
+                margin-left: $margin-med;
+            }
+
+            &.new-entry {
+                input {
+                    box-sizing: border-box;
+                    font-size: $font-size-sm;
+                    width: 10rem;
+                }
+
+                label {
+                    color: $failure;
+                    font-size: $font-size-sm;
+                    margin-left: $margin-med;
+                }
+            }
+        }
+        .right-pane {
+            margin-left: auto;
+        }
+
+        .btn {
+            height: $input-height;
+        }
+    }
+
+    .list-scroller {
+        border: $table-row-border;
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+        overflow-y: auto;
+
+        .no-items {
+            align-items: center;
+            display: flex;
+            font-size: $font-size-sm;
+            font-style: italic;
+            height: 3rem;
+            padding: $padding-thick;
+        }
+    }
+
+    ul {
+        padding-left: 0;
+        margin-bottom: 0;
+
+        li {
+            align-items: center;
+            background-color: $table-row-bg;
+            color: $table-row-color;
+            display: flex;
+            border-bottom: $table-row-border;
+            flex-direction: row;
+            font-size: $font-size-sm;
+            height: 3rem;
+            padding: $padding-med;
+            width: 100%;
+
+            &:hover, &.selected:hover {
+                background-color: $table-row-hover-bg;
+                color: $table-row-color;
+
+                .sw-icon-delete {
+                    opacity: 1.0;
+                }
+            }
+
+            &.selected {
+                background-color: $table-row-hover-bg;
+                color: $table-row-color;
+            }
+
+            .item-name {
+                flex: 1 1 auto;
+                max-width: 100%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .sw-icon-delete {
+                display: inline-flex;
+                flex: 0 0 auto;
+                margin-left: auto;
+                opacity: 0.001;
+            }
+        }
+    }
+}

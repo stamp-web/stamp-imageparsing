@@ -24,6 +24,17 @@
         max-width:6rem;
     }
 
+    .altPath-list {
+        display: flex;
+        flex-direction: column;
+        max-height: 20rem;
+        width: 30rem;
+
+        string-list-view {
+            margin-top: $margin-med;
+        }
+    }
+
     .security-key-group {
         display: flex;
         flex-direction: column;

@@ -232,13 +232,13 @@
     },
     {
       "uid": "d5098cb09be5827a2911dbab5af49ad2",
-      "css": "down",
+      "css": "down-1",
       "code": 59424,
       "src": "entypo"
     },
     {
       "uid": "43c4064ec1260d0e55c37e0467c75cbb",
-      "css": "up",
+      "css": "up-1",
       "code": 59425,
       "src": "entypo"
     },
@@ -453,6 +453,18 @@
       "css": "folder-empty",
       "code": 61545,
       "src": "mfglabs"
+    },
+    {
+      "uid": "ccddff8e8670dcd130e3cb55fdfc2fd0",
+      "css": "down",
+      "code": 59455,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "fe6697b391355dec12f3d86d6d490397",
+      "css": "up",
+      "code": 59456,
+      "src": "fontawesome"
     },
     {
       "uid": "fb41c3a521c66ffd5a8492ee2c53e783",

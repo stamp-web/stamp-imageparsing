@@ -18,6 +18,7 @@ import {EventAggregator} from 'aurelia-event-aggregator';
 import {DialogService} from 'aurelia-dialog';
 import {ImageBounds} from 'model/image-bounds';
 import {EventNames, ImageTypes, KeyCodes} from 'util/constants';
+import {AltPaths} from 'manager/alt-paths';
 import {RegionDefaultsDialog} from 'resources/elements/dialogs/region-defaults-dialog';
 import _ from 'lodash';
 
@@ -25,7 +26,7 @@ import _ from 'lodash';
 @customElement('side-panel')
 export class SidePanel {
 
-    static inject = [EventAggregator, BindingEngine, DialogService];
+    static inject = [EventAggregator, BindingEngine, DialogService, AltPaths];
 
     @bindable boundRegions;
     @bindable folders = [];
@@ -39,20 +40,21 @@ export class SidePanel {
     toggled = false;
 
     imageTypes = ImageTypes;
-    altPaths = [
-        {label: ' ', value: ''},
-        {label: 'used', value: 'used'},
-        {label: 'Reference', value: 'reference'}
-    ];
+    selectedAltPath;
 
-    constructor(eventAggregator, bindingEngine, dialogService) {
+    altPaths = [];
+
+    constructor(eventAggregator, bindingEngine, dialogService, altPathsManager) {
         this.eventAggregator = eventAggregator;
         this.bindingEngine = bindingEngine;
         this.dialogService = dialogService;
+        this.altPathsManager = altPathsManager;
     }
 
     attached() {
         this.subscribers.push(this.bindingEngine.collectionObserver(this.boundRegions).subscribe(this.regionsChanged.bind(this)));
+        this.altPaths = _.clone(this.altPathsManager.getPaths());
+        this.altPaths.unshift('');
     }
 
     detached() {

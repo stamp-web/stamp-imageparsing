@@ -56,10 +56,9 @@
                         <div class="form-group">
                             <label>${'labels.options'|t}</label>
                             <select class="form-control alt-type"
-                                    value.bind="region.altPath"
-                                    change.delegate="updateFilePath(region)">
-                                <option repeat.for="altPath of altPaths" model.bind="altPath.value">
-                                    ${altPath.label}
+                                    value.bind="region.altPath">
+                                <option repeat.for="altPath of altPaths" model.bind="altPath">
+                                    ${altPath}
                                 </option>
                             </select>
                         </div>

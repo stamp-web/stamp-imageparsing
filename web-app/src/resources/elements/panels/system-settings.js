@@ -17,19 +17,22 @@ import {customElement, inject} from 'aurelia-framework';
 import {I18N} from 'aurelia-i18n';
 import {ServerConfig} from "manager/server-config";
 import {IdentityHelper} from 'util/identity-helper';
+import {AltPaths} from "../../../manager/alt-paths";
 
 @customElement('system-settings')
-@inject(Element, I18N, ServerConfig)
+@inject(Element, I18N, ServerConfig, AltPaths)
 export class SystemSettings {
 
     port = -1;
     hostname;
     applicationKey;
+    altPath = [];
 
-    constructor(element, i18n, serverConfig) {
+    constructor(element, i18n, serverConfig, altPathConfig) {
         this.element = element;
         this.i18n = i18n;
         this.serverConfig = serverConfig;
+        this.altPathConfig = altPathConfig;
     }
 
     activate() {
@@ -41,6 +44,8 @@ export class SystemSettings {
         this.port = this.serverConfig.getPort();
         this.applicationKey = this.serverConfig.getApplicationKey();
         this.serverConfig.reset();
+
+        this.altPath = this.altPathConfig.getPaths();
     }
 
     save() {
@@ -48,6 +53,9 @@ export class SystemSettings {
         this.serverConfig.setHostname(this.hostname);
         this.serverConfig.setApplicationKey(this.applicationKey);
         this.serverConfig.save();
+
+        this.altPathConfig.setPaths(this.altPath);
+        this.altPathConfig.save();
     }
 
     generateSecurityKey() {

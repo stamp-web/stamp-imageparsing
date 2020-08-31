@@ -1,11 +1,11 @@
 @font-face {
   font-family: 'stamp-web';
-  src: url('../font/stamp-web.eot?28248126');
-  src: url('../font/stamp-web.eot?28248126#iefix') format('embedded-opentype'),
-       url('../font/stamp-web.woff2?28248126') format('woff2'),
-       url('../font/stamp-web.woff?28248126') format('woff'),
-       url('../font/stamp-web.ttf?28248126') format('truetype'),
-       url('../font/stamp-web.svg?28248126#stamp-web') format('svg');
+  src: url('../font/stamp-web.eot?34416191');
+  src: url('../font/stamp-web.eot?34416191#iefix') format('embedded-opentype'),
+       url('../font/stamp-web.woff2?34416191') format('woff2'),
+       url('../font/stamp-web.woff?34416191') format('woff'),
+       url('../font/stamp-web.ttf?34416191') format('truetype'),
+       url('../font/stamp-web.svg?34416191#stamp-web') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -15,7 +15,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: 'stamp-web';
-    src: url('../font/stamp-web.svg?28248126#stamp-web') format('svg');
+    src: url('../font/stamp-web.svg?34416191#stamp-web') format('svg');
   }
 }
 */
@@ -24,7 +24,7 @@
   font-family: "stamp-web";
   font-style: normal;
   font-weight: normal;
-  speak: none;
+  speak: never;
  
   display: inline-block;
   text-decoration: inherit;
@@ -87,8 +87,8 @@
 .sw-icon-catalogue:before { content: '\e81d'; } /* '' */
 .sw-icon-album:before { content: '\e81e'; } /* '' */
 .sw-icon-time:before { content: '\e81f'; } /* '' */
-.sw-icon-down:before { content: '\e820'; } /* '' */
-.sw-icon-up:before { content: '\e821'; } /* '' */
+.sw-icon-down-1:before { content: '\e820'; } /* '' */
+.sw-icon-up-1:before { content: '\e821'; } /* '' */
 .sw-icon-forward:before { content: '\e822'; } /* '' */
 .sw-icon-to-end:before { content: '\e823'; } /* '' */
 .sw-icon-to-start:before { content: '\e824'; } /* '' */
@@ -118,6 +118,8 @@
 .sw-icon-rotate:before { content: '\e83c'; } /* '' */
 .sw-icon-download:before { content: '\e83d'; } /* '' */
 .sw-icon-upload:before { content: '\e83e'; } /* '' */
+.sw-icon-down:before { content: '\e83f'; } /* '' */
+.sw-icon-up:before { content: '\e840'; } /* '' */
 .sw-icon-folder-open:before { content: '\f068'; } /* '' */
 .sw-icon-folder-empty:before { content: '\f069'; } /* '' */
 .sw-icon-unlink:before { content: '\f127'; } /* '' */

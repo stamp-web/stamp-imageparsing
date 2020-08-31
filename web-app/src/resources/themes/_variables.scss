@@ -82,7 +82,11 @@ $table-header-bg: $pallet-base-very-dark;
 $table-header-color: $pallet-base-light;
 $table-border: 2px $pallet-base-medium solid;
 $table-row-border: 1px $pallet-base-medium solid;
+$table-row-bg: $color-white;
+$table-row-color: $color-gray-dark;
 $table-row-hover-bg: $pallet-base;
+$table-row-selected-bg: $pallet-primary-offset;
+$table-row-selected-color: $selection-text-color;
 
 $success: $pallet-primary;
 $failure: $color-red;

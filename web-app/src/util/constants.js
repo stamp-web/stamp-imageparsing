@@ -77,9 +77,10 @@ export const EventNames = {
 };
 
 export const StorageKeys = {
-    OPTIONS:     'options',
-    OUTPUT_PATH: 'output-path',
-    SERVER_INFO: 'server-info'
+    ALTERNATE_PATHS: 'alt-paths',
+    OPTIONS:         'options',
+    OUTPUT_PATH:     'output-path',
+    SERVER_INFO:     'server-info'
 }
 
 export const ChannelNames = {
