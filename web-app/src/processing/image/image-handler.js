@@ -140,18 +140,19 @@ export class ImageHandler {
         return q;
     }
 
-    _processSavedRegions(regions, results) {
+    _processSavedRegions(savedRegions, results) {
         let duplicateRegions = [];
-        let savedRegions = _.clone(regions);
         _.forEach(_.filter(results, {exists: true, saved: false}), result => {
             duplicateRegions.push(result);
             this.logger.info('duplicate ->', result.filePath);
+        });
+        _.forEach(_.filter(results, {saved: true}), result => {
             let match = _.find(savedRegions, ImageBounds.getMatcher(result));
             if (match) {
-                _.remove(savedRegions, match);
+                _.assign(match, result);
+                this.logger.info('saved ->', result.filePath);
             }
         });
-        _.forEach(savedRegions, r => this.logger.info('saved ->', r.filePath));
         return duplicateRegions;
     }
 
