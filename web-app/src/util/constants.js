@@ -71,6 +71,7 @@ export const EventNames = {
     REMOTE_MESSAGING:    'remote-messaging',
     SAVE_REGIONS:        'save-regions',
     SAVE_SETTINGS:       'save-settings',
+    SELECT_MODE:         'select-mode',
     SELECTION_CHANGED:   'selection-changed',
     STATUS_MESSAGE:      'status-message',
     ZOOM:                'zoom'

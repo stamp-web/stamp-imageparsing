@@ -48,6 +48,7 @@ export class ImageCanvas {
     _image; // HTMLImageElement
     _subscribers = [];
     _lastCoords = {x:0, y:0};
+    _threshold = 5;
 
     constructor(element, eventAggregator, bindingEngine) {
         this.element = element;
@@ -72,6 +73,10 @@ export class ImageCanvas {
         this._subscribers.push(this.eventAggregator.subscribe(EventNames.ADD_REGION, () => {
             this._clickMode = ClickMode.box;
         }));
+        this._subscribers.push(this.eventAggregator.subscribe(EventNames.SELECT_MODE, () => {
+            this._clickMode = ClickMode.select;
+        }));
+
         this._subscribers.push(this.eventAggregator.subscribe('delete-selected', this.deleteSelected.bind(this)));
         this._subscribers.push(this.bindingEngine.collectionObserver(this.boundRegions).subscribe(this.regionsChanged.bind(this)));
         this.repaintDebounced = _.throttle(this.repaint.bind(this), 750);
@@ -117,7 +122,7 @@ export class ImageCanvas {
             let previousRegion = this.selectedRegion;
             _.forEachRight(this.boundRegions, region => {
                 let rectangle = region.rectangle;
-                if (this._isSelectionWithinBox(rectangle, evt.offsetX / this.scalingFactor, evt.offsetY / this.scalingFactor)) {
+                if (this._isSelectionWithinBox(rectangle, this._toActualSize(evt.offsetX), this._toActualSize(evt.offsetY))) {
                     if (_.get(previousRegion, 'rectangle') === rectangle) {
                         return true;
                     }
@@ -126,7 +131,6 @@ export class ImageCanvas {
                 }
             });
             if (!this.selectedRegion && previousRegion) {
-                this.logger.warn(">> reseting to previous");
                 this.eventAggregator.publish(EventNames.SELECTION_CHANGED, previousRegion);
             }
         }
@@ -139,10 +143,12 @@ export class ImageCanvas {
                 y: evt.offsetY
             };
             this._lastCoords = _.clone(this._boxStart);
-        } else if (this._clickMode == ClickMode.select && this.selectedRegion) {
-            //   console.log("near?", this._isNearSelectionEdge(this.selectedBox, evt.offsetX, evt.offsetY));
-            if (this._isNearSelectionEdge(this.selectedRegion.rectangle, evt.offsetX, evt.offsetY)) {
-                this._clickMode == ClickMode.resize;
+        } else if (this._clickMode === ClickMode.select && this.selectedRegion) {
+            let cursor = $(this.element).css('cursor');
+            if (cursor.match(/-resize/)) {
+                this._clickMode = ClickMode.resize;
+                this.resizingRegion = _.clone(this.selectedRegion);
+                this._handleResizePositionByCursor(this.resizingRegion, evt.offsetX, evt.offsetY, cursor);
             }
         }
     }
@@ -155,17 +161,18 @@ export class ImageCanvas {
         return true;
     }
 
-    _zoom(wheelDelta) {
-        this.eventAggregator.publish(EventNames.ZOOM, Math.sign(wheelDelta));
-    }
-
-
     mouseMoveCanvas(evt) {
-        if (this._clickMode === ClickMode.box && this._boxStart) {
-            if(this._lastCoords.x === evt.offsetX && this._lastCoords.y === evt.offsetY) {
+        if (this._clickMode === ClickMode.select && this.selectedRegion) {
+            let cursor = 'default';
+            cursor = this._getPointerByPosition(this.selectedRegion.rectangle, evt.offsetX, evt.offsetY);
+            _.defer(() => {
+                $(this.element).css('cursor', cursor);
+            });
+        }
+        else if (this._clickMode === ClickMode.box && this._boxStart) {
+            if(this._isSelectionWithin(this._lastCoords.x, this._lastCoords.y, evt.offsetX, evt.offsetY, 3)) {
                 return;
             }
-            //this.repaint();
             this.paint(this.image);
             _.defer(() => {
                 if (!this._boxStart) {
@@ -181,30 +188,48 @@ export class ImageCanvas {
                 this._lastCoords = {x :evt.offsetX, y: evt.offsetY};
             });
         } else if (this._clickMode === ClickMode.resize) {
-            //  console.log('resizing');
+            if(this._isSelectionWithin(this._lastCoords.x, this._lastCoords.y, evt.offsetX, evt.offsetY, 2)) {
+                return;
+            }
+            this.paint(this.image);
+            _.defer(() => {
+                if (!this.resizingRegion) {
+                    return;
+                }
+                let ctx = this._getContext();
+                ctx.strokeStyle = this.style.create;
+                ctx.setLineDash([5, 5]);
+                ctx.lineWidth = this.LINE_WIDTH;
+                let rectangle = _.get(this.resizingRegion, 'rectangle');
+                let x = this._toScaledSize(rectangle.x);
+                let y = this._toScaledSize(rectangle.y);
+                let w = this._toScaledSize(rectangle.width);
+                let h = this._toScaledSize(rectangle.height);
+                ctx.strokeRect(x, y,
+                    (this.resizingRegion.allowResizeX ? evt.offsetX - x : w),
+                    (this.resizingRegion.allowResizeY ? evt.offsetY - y : h));
+                ctx.setLineDash([]);
+                this._lastCoords = {x :evt.offsetX, y: evt.offsetY};
+            });
         }
     }
 
+
+
     mouseUpCanvas(evt) {
+        if (this._clickMode === ClickMode.resize) {
+            let rectangle = this._getResizedRectangle(_.get(this.resizingRegion, 'rectangle'), evt.offsetX, evt.offsetY,
+                _.get(this.resizingRegion, 'allowResizeX', true), _.get(this.resizingRegion, 'allowResizeY', true));
+            this.selectedRegion.rectangle = rectangle;
+            this.selectedRegion.image = this._generateCropImage(rectangle);
+            _.defer(() => {
+                this.repaint();
+                this._clickMode = ClickMode.select;
+            });
+        }
         if (this._clickMode === ClickMode.box && this._boxStart) {
             this.repaintDebounced();
-            let x = this._boxStart.x;
-            let y = this._boxStart.y;
-            let w = (evt.offsetX - this._boxStart.x);
-            let h = evt.offsetY - this._boxStart.y;
-            if (w < 0) {
-                x = x + w;
-            }
-            if (h < 0) {
-                y = y + h;
-            }
-            let rectangle = {
-                x:      x / this.scalingFactor,
-                y:      y / this.scalingFactor,
-                width:  Math.abs(w) / this.scalingFactor,
-                height: Math.abs(h) / this.scalingFactor
-            };
-
+            let rectangle = this._getCreatedRectangle(this._boxStart, evt.offsetX, evt.offsetY);
             let imageBounds = new ImageBounds({
                 image:     this._generateCropImage(rectangle),
                 rectangle: rectangle
@@ -218,14 +243,151 @@ export class ImageCanvas {
         }
     }
 
+    _zoom(wheelDelta) {
+        this.eventAggregator.publish(EventNames.ZOOM, Math.sign(wheelDelta));
+    }
+
+    _toActualSize(v) {
+        return v / this.scalingFactor;
+    }
+
+    _toScaledSize(v) {
+        return v * this.scalingFactor;
+    }
+
+    /**
+     * Will examine the cursor position against the original origin for the cursor and if needed
+     * re-set the starting cursor position.  If will also fix the vertical/horizontal resizing of the
+     * region if needed.
+     *
+     * @param region
+     * @param e_x
+     * @param e_y
+     * @param cursor
+     * @private
+     */
+    _handleResizePositionByCursor(region, e_x, e_y, cursor) {
+        region.allowResizeX = true;
+        region.allowResizeY = true;
+        switch(cursor) {
+            case 'ns-resize':
+                region.allowResizeX = false;
+                let y = this._toScaledSize(_.get(region, 'rectangle.y'));
+                if (this._isSelectionWithin(0, y, 0, e_y, this._threshold)) {
+                    _.set(region, 'rectangle.y', this._toActualSize(y) + _.get(region, 'rectangle.height'));
+                }
+                break;
+            case 'ew-resize':
+                region.allowResizeY = false;
+                let x = this._toScaledSize(_.get(region, 'rectangle.x'));
+                if (this._isSelectionWithin(x, 0, e_x, 0, this._threshold)) {
+                    _.set(region, 'rectangle.x', this._toActualSize(x) + _.get(region, 'rectangle.width'));
+                }
+                break;
+            case 'nesw-resize':
+                x = _.get(region, 'rectangle.x');
+                let w = _.get(region, 'rectangle.width');
+                if (this._isSelectionWithin( this._toScaledSize(x) + this._toScaledSize(w), 0, e_x, 0, this._threshold)) {
+                    _.set(region, 'rectangle.y', _.get(region, 'rectangle.y') + _.get(region, 'rectangle.height'));
+                } else if (this._isSelectionWithin( this._toScaledSize(x), 0, e_x, 0, this._threshold)) {
+                    _.set(region, 'rectangle.x', x + w);
+                }
+                break;
+            case 'nwse-resize':
+                x = _.get(region, 'rectangle.x');
+                w = _.get(region, 'rectangle.width');
+                if (this._isSelectionWithin( this._toScaledSize(x), 0, e_x, 0, this._threshold)) {
+                    _.set(region, 'rectangle.x', x + w);
+                    _.set(region, 'rectangle.y', _.get(region, 'rectangle.y') + _.get(region, 'rectangle.height'));
+                }
+                break;
+        }
+    }
+
+    /**
+     * Create an actual box from the original starting location and the width/height as designated by the positional
+     * coordinates.  If the
+     *
+     * @param rectangle
+     * @param e_x
+     * @param e_y
+     * @private
+     */
+    _getCreatedRectangle(rectangle, e_x, e_y) {
+        let x = rectangle.x;
+        let y = rectangle.y;
+        let w = e_x - this._toScaledSize(rectangle.x);
+        let h = e_y - this._toScaledSize(rectangle.y);
+        if (w < 0) {
+            x = e_x;
+        }
+        if (h < 0) {
+            y = e_y;
+        }
+        let rect = {
+            x:      this._toActualSize(x),
+            y:      this._toActualSize(y),
+            width:  this._toActualSize(Math.abs(w)),
+            height: this._toActualSize(Math.abs(h))
+        };
+        return rect;
+    }
+
+
+    _getResizedRectangle(rectangle, e_x, e_y, allowResizeX, allowResizeY) {
+        let x = this._toScaledSize(rectangle.x);
+        let y = this._toScaledSize(rectangle.y);
+        let w = allowResizeX ? (e_x - x) : this._toScaledSize(rectangle.width);
+        let h = allowResizeY ?(e_y - y) : this._toScaledSize(rectangle.height);
+        if (w < 0) {
+            x += w;
+        }
+        if (h < 0) {
+            y += h;
+        }
+        let rect = {
+            x:      this._toActualSize(x),
+            y:      this._toActualSize(y),
+            width:  this._toActualSize(Math.abs(w)),
+            height: this._toActualSize(Math.abs(h))
+        };
+        return rect;
+    }
+
+    _getPointerByPosition(rectangle, x, y) {
+        let cursor = 'default';
+        let cr = this._threshold;
+        let rx = this._toScaledSize(rectangle.x);
+        let ry = this._toScaledSize(rectangle.y);
+        let rw = this._toScaledSize(rectangle.width);
+        let rh = this._toScaledSize(rectangle.height);
+        if (this._isSelectionWithin(rx + rw, ry + rh, x, y, cr) || this._isSelectionWithin(rx, ry, x, y, cr)) {
+            cursor = 'nwse-resize';
+        } else if (this._isSelectionWithin(rx + rw, ry, x, y, cr) || this._isSelectionWithin(rx, ry + rh, x, y, cr)) {
+            cursor = 'nesw-resize';
+        } else if ((this._isSelectionWithin(0, ry + rh, 0, y, cr) || this._isSelectionWithin(0, ry, 0, y, cr)) && x + cr >= rx && x <= rx + rw - cr) {
+            cursor = 'ns-resize';
+        } else if ((this._isSelectionWithin(rx, 0, x, 0, cr) || this._isSelectionWithin(rx + rw, 0, x, 0, cr))
+            && (y >= ry + cr) && (y <= ry + rh - cr)) {
+            cursor = 'ew-resize';
+        }
+        return cursor;
+    }
+
+    _isSelectionWithin(previousX, previousY, currentX, currentY, threshold = 2) {
+        return Math.abs(currentX - previousX) <= threshold && Math.abs(currentY - previousY) <= threshold;
+    }
+
     _isSelectionWithinBox(rectangle, x, y) {
         return ( rectangle.x < x && rectangle.x + rectangle.width > x && rectangle.y < y && rectangle.y + rectangle.height > y);
     }
 
     _isNearSelectionEdge(rectangle, x, y) {
         let delta = 10;
-        return ((((x > rectangle.x - delta) && (x < rectangle.x + delta)) || ((x > rectangle.x + rectangle.width - delta) && (x < rectangle.x + rectangle.width + delta))) &&
-            (((y > rectangle.y - delta) && (y < rectangle.y + delta)) || ((y > rectangle.y + rectangle.height - delta) && (y < rectangle.y + rectangle.height + delta)))
+        return ((((x > rectangle.x - delta) && (x < rectangle.x + delta)) ||
+                ((x > rectangle.x + rectangle.width - delta) && (x < rectangle.x + rectangle.width + delta))) &&
+            (((y > rectangle.y - delta) && (y < rectangle.y + delta)) ||
+                ((y > rectangle.y + rectangle.height - delta) && (y < rectangle.y + rectangle.height + delta)))
         );
     }
 
@@ -268,14 +430,14 @@ export class ImageCanvas {
                     let cvs = this._getCanvas();
                     // We need to set the HTML attributes of the Canvas vs. using CSS since the CSS properties are for the
                     // visible size only
-                    cvs.attr('width', img.width * this.scalingFactor);
-                    cvs.attr('height', img.height * this.scalingFactor);
+                    cvs.attr('width', this._toScaledSize(img.width));
+                    cvs.attr('height', this._toScaledSize(img.height));
                     this.lastScalingFactor = this.scalingFactor;
                 }
 
                 this._getContext().lineWidth = 1.0;
                 this._getContext().drawImage(img, 0, 0, img.width, img.height, 0, 0,
-                    img.width * this.scalingFactor, img.height * this.scalingFactor);
+                    this._toScaledSize(img.width), this._toScaledSize(img.height));
             }
             img.src = newImage;
             this._image = img;
@@ -283,7 +445,7 @@ export class ImageCanvas {
             let canvas = this._getCanvas();
             let ctx = this._getContext();
             ctx.fillStyle = '#111';
-            ctx.fillRect(0, 0, $(canvas).width() / this.scalingFactor, $(canvas).height() / this.scalingFactor);
+            ctx.fillRect(0, 0, this._toActualSize($(canvas).width()), this._toActualSize($(canvas).height()));
         }
     }
 
@@ -351,14 +513,14 @@ export class ImageCanvas {
         let isSelected = (rect === _.get(this.selectedRegion, 'rectangle'));
         ctx.lineWidth = isSelected ? this.SELECTED_LINE_WIDTH: this.LINE_WIDTH;
         ctx.strokeStyle = isSelected ? this.style.selected : this.style.border;
-        ctx.strokeRect(rect.x * this.scalingFactor, rect.y * this.scalingFactor,
-            rect.width * this.scalingFactor, rect.height * this.scalingFactor);
+        ctx.strokeRect(this._toScaledSize(rect.x), this._toScaledSize(rect.y),
+            this._toScaledSize(rect.width), this._toScaledSize(rect.height));
 
         if (isSelected) {
             ctx.globalAlpha = this.style.transparency;
             ctx.fillStyle = this.style.selected;
-            ctx.fillRect(rect.x * this.scalingFactor, rect.y * this.scalingFactor,
-                rect.width * this.scalingFactor, rect.height * this.scalingFactor);
+            ctx.fillRect(this._toScaledSize(rect.x ), this._toScaledSize(rect.y),
+                this._toScaledSize(rect.width), this._toScaledSize(rect.height));
             ctx.globalAlpha = 1.0; // revert
         }
 
@@ -366,7 +528,7 @@ export class ImageCanvas {
         ctx.font = `${fontSize} arial`;
         ctx.lineWidth = 1;
         ctx.fillStyle = isSelected ? this.style.selected : this.style.border;
-        ctx.fillText(text, rect.x * this.scalingFactor + 5, rect.y * this.scalingFactor + 15);
+        ctx.fillText(text, this._toScaledSize(rect.x) + 5, this._toScaledSize(rect.y) + 15);
     }
 
     /**

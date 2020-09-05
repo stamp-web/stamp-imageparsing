@@ -312,6 +312,7 @@ export class MainPanel {
             this.boundRegions.splice(index, 1);
             this.eventAggregator.publish('delete-selected', this.selectedRegion);
             this.selectedRegion = undefined;
+            this.resetMode();
         }
     }
 
@@ -319,10 +320,15 @@ export class MainPanel {
         return _.findIndex(this.boundRegions, o => { return o === this.selectedRegion});
     }
 
+    resetMode() {
+        this.eventAggregator.publish(EventNames.SELECT_MODE);
+    }
+
     clear() {
         this.data = undefined;
         this.dataURI = undefined;
         this.clearBoxes();
+        this.resetMode();
     }
 
     clearBoxes() {
@@ -345,6 +351,7 @@ export class MainPanel {
         } else if (this.scalingFactor >= MAX_ZOOM) {
             this.toobig = true;
         }
+        this.resetMode();
     }
 
     settings() {
