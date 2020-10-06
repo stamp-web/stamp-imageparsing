@@ -80,7 +80,7 @@ export class SidePanel {
         this.toggled = !this.toggled;
     }
 
-    @computedFrom('toggled', 'boundRegions')
+    @computedFrom('toggled', 'boundRegions.length')
     get filteredRegions() {
         if (!this.toggled) {
             this.selectedRegion = _.find(this.boundRegions, this.selectedRegion) || _.first(this.boundRegions);
