@@ -67,6 +67,7 @@
 	</dependencies>
 
 	<repositories>
+		<!-- 
 		<repository>
 			<id>drakeserver.repo</id>
 			<name>Maven Repository on Drakeserver</name>
@@ -76,6 +77,7 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</repository>
+		 -->
 		<repository>
 			<id>wisc.edu</id>
 			<name>Wisconson University</name>
