@@ -78,6 +78,7 @@ let folderUtilities = function () {
                     path: f
                 });
             });
+            output = _.orderBy(output, ['name']);
             return output;
         },
 
