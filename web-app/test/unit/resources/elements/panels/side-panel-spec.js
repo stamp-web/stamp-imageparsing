@@ -72,4 +72,32 @@ describe('SidePanel', () => {
             expect(sidepanel.toggled).toBe(false);
         });
     });
+
+    describe('_clearValues', () => {
+       it('verify empty bound regions', () => {
+           sidepanel.validForSave = true; // just to check reset
+           sidepanel.boundRegions = [];
+           sidepanel._clearValues();
+           expect(sidepanel.validForSave).toBe(false);
+           expect(sidepanel.selectedRegion).toBeUndefined();
+       });
+
+        it('verify clears bound regions', () => {
+            sidepanel.validForSave = true; // just to check reset
+            sidepanel.boundRegions = [{
+                filePath: 'test/image-123.png',
+                filename: 'image-123.png',
+                valid: true,
+                name: 'image-123'
+            }, {
+                filePath: 'test/image-345.png',
+                filename: 'image-345.png',
+                valid: true,
+                name: 'image-345'
+            }];
+            sidepanel._clearValues();
+            expect(sidepanel.validForSave).toBe(false);
+            expect(sidepanel.selectedRegion).toBe(sidepanel.boundRegions[0]);
+        })
+    });
 });

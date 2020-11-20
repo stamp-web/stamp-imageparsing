@@ -14,26 +14,29 @@
  limitations under the License.
  */
 import {customElement, bindable, BindingEngine, computedFrom} from 'aurelia-framework';
+import {I18N} from 'aurelia-i18n';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {DialogService} from 'aurelia-dialog';
 import {ImageBounds} from 'model/image-bounds';
 import {EventNames, ImageTypes, KeyCodes} from 'util/constants';
 import {AltPaths} from 'manager/alt-paths';
 import {RegionDefaultsDialog} from 'resources/elements/dialogs/region-defaults-dialog';
+import {MessagePromptDialog} from 'resources/elements/dialogs/message-prompt-dialog';
+
 import _ from 'lodash';
 
 
 @customElement('side-panel')
 export class SidePanel {
 
-    static inject = [EventAggregator, BindingEngine, DialogService, AltPaths];
+    static inject = [I18N, EventAggregator, BindingEngine, DialogService, AltPaths];
 
     @bindable boundRegions;
     @bindable folders = [];
     @bindable options = {};
     @bindable selectedRegion;
 
-    defaultConfig = { };
+    defaultConfig = {};
 
     subscribers = [];
     validForSave = false;
@@ -44,7 +47,8 @@ export class SidePanel {
 
     altPaths = [];
 
-    constructor(eventAggregator, bindingEngine, dialogService, altPathsManager) {
+    constructor(i18n, eventAggregator, bindingEngine, dialogService, altPathsManager) {
+        this.i18n = i18n;
         this.eventAggregator = eventAggregator;
         this.bindingEngine = bindingEngine;
         this.dialogService = dialogService;
@@ -94,34 +98,24 @@ export class SidePanel {
         }
     }
 
-    _setDefaultFolder() {
-        let folder = _.get(this.defaultConfig, 'folder');
-        if (folder) {
-            _.each(this.boundRegions, region => {
-                region.folder = folder;
-            });
-        }
-    }
-
-
     clearValues() {
-        _.each(this.boundRegions, region => {
-            if (region.filePath) {
-                region.name = ImageBounds.nextName();
+        let opts = {
+            viewModel: MessagePromptDialog,
+            model:     this.i18n.tr('messages.clear-msg')
+        };
+        this.dialogService.open(opts).then(dialogResult => {
+            return dialogResult.closeResult;
+        }).then(response => {
+            if (!response.wasCancelled) {
+                this._clearValues();
             }
-           region.filePath = undefined;
-           region.filename = undefined;
-           region.valid = this.isValidRegion(region);
-
         });
-        this.validForSave = false;
-        this.selectedRegion = _.first(this.boundRegions);
     }
 
     setDefaults() {
         this.dialogService.open({
             viewModel: RegionDefaultsDialog,
-            model: this.defaultConfig
+            model:     this.defaultConfig
         }).then(dialogResult => {
             return dialogResult.closeResult;
         }).then((response) => {
@@ -135,11 +129,11 @@ export class SidePanel {
     saveValues() {
         let saveRegions = [];
         _.each(this.filteredRegions, region => {
-            if(this.isValidRegion(region)) {
+            if (this.isValidRegion(region)) {
                 saveRegions.push(region);
             }
         });
-        if(saveRegions.length > 0) {
+        if (saveRegions.length > 0) {
             this.eventAggregator.publish(EventNames.SAVE_REGIONS, saveRegions);
         }
     }
@@ -161,16 +155,6 @@ export class SidePanel {
         return true;
     }
 
-    _handleTabPressed(region) {
-        if (this.tabPressed) {
-            let index = _.indexOf(this.boundRegions, region) + 1;
-            if (index > 0 && index < this.boundRegions.length) {
-                this.selectedRegion = this.boundRegions[index];
-            }
-            this.tabPressed = false;
-        }
-    }
-
     rotate(region) {
         let angle = region.rotate || 0;
         region.rotate = (angle + 90) % 360;
@@ -185,7 +169,7 @@ export class SidePanel {
 
     updateFilePath(region) {
         if (region.filename) {
-            region.filePath =  region.filename + "." + region.imageType;
+            region.filePath = region.filename + "." + region.imageType;
             region.name = region.filePath;
             this.eventAggregator.publish(EventNames.SELECTION_CHANGED, region);
         } else if (!region.name) {
@@ -205,13 +189,45 @@ export class SidePanel {
     }
 
     expand(region) {
-        if(region) {
+        if (region) {
             _.forEach(this.boundRegions, iter => {
                 iter.expanded = false;
             });
             region.expanded = true;
             this.eventAggregator.publish(EventNames.SELECTION_CHANGED, region);
         }
+    }
 
+    _setDefaultFolder() {
+        let folder = _.get(this.defaultConfig, 'folder');
+        if (folder) {
+            _.each(this.boundRegions, region => {
+                region.folder = folder;
+            });
+        }
+    }
+
+    _handleTabPressed(region) {
+        if (this.tabPressed) {
+            let index = _.indexOf(this.boundRegions, region) + 1;
+            if (index > 0 && index < this.boundRegions.length) {
+                this.selectedRegion = this.boundRegions[index];
+            }
+            this.tabPressed = false;
+        }
+    }
+
+    _clearValues() {
+        _.each(this.boundRegions, region => {
+            if (region.filePath) {
+                region.name = ImageBounds.nextName();
+            }
+            region.filePath = undefined;
+            region.filename = undefined;
+            region.valid = this.isValidRegion(region);
+
+        });
+        this.validForSave = false;
+        this.selectedRegion = _.first(this.boundRegions);
     }
 }

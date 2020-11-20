@@ -1,0 +1,13 @@
+<template>
+    <ux-dialog class="message-prompt-dialog">
+        <ux-dialog-body>
+            <div class="message-prompt">
+                ${message}
+            </div>
+        </ux-dialog-body>
+        <ux-dialog-footer>
+            <button class="btn btn-primary" click.trigger="controller.ok(message)">${'actions.ok'|t}</button>
+            <button class="btn btn-secondary" click.trigger="controller.cancel()">${'actions.cancel'|t}</button>
+        </ux-dialog-footer>
+    </ux-dialog>
+</template>

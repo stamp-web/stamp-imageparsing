@@ -15,6 +15,7 @@ let appSrc = project.build.bundles.map(x => path.join(output, x.name));
 let entryIndex = appSrc.indexOf(path.join(output, project.build.loader.configTarget));
 let entryBundle = appSrc.splice(entryIndex, 1)[0];
 let files = [
+    { pattern: "node_modules/reflect-metadata/Reflect.js", include: true },
     entryBundle,
     'src/electron-fix.js'
 ].concat(testSrc).concat(appSrc);

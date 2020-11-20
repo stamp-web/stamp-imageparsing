@@ -4,7 +4,7 @@
     <div class="action-list">
         <button class="btn btn-primary" click.delegate="saveValues()" disabled.bind="!validForSave && filteredRegions.length > 0" title="${'tooltips.save'|t}"><i class="sw-icon-download"></i></button>
         <button class="btn btn-secondary" click.delegate="setDefaults()"><i class="sw-icon-settings" title="${'tooltips.region-settings'|t}"></i></button>
-        <button class="btn btn-secondary" click.delegate="clearValues()"><i class="sw-icon-eraser" title="${'tooltips.reset'|t}"></i></button>
+        <button class="btn btn-secondary" click.delegate="clearValues()" disabled.bind="!validForSave"><i class="sw-icon-eraser" title="${'tooltips.reset'|t}"></i></button>
         <button class="btn btn-secondary ${toggled ? 'active': ''}" click.delegate="toggleProcessed()">
             <i class="sw-icon-filter" title="${'tooltips.filter-processed'|t}"></i>
         </button>

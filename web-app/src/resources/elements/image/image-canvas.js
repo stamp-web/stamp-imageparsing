@@ -316,8 +316,8 @@ export class ImageCanvas {
     _getCreatedRectangle(rectangle, e_x, e_y) {
         let x = rectangle.x;
         let y = rectangle.y;
-        let w = e_x - this._toScaledSize(rectangle.x);
-        let h = e_y - this._toScaledSize(rectangle.y);
+        let w = e_x - rectangle.x;
+        let h = e_y - rectangle.y;
         if (w < 0) {
             x = e_x;
         }
