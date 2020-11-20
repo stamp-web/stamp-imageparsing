@@ -100,7 +100,7 @@
                     },
                     {
                         "name": "@stomp/stompjs",
-                        "path": "../node_modules/@stomp/stompjs/esm5",
+                        "path": "../node_modules/@stomp/stompjs/esm6",
                         "main": "index.js",
                         "deps": [
                             "sockjs-client"
