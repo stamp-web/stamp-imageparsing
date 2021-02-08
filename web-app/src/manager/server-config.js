@@ -85,4 +85,14 @@ export class ServerConfig {
     setScheme(scheme) {
         _.set(this.serverInfo, 'scheme', scheme);
     }
+
+    getJvmPath() {
+        this._ensureLoaded();
+        return _.get(this.serverInfo, 'jvmPath', ServerConfiguration.jvmPath);
+    }
+
+    setJvmPath(path) {
+        _.set(this.serverInfo, 'jvmPath', path);
+    }
+
 }

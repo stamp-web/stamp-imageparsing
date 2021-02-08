@@ -30,6 +30,29 @@
         .card-wrapper {
             margin: $margin-thick;
         }
+
+    }
+
+    .messaging-area {
+        background: $valid-background;
+        border-bottom: $fieldset-border;
+        display: flex;
+        flex-direction: row;
+        height: 4.2rem;
+        padding: $padding-x-thick;
+        width: 100%;
+
+        i {
+            margin-right: $margin-med;
+        }
+
+        &.with-error {
+            background: $invalid-background;
+
+            i {
+                color: $failure;
+            }
+        }
     }
 }
 

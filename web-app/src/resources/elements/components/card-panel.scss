@@ -28,6 +28,16 @@ card-panel {
         width: 20rem;
         padding: 1rem;
 
+        &.disabled {
+            background-color: $button-bg-disabled;
+            color: $button-color-disabled;
+            cursor: not-allowed;
+
+            img {
+                opacity: 0.4;
+            }
+        }
+
         span {
             font-size: $font-size-title;
             margin-top: $margin-med;

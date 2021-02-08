@@ -47,7 +47,8 @@ export const DefaultOptions = {
 export const ServerConfiguration = {
     hostname:   'localhost',
     serverPort: 9007,
-    scheme:     'http'
+    scheme:     'http',
+    jvmPath:    undefined
 }
 
 export const KeyCodes = {

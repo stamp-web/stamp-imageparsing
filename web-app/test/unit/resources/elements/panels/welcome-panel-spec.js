@@ -26,17 +26,24 @@ describe('WelcomePanel', () => {
     let elementSpy = jasmine.createSpy('element');
     let i18nSpy = jasmine.createSpyObj('i18n', ['tr']);
     let routerSpy = jasmine.createSpyObj('router', ['navigate']);
-    let processManagerSpy = jasmine.createSpyObj('processManager', ['start']);
+    let processManagerSpy = jasmine.createSpyObj('processManager', ['start', 'checkJava']);
+    let connectionManagerSpy = jasmine.createSpyObj('connectionManager', ['isConnected']);
+    let serverConfigSpy = jasmine.createSpyObj('serverConfig', ['getJvmPath']);
 
-    beforeEach(() => {
-        welcomepanel = new WelcomePanel(elementSpy, i18nSpy, routerSpy, processManagerSpy);
+    let createInstance = () => {
+        welcomepanel = new WelcomePanel(elementSpy, i18nSpy, routerSpy, processManagerSpy, connectionManagerSpy, serverConfigSpy);
         defaultActionsCount = welcomepanel.cardActions.length;
 
         routerSpy.navigate.calls.reset();
         processManagerSpy.start.calls.reset();
-    });
+    };
 
     describe('activate', () => {
+
+        beforeEach(() => {
+            createInstance();
+        });
+
         it('verify a valid route is inserted and welcome is ignored', () => {
             routerSpy.routes = [
                 {
@@ -51,7 +58,7 @@ describe('WelcomePanel', () => {
                     route: 'image-manage',
                     name:  'image-manage'
                 }];
-
+            welcomepanel.processManager.checkJava.and.returnValue(Promise.resolve(true));
             welcomepanel.activate();
             expect(welcomepanel.cardActions.length).toBe(defaultActionsCount + 1);
             expect(welcomepanel.cardActions[0].name).toBe('image-manage');
@@ -75,7 +82,44 @@ describe('WelcomePanel', () => {
         });
     });
 
+    describe('_checkJavaState', () => {
+        beforeEach(() => {
+            createInstance();
+        });
+
+        it('state is false', (done) => {
+            let panel = {
+                disabled: true
+            };
+            welcomepanel.processManager.checkJava.and.returnValue(Promise.resolve(false));
+            welcomepanel._checkJavaState(panel).then(() => {
+                expect(panel.disabled).toBe(true);
+                expect(welcomepanel.i18n.tr).toHaveBeenCalledWith('messages.image-processor-unavailable');
+                done();
+            });
+        });
+
+        it('state is true', (done) => {
+            let panel = {
+                disabled: true
+            };
+            welcomepanel.processManager.checkJava.and.returnValue(Promise.resolve(true));
+            welcomepanel._checkJavaState(panel).then(() => {
+                expect(panel.disabled).toBe(false);
+                expect(welcomepanel.i18n.tr).toHaveBeenCalledWith('messages.image-processor-available');
+                done();
+            });
+
+
+        })
+    });
+
     describe('handleAction', () => {
+
+        beforeEach(() => {
+            createInstance();
+        });
+
         it('route action is routed', () => {
             routerSpy.routes = [
                 {
@@ -95,6 +139,51 @@ describe('WelcomePanel', () => {
             welcomepanel.handleAction(appAction);
             expect(processManagerSpy.start).toHaveBeenCalled();
             expect(routerSpy.navigate).not.toHaveBeenCalled();
+        });
+
+        it('handle action short-circuits for disabled', () => {
+            let appAction = {
+                name:     'start-image-processor',
+                disabled: true
+            };
+            welcomepanel.handleAction(appAction);
+            expect(processManagerSpy.start).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('hasMessage', () => {
+
+        beforeEach(() => {
+            createInstance();
+        });
+
+        it('message with errorMessage', () => {
+            expect(welcomepanel.hasMessage).toBe(false);
+            welcomepanel.errorMessage = 'some message';
+            expect(welcomepanel.hasMessage).toBe(true);
+        });
+
+        it('message with availableMessage', () => {
+            expect(welcomepanel.hasMessage).toBe(false);
+            welcomepanel.availableMessage = 'some message';
+            expect(welcomepanel.hasMessage).toBe(true);
+        });
+    });
+
+    describe('message', () => {
+
+        beforeEach(() => {
+            createInstance();
+        });
+
+        it('message with errorMessage', () => {
+            welcomepanel.errorMessage = 'some message';
+            expect(welcomepanel.message).toBe('some message');
+        });
+
+        it('message with availableMessage', () => {
+            welcomepanel.availableMessage = 'some available message';
+            expect(welcomepanel.message).toBe('some available message');
         });
     });
 });

@@ -13,24 +13,27 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-import {customElement, inject} from 'aurelia-framework';
+import {customElement, inject, observable} from 'aurelia-framework';
 import {I18N} from 'aurelia-i18n';
-import {ServerConfig} from "manager/server-config";
+import {ServerConfig} from 'manager/server-config';
+import {ProcessManager} from 'manager/process-manager';
 import {IdentityHelper} from 'util/identity-helper';
-import {AltPaths} from "../../../manager/alt-paths";
+import {AltPaths} from 'manager/alt-paths';
 
 @customElement('system-settings')
-@inject(Element, I18N, ServerConfig, AltPaths)
+@inject(Element, I18N, ProcessManager, ServerConfig, AltPaths)
 export class SystemSettings {
 
     port = -1;
     hostname;
     applicationKey;
+    @observable jvmPath;
     altPath = [];
 
-    constructor(element, i18n, serverConfig, altPathConfig) {
+    constructor(element, i18n, processManager, serverConfig, altPathConfig) {
         this.element = element;
         this.i18n = i18n;
+        this.processManager = processManager;
         this.serverConfig = serverConfig;
         this.altPathConfig = altPathConfig;
     }
@@ -43,15 +46,37 @@ export class SystemSettings {
         this.hostname = this.serverConfig.getHostname();
         this.port = this.serverConfig.getPort();
         this.applicationKey = this.serverConfig.getApplicationKey();
-        this.serverConfig.reset();
-
+        this.jvmPath = this.serverConfig.getJvmPath();
         this.altPath = this.altPathConfig.getPaths();
+    }
+
+    jvmPathChanged() {
+        if (this.jvmPath) {
+            let opts = {
+                jvmPath: this.jvmPath
+            };
+            this._checkPath(opts);
+        }
+    }
+
+    _checkPath(opts) {
+        this.checkingJvm = true;
+        return this.processManager.checkJava(opts).then(result => {
+            this.checkingJvm = false;
+            this.jvmValid = result;
+        });
+    }
+
+    reset() {
+        this.serverConfig.reset();
+        this.initialize();
     }
 
     save() {
         this.serverConfig.setPort(this.port);
         this.serverConfig.setHostname(this.hostname);
         this.serverConfig.setApplicationKey(this.applicationKey);
+        this.serverConfig.setJvmPath(this.jvmPath);
         this.serverConfig.save();
 
         this.altPathConfig.setPaths(this.altPath);

@@ -1,0 +1,6 @@
+<template>
+    <require from="resources/elements/components/connection-status.css"></require>
+
+    <i class="${connected ? 'connected sw-icon-select-all-2' : 'not-connected sw-icon-unlink'}"></i>
+    <span>${`messages.connected-${connected}`|t}</span>
+</template>

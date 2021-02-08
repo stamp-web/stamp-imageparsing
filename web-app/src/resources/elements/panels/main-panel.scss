@@ -84,19 +84,6 @@ $side-panel-width: 30rem;
         height: 30px;
         padding: $padding-thick;
 
-        .connection-state {
-            align-items: center;
-            display: inline-flex;
-
-            .connected {
-                color: $success;
-            }
-
-            .not-connected {
-                color: $failure;
-            }
-        }
-
         .zoom-info {
             align-items: center;
             display: inline-flex;

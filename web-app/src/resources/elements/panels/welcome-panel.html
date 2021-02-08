@@ -1,14 +1,22 @@
 <template>
     <require from="resources/elements/panels/header-pane"></require>
     <require from="resources/elements/components/card-panel"></require>
+    <require from="resources/elements/components/connection-status"></require>
 
     <require from="resources/elements/panels/welcome-panel.css"></require>
 
     <div class="welcome-panel-wrapper">
         <header-pane page-title="${'titles.welcome'|t}" show-output-folder="false"></header-pane>
+        <div class="messaging-area ${errorMessage ? 'with-error': ''}" if.bind="hasMessage">
+            <span if.bind="hasMessage && !connected">
+                <i class="${errorMessage ? 'sw-icon-attention' : 'sw-icon-ok'}"></i>
+                <span>${message}</span>
+            </span>
+            <connection-status connected.bind="connected" if.bind="connected"></connection-status>
+        </div>
         <div class="welcome-panel">
             <div class="card-wrapper" repeat.for="card of cardActions">
-                <card-panel label="${card.label|t}" icon.bind="card.icon" click.delegate="handleAction(card)"></card-panel>
+                <card-panel disabled.bind="card.disabled" label="${card.label|t}" icon.bind="card.icon" click.delegate="handleAction(card)"></card-panel>
             </div>
         </div>
     </div>

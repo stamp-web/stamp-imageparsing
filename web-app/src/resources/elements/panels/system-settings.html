@@ -1,6 +1,7 @@
 <template>
     <require from="resources/elements/panels/header-pane"></require>
     <require from="resources/elements/components/string-list-view"></require>
+    <require from="resources/elements/components/file-input"></require>
     <require from="resources/elements/panels/system-settings.css"></require>
 
     <div class="system-settings-wrapper">
@@ -27,6 +28,20 @@
                         </button>
                     </div>
                 </div>
+                <div class="form-group java-path-group">
+                    <label>${'labels.java-path-key'|t}</label>
+                    <span class="java-selection">
+                        <file-input folder-mode="true"
+                                value.bind="jvmPath"
+                                show-remove="true">
+                        </file-input>
+                        <span class="jvm-path-message ${!jvmValid ? 'invalid' : ''}" if.bind="jvmPath">
+                            <i class="${jvmValid ? 'sw-icon-ok' : 'invalid sw-icon-cancel'}"></i>
+                            ${'messages.java-' + (jvmValid? 'valid' : 'invalid') |t}
+                        </span>
+                    </span>
+
+                </div>
                 <div class="form-group altPath-list">
                     <label>${'labels.alt-path'|t}</label>
                     <string-list-view items.bind="altPath"></string-list-view>
@@ -34,6 +49,7 @@
             </form>
             <div class="button-actions">
                 <button class="btn btn-primary" click.delegate="save()">${'actions.save'|t}</button>
+                <button class="btn btn-secondary" click.delegate="reset()">${'actions.reset'|t}</button>
             </div>
 
         </div>

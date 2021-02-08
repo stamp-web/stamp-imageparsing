@@ -1,5 +1,5 @@
 /*
- Copyright 2019 Jason Drake (jadrake75@gmail.com)
+ Copyright 2021 Jason Drake (jadrake75@gmail.com)
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -13,21 +13,20 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-import {customElement, computedFrom, bindable} from 'aurelia-framework';
+import {ConnectionStatus} from 'resources/elements/components/connection-status';
 
-@customElement('card-panel')
-export class CardPanel {
+describe('ConnectionStatus', () => {
 
-    @bindable
-    label;
+    let connectionStatus;
+    let elementSpy = jasmine.createSpy('element');
 
-    @bindable
-    icon;
+    beforeEach(() => {
+        connectionStatus = new ConnectionStatus(elementSpy);
+    });
 
-    @bindable
-    disabled = false;
-
-    disabledChanged( ) {
-        this.disabled = (this.disabled) ? true: false;
-    }
-}
+    describe('constructor', () => {
+        it('test creation', () => {
+           expect(connectionStatus.connected).toBe(false);
+        });
+    });
+});

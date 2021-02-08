@@ -20,6 +20,10 @@
 
     max-width: 50em;
 
+    label {
+        font-weight: bold;
+    }
+
     .port-number {
         max-width:6rem;
     }
@@ -32,6 +36,28 @@
 
         string-list-view {
             margin-top: $margin-med;
+        }
+    }
+
+    .java-path-group {
+        display: flex;
+        flex-direction: column;
+
+        .java-selection {
+            align-items: center;
+            display: flex;
+
+            file-input {
+                margin-right: $margin-thick;
+            }
+
+            .jvm-path-message {
+                color: $success;
+                &.invalid {
+                    color: $failure;
+                }
+            }
+
         }
     }
 
@@ -61,6 +87,6 @@
     }
 
     form {
-        margin-bottom: $margin-thick * 2;
+        margin-bottom: $margin-thick * 3;
     }
 }

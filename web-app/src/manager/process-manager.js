@@ -39,7 +39,11 @@ export class ProcessManager {
         this._initialize();
     }
 
-    start(restart=false) {
+    checkJava(options = {}) {
+        return this.processHandler.checkJava(options);
+    }
+
+    start(restart=false, options = {}) {
         if (restart) {
             this.stop();
         }
@@ -47,7 +51,7 @@ export class ProcessManager {
             let uuid = this.serverConfig.getApplicationKey();
             let serverPort = this.serverConfig.getPort();
             this.logger.info('UUID for application key is ', uuid);
-            this.processHandler.start(uuid, serverPort, this._handleProcessStatus.bind(this));
+            this.processHandler.start(uuid, serverPort, options, this._handleProcessStatus.bind(this));
         }
         if (!this.connectionManager.isConnected()) {
             this.connectionManager.connect();

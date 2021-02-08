@@ -2,6 +2,7 @@
     <require from="resources/elements/image/image-canvas"></require>
     <require from="resources/elements/components/file-input"></require>
     <require from="resources/elements/components/memory-stats"></require>
+    <require from="resources/elements/components/connection-status"></require>
     <require from="resources/value-converters/as-percentage"></require>
 
     <require from="resources/elements/panels/main-panel.css"></require>
@@ -44,7 +45,7 @@
         <div class="zoom-info">
             ${'labels.zoom'|t}: ${scalingFactor|asPercentage}
         </div>
-        <div class="connection-state"><i class="${connected ? 'connected sw-icon-select-all-2' : 'not-connected sw-icon-unlink'}"></i>${`messages.connected-${connected}`|t}</div>
+        <connection-status connected.bind="connected"></connection-status>
         <div class="memory-stats" show.bind="memoryStats.length > 1">${'labels.memory'|t}<memory-stats data.bind="memoryStats"></memory-stats></div>
 
     </div>

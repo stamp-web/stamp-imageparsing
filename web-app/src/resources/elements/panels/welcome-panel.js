@@ -17,25 +17,32 @@ import {customElement, inject, computedFrom, bindable} from 'aurelia-framework';
 import {I18N} from 'aurelia-i18n';
 import {Router} from 'aurelia-router';
 import {ProcessManager} from 'manager/process-manager';
+import {ServerConfig} from 'manager/server-config';
+import {ConnectionManager} from 'manager/connection-manager';
 import {IdentityHelper} from 'util/identity-helper';
 
-@customElement('welcome-panel')
-@inject(Element, I18N, Router, ProcessManager)
-export class WelcomePanel {
+import _ from "lodash";
 
+
+@customElement('welcome-panel')
+@inject(Element, I18N, Router, ProcessManager, ConnectionManager, ServerConfig)
+export class WelcomePanel {
     cardActions = [
         {
-            name: 'start-image-processor',
-            label: 'actions.start-processor',
-            icon: 'assets/svg/process.svg'
+            name:     'start-image-processor',
+            label:    'actions.start-processor',
+            icon:     'assets/svg/process.svg',
+            disabled: true
         }
     ];
 
-    constructor(element, i18n, router, processManager) {
+    constructor(element, i18n, router, processManager, connectionManager, serverConfig) {
         this.element = element;
         this.i18n = i18n;
         this.router = router;
         this.processManager = processManager;
+        this.connectionManager = connectionManager;
+        this.serverConfig = serverConfig;
     }
 
     activate() {
@@ -48,9 +55,49 @@ export class WelcomePanel {
                }
             });
         }
+        let ip = _.find(this.cardActions, {name: 'start-image-processor'});
+        if (ip) {
+            this._checkJavaState(ip);
+        }
+        this._startPing();
+    }
+
+    _checkJavaState(panel) {
+        let opts = {
+            jvmPath: this.serverConfig.getJvmPath()
+        };
+        return this.processManager.checkJava(opts).then(valid => {
+            if (valid) {
+                panel.disabled = false;
+                this.availableMessage = this.i18n.tr('messages.image-processor-available');
+            } else {
+                this.errorMessage = this.i18n.tr('messages.image-processor-unavailable');
+            }
+        });
+    }
+
+    _startPing() {
+        let f = () => {
+            this.connected = this.connectionManager.isConnected();
+            _.delay(f, 2000);
+        }
+        f();
+    }
+
+    @computedFrom('errorMessage', 'availableMessage')
+    get hasMessage() {
+        return !_.isUndefined(this.errorMessage || this.availableMessage);
+    }
+
+    @computedFrom('errorMessage', 'availableMessage')
+    get message() {
+        return this.availableMessage ? this.availableMessage : this.errorMessage;
     }
 
     handleAction(action) {
+        if (action.disabled) {
+            return;
+        }
         if (action.route) {
             this.router.navigate(action.route);
             return;

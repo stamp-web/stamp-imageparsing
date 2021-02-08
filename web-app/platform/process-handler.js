@@ -14,7 +14,10 @@
  limitations under the License.
  */
 const {spawn} = require('child_process');
+const util = require('util');
 const _ = require('lodash');
+const pexec = util.promisify(require('child_process').exec);
+const path = require('path')
 
 let processHandler = function () {
     "use strict";
@@ -38,10 +41,13 @@ let processHandler = function () {
     return {
         processes: {},
 
-        start: function(uuid, port, callback) {
+        start: function(uuid, port, config, callback) {
+            let microserviceLib = _.get(config, 'microserviceLib', 'lib/stamp-imageparsing-3.0.0-SNAPSHOT.jar');
+            let javaRuntime = _.get(config, 'javaRuntime');
+            let javaCmd = (javaRuntime) ? `${javaRuntime}/bin/javaw` : 'javaw';
             let cmdLine = ['-jar', 'lib/stamp-imageparsing-3.0.0-SNAPSHOT.jar', '--apiKey="' + uuid + '"' ,'--server.port=' + port];
             console.log(cmdLine);
-            let process = spawn('javaw', cmdLine);
+            let process = spawn(javaCmd, cmdLine);
 
             _.set(this.processes, process.pid, process);
             configureStreams(process);
@@ -59,8 +65,23 @@ let processHandler = function () {
                 process.stdin.pause();
                 process.kill();
             }
-        }
+        },
 
+        checkJava(options) {
+            const javaRuntime = _.get(options, 'jvmPath');
+            const javaCmd = (javaRuntime) ? path.join(javaRuntime, 'bin', 'javaw') : 'javaw';
+            return new Promise((resolve, reject) => {
+                pexec(`"${javaCmd}" -version`).then(result => {
+                    let message = _.get(result, 'stdout');
+                    if (_.isEmpty(message)) {
+                        message = _.get(result, 'stderr');
+                    }
+                    resolve(message.indexOf('java version') >= 0);
+                }).catch(e => {
+                    resolve(false);
+                });
+            });
+        }
 
     };
 }();
