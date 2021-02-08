@@ -50,7 +50,9 @@ export class ProcessManager {
         if (!this.running) {
             let uuid = this.serverConfig.getApplicationKey();
             let serverPort = this.serverConfig.getPort();
+            _.set(options, 'jvmPath', this.serverConfig.getJvmPath());
             this.logger.info('UUID for application key is ', uuid);
+            this.logger.info(`Using the following jvmPath ${options.jvmPath}`);
             this.processHandler.start(uuid, serverPort, options, this._handleProcessStatus.bind(this));
         }
         if (!this.connectionManager.isConnected()) {

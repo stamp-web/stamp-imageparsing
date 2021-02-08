@@ -43,7 +43,7 @@ let processHandler = function () {
 
         start: function(uuid, port, config, callback) {
             let microserviceLib = _.get(config, 'microserviceLib', 'lib/stamp-imageparsing-3.0.0-SNAPSHOT.jar');
-            let javaRuntime = _.get(config, 'javaRuntime');
+            let javaRuntime = _.get(config, 'jvmPath');
             let javaCmd = (javaRuntime) ? `${javaRuntime}/bin/javaw` : 'javaw';
             let cmdLine = ['-jar', 'lib/stamp-imageparsing-3.0.0-SNAPSHOT.jar', '--apiKey="' + uuid + '"' ,'--server.port=' + port];
             console.log(cmdLine);
