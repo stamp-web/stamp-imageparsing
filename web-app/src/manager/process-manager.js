@@ -36,6 +36,7 @@ export class ProcessManager {
         this.connectionManager = connectionManager;
         this.serverConfig = serverConfig;
         this.logger = LogManager.getLogger('process-manager');
+        this.logger.setLevel(LogManager.logLevel.warn);
         this._initialize();
     }
 
@@ -115,8 +116,7 @@ export class ProcessManager {
             case 'started':
                 this.running = true;
                 this.pid = opts.pid;
-
-
+                break;
         }
     }
 }

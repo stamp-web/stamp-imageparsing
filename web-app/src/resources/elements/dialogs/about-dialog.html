@@ -1,0 +1,22 @@
+<template>
+    <require from="resources/elements/dialogs/about-dialog.css"></require>
+    <ux-dialog class="about-dialog">
+        <ux-dialog-body>
+            <div class="title-header">
+                <img src="assets/icons/png/64x64.png">
+                <div class="title-properties">
+                    <h4>${info.productName}</h4>
+                    <span>
+                        <label>Version</label>
+                        <span>${info.version}</span>
+                    </span>
+                    <span>${info.copyright}</span>
+                </div>
+            </div>
+
+        </ux-dialog-body>
+        <ux-dialog-footer>
+            <button class="btn btn-primary" click.trigger="controller.ok()">${'actions.ok'|t}</button>
+        </ux-dialog-footer>
+    </ux-dialog>
+</template>

@@ -14,6 +14,7 @@
  limitations under the License.
  */
 import environment from './environment';
+import {remote} from 'electron';
 import {I18N, TCustomAttribute} from 'aurelia-i18n';
 import Backend from 'i18next-xhr-backend';
 import {PLATFORM, LogManager} from 'aurelia-framework';
@@ -66,5 +67,8 @@ function _initAurelia(aurelia) {
         aurelia.use.plugin('aurelia-testing');
     }
 
-    aurelia.start().then(() => aurelia.setRoot());
+    aurelia.start().then(() => {
+        remote.getCurrentWebContents().on('menu-about', () => { console.log('contents');});
+        aurelia.setRoot();
+    });
 }

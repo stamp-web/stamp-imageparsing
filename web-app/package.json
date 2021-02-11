@@ -3,6 +3,7 @@
     "productName": "Stamp Image Bursting Application",
     "description": "Next-Generation Image Bursting Application",
     "version": "3.0.1",
+    "copyright": "Copyright © 2021 Jason Drake.  All Rights Reserved.",
     "bugs": {
         "url": "https://github.com/jadrake75/stamp-imageparsing/issues"
     },
@@ -97,7 +98,7 @@
         "lodash": "4.17.20",
         "mime": "1.4.1",
         "requirejs": "2.3.6",
-        "sharp": "0.26.0",
+        "sharp": "^0.27.1",
         "sockjs-client": "1.5.0",
         "text": "github:requirejs/text#latest",
         "uid-generator": "2.0.0"
@@ -120,7 +121,7 @@
         "babel-core": "7.0.0-bridge.0",
         "babel-eslint": "10.1.0",
         "babel-plugin-istanbul": "5.1.1",
-        "electron": "10.1.2",
+        "electron": "11.1.1",
         "electron-builder": "22.8.1",
         "electron-packager": "15.1.0",
         "electron-rebuild": "2.0.1",
@@ -150,6 +151,7 @@
         "karma-junit-reporter": "1.2.0",
         "karma-remap-istanbul": "0.6.0",
         "karma-requirejs": "1.1.0",
+        "node-abi": "^2.19.3",
         "popper.js": "1.16.1",
         "reflect-metadata": "^0.1.13",
         "require-dir": "1.2.0",

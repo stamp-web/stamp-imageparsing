@@ -15,7 +15,7 @@
  */
 
 // Modules to control application life and create native browser window
-const {app, BrowserWindow} = require('electron');
+const {app, Menu, BrowserWindow, globalShortcut} = require('electron');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -43,12 +43,9 @@ function createWindow() {
         }
     });
 
-    //mainWindow.setMenu(null);
+    createMenu(mainWindow);
     mainWindow.maximize();
     mainWindow.loadFile('index.html')
-
-    // Open the DevTools.
-    mainWindow.webContents.openDevTools();
 
     // Emitted when the window is closed.
     mainWindow.on('closed', function () {
@@ -58,10 +55,70 @@ function createWindow() {
         mainWindow = null
     })
 
+
     mainWindow.once('ready-to-show', () => {
         mainWindow.show();
     });
-}
+};
+
+
+function createMenu(win) {
+
+    let menu = Menu.buildFromTemplate([
+        {
+            label: 'File',
+            submenu: [
+                {
+                    label: 'Exit',
+                    click() {
+                        app.quit();
+                    }
+                }
+            ]
+        },
+        {
+            label: 'View',
+            submenu: [
+                {
+                    label: 'Refresh',
+                    accelerator: 'F5',
+                    click() {
+                        win.webContents.reload();
+                    }
+                }
+            ]
+        },
+        {
+            label: 'Help',
+            submenu: [
+                {
+                    label: 'Technical Assistance',
+                    submenu: [
+                        {
+                            label: 'Dev Tools',
+                            accelerator: 'F12',
+                            click: () => {
+                                win.webContents.send('dev-tools', {});
+                                win.webContents.toggleDevTools();
+                            }
+                        }
+                    ]
+                },
+                {
+                    type: 'separator'
+                },
+                {
+                    label: 'About',
+                    click: () => {
+                        win.webContents.send('menu-about', {});
+                    }
+                }
+            ]
+        }
+    ]);
+
+    Menu.setApplicationMenu(menu);
+};
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.

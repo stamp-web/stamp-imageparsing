@@ -1,5 +1,5 @@
 /*
- Copyright 2020 Jason Drake (jadrake75@gmail.com)
+ Copyright 2021 Jason Drake (jadrake75@gmail.com)
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -13,26 +13,35 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-import {MessagePromptDialog} from 'resources/elements/dialogs/message-prompt-dialog';
+import {RegionDefaultsDialog} from 'resources/elements/dialogs/region-defaults-dialog';
+import _ from 'lodash';
 
-describe('MessagePromptDialog', () => {
+describe('RegionDefaultsDialog', () => {
 
     let dialog;
 
     let createComponent = () => {
         let dialogControllerSpy = jasmine.createSpy('dialogController');
-        return new MessagePromptDialog(dialogControllerSpy);
+        return new RegionDefaultsDialog(dialogControllerSpy);
     };
 
     describe('activate', () => {
+
         beforeEach(() => {
             dialog = createComponent();
         });
 
-        it('standard activation', () => {
-            let model = 'test of message';
-            dialog.activate(model);
-            expect(dialog.message).toBe('test of message');
+        it('model correctly set', () => {
+            let data = {
+                key: 'value',
+                folders: ['folder1', 'folder2'],
+                folder: 'test-folder'
+            };
+            dialog.activate(data);
+            expect(dialog.model).toBe(data);
+            expect(dialog.config.folder).toBe('test-folder');
+            expect(dialog.folders.length).toBe(2);
         });
     });
+
 });

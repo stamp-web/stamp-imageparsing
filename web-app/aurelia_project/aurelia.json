@@ -31,6 +31,10 @@
         "fileExtension": ".scss",
         "source": "src/**/*.scss"
     },
+    "textProcessor": {
+        "displayName": "Text",
+        "source": ["src/**/*.json", "package.json"]
+    },
     "editor": {
         "id": "webstorm",
         "displayName": "WebStorm"
@@ -87,7 +91,7 @@
                 "name": "app-bundle.js",
                 "source": [
                     "[**/*.js]",
-                    "**/*.{css,html}"
+                    "**/*.{css,html,json}"
                 ]
             },
             {

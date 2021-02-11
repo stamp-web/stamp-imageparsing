@@ -17,16 +17,20 @@ import {I18N} from 'aurelia-i18n';
 import {ConnectionManager} from 'manager/connection-manager';
 import {MessageManager} from 'manager/message-manager';
 import {ProcessManager} from 'manager/process-manager';
+import {GlobalActions} from 'manager/global-actions';
+import {MenuActions} from 'manager/menu-actions';
 
 export class App {
 
-    static inject = [I18N, ConnectionManager, MessageManager, ProcessManager];
+    static inject = [I18N, ConnectionManager, MessageManager, ProcessManager, GlobalActions, MenuActions];
 
-    constructor(i18n, connectionManager, messageManager, processManager) {
+    constructor(i18n, connectionManager, messageManager, processManager, globalActions, menuActions) {
         this.i18n = i18n;
         this.connectionManager = connectionManager;
         this.messageManager = messageManager;
         this.processManager = processManager;
+        this.globalActions = globalActions;
+        this.menuActions = menuActions;
     }
 
     configureRouter(config, router) {
@@ -67,10 +71,17 @@ export class App {
         ]);
     }
 
+    activate() {
+        this.globalActions.register();
+        this.menuActions.register();
+    }
+
     deactivate() {
         this.processManager.stop();
         this.connectionManager.disconnect();
         this.messageManager.dispose();
+        this.globalActions.unregister();
+        this.menuActions.unregister();
     }
 
 }

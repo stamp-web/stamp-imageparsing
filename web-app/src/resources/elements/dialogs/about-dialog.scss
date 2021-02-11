@@ -1,0 +1,14 @@
+@import '../../themes/variables';
+
+.about-dialog {
+    .title-header {
+        display: flex;
+        flex-direction: row;
+
+        .title-properties {
+            display: flex;
+            flex-direction: column;
+            margin-left: $margin-thick;
+        }
+    }
+}

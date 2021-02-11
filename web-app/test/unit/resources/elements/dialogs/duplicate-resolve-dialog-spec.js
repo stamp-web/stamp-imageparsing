@@ -20,17 +20,21 @@ describe('DuplicateResolveDialog', () => {
 
     let dialog, imageHandlerSpy, fileManagerSpy;
 
-
-    beforeEach(() => {
+    let createComponent = () => {
         let dialogControllerSpy = jasmine.createSpy('dialogController');
         imageHandlerSpy = jasmine.createSpyObj('imageHandler', ['asDataUrlFromFile']);
         fileManagerSpy = jasmine.createSpyObj('fileManager', ['getPathSeparator']);
-        dialog = new DuplicateResolveDialog(dialogControllerSpy, imageHandlerSpy, fileManagerSpy);
+        let _dialog = new DuplicateResolveDialog(dialogControllerSpy, imageHandlerSpy, fileManagerSpy);
 
         fileManagerSpy.getPathSeparator.and.returnValue('/');
-    });
+        return _dialog;
+    };
 
     describe('activate', () => {
+
+        beforeEach(() => {
+            dialog = createComponent();
+        });
 
         it('standard activation', () => {
             let duplicate = {
@@ -49,6 +53,10 @@ describe('DuplicateResolveDialog', () => {
     });
 
     describe('getImage', () => {
+
+        beforeEach(() => {
+            dialog = createComponent();
+        });
 
         it('returns dataURL', done => {
             let data = 'data:image/png;base64,012345ABCDEFABCDEF';
