@@ -279,13 +279,18 @@ export class MainPanel {
             this.dataURI = dataURI;
             this.image = this.handler.toObjectUrl(dataURI, this.options);
             this.processing = false;
-            _.defer(() => { // defer till event processing is complete
+            this.eventAggregator.publish(EventNames.STATUS_MESSAGE, {
+                message:  this.i18n.tr('messages.loading-done'),
+                showBusy: false,
+                dismiss:  true
+            });
+            _.delay(() => { // defer till event processing is complete
                 this.eventAggregator.publish(EventNames.STATUS_MESSAGE, {
                     message:  this.i18n.tr('messages.loading-done'),
                     showBusy: false,
                     dismiss:  true
                 });
-            });
+            }, 500);
         });
     }
 

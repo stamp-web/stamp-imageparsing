@@ -14,7 +14,7 @@
     "scripts": {
         "build": "au build",
         "watch": "au run --watch",
-        "prewin32": "au build",
+        "prewin32": "au build --env prod",
         "win32": "electron-builder --x64",
         "start": "electron .",
         "postinstall": "electron-builder install-app-deps",

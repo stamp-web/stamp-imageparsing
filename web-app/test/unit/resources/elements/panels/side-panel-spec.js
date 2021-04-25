@@ -100,4 +100,22 @@ describe('SidePanel', () => {
             expect(sidepanel.selectedRegion).toBe(sidepanel.boundRegions[0]);
         })
     });
+
+    describe('_setDefaultValues', () => {
+        it('folder and options are set', () => {
+            sidepanel.defaultConfig = {
+                folder:  'Germany',
+                altPath: 'used'
+            };
+            sidepanel.boundRegions = [];
+            sidepanel.boundRegions.push({folder: 'test', altPath: ''});
+            sidepanel.boundRegions.push({});
+
+            sidepanel._setDefaultValues();
+            _.forEach(sidepanel.boundRegions, region => {
+                expect(region.folder).toBe('Germany');
+                expect(region.altPath).toBe('used');
+            });
+        });
+    });
 });

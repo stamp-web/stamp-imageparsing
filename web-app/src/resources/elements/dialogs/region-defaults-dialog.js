@@ -29,6 +29,8 @@ export class RegionDefaultsDialog {
     activate(model){
         this.model = model;
         this.folders = _.get(model, 'folders', []);
+        this.altPaths = _.get(model, 'altPaths', []);
         this.config.folder = _.get(model, 'folder');
+        this.config.altPath = _.get(model, 'altPath');
     }
 }

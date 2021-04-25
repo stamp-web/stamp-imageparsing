@@ -33,6 +33,7 @@ export class SidePanel {
 
     @bindable boundRegions;
     @bindable folders = [];
+    @bindable altPaths = [];
     @bindable options = {};
     @bindable selectedRegion;
 
@@ -45,7 +46,7 @@ export class SidePanel {
     imageTypes = ImageTypes;
     selectedAltPath;
 
-    altPaths = [];
+
 
     constructor(i18n, eventAggregator, bindingEngine, dialogService, altPathsManager) {
         this.i18n = i18n;
@@ -67,6 +68,10 @@ export class SidePanel {
         });
     }
 
+    altPathsChanged() {
+        this.defaultConfig.altPaths = this.altPaths;
+    }
+
     foldersChanged() {
         this.defaultConfig.folders = this.folders;
     }
@@ -76,7 +81,7 @@ export class SidePanel {
             return sum + obj.addedCount;
         }, 0);
         if (count > 0) {
-            this._setDefaultFolder();
+            this._setDefaultValues();
         }
     }
 
@@ -120,8 +125,9 @@ export class SidePanel {
             return dialogResult.closeResult;
         }).then((response) => {
             if (!response.wasCancelled) {
+                _.set(this.defaultConfig, 'altPath', _.get(response, 'output.altPath'));
                 _.set(this.defaultConfig, 'folder', _.get(response, 'output.folder'));
-                this._setDefaultFolder();
+                this._setDefaultValues();
             }
         });
     }
@@ -198,11 +204,17 @@ export class SidePanel {
         }
     }
 
-    _setDefaultFolder() {
+    _setDefaultValues() {
         let folder = _.get(this.defaultConfig, 'folder');
-        if (folder) {
+        let altPath = _.get(this.defaultConfig, 'altPath');
+        if (folder || altPath) {
             _.each(this.boundRegions, region => {
-                region.folder = folder;
+                if (folder) {
+                    region.folder = folder;
+                }
+                if (altPath) {
+                    region.altPath = altPath;
+                }
             });
         }
     }

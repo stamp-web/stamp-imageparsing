@@ -11,6 +11,15 @@
                         <option repeat.for="folder of folders" model.bind="folder">${folder.name}</option>
                     </select>
                 </div>
+                <div class="form-group">
+                    <label>${'labels.options'|t}</label>
+                    <select class="form-control alt-type"
+                            value.bind="config.altPath">
+                        <option repeat.for="altPath of altPaths" model.bind="altPath">
+                            ${altPath}
+                        </option>
+                    </select>
+                </div>
             </form>
         </ux-dialog-body>
 
