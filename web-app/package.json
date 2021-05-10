@@ -95,7 +95,7 @@
         "changedpi": "1.0.4",
         "file-api": "0.10.4",
         "filereader": "0.10.3",
-        "lodash": "4.17.20",
+        "lodash": "4.17.21",
         "mime": "1.4.1",
         "requirejs": "2.3.6",
         "sharp": "^0.27.1",
