@@ -121,7 +121,7 @@
         "babel-core": "7.0.0-bridge.0",
         "babel-eslint": "10.1.0",
         "babel-plugin-istanbul": "5.1.1",
-        "electron": "11.1.1",
+        "electron": "11.5.0",
         "electron-builder": "22.8.1",
         "electron-packager": "15.1.0",
         "electron-rebuild": "2.0.1",
