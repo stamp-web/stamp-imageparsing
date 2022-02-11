@@ -142,7 +142,7 @@
         "i18next-xhr-backend": "1.5.1",
         "jasmine-core": "2.99.1",
         "jquery": "3.5.1",
-        "karma": "5.1.1",
+        "karma": "6.3.14",
         "karma-babel-preprocessor": "8.0.1",
         "karma-chrome-launcher": "1.0.1",
         "karma-coverage": "1.1.2",
