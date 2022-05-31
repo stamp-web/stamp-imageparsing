@@ -45,11 +45,14 @@ export class DuplicateResolveDialog {
             if (duplicate.altPath) {
                 path.push(duplicate.altPath);
             }
-            let fullPath = path.join(this.fileManager.getPathSeparator());
-            this.imageHandler.asDataUrlFromFile(fullPath, duplicate.filePath).then(dataUrl => {
-                duplicate.duplicateImage = dataUrl;
-                resolve();
-            });
+            this.fileManager.getPathSeparator().then(sep => {
+                let fullPath = path.join(sep);
+                this.imageHandler.asDataUrlFromFile(fullPath, duplicate.filePath).then(dataUrl => {
+                    duplicate.duplicateImage = dataUrl;
+                    resolve();
+                });
+            })
+
         });
     }
 

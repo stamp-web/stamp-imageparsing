@@ -75,8 +75,15 @@ export class MainPanel {
         this.fileManager = fileManager;
         this.connectionManager = connectionManager;
         this.dialogService = dialogService;
+        this.setTiffMetaType();
 
-        this.tiffMetaType = this.fileManager.getMimeType('tiff');
+    }
+
+    setTiffMetaType() {
+        this.fileManager.getMimeType('tiff').then(mime => {
+            this.tiffMetaType = mime;
+            ;
+        });
     }
 
     attached() {
@@ -201,11 +208,13 @@ export class MainPanel {
 
     _handleSaveRegions(regions, evt, overwriteImage = false) {
         if (!this.data) {
-            let f = this.fileManager.asFile(this.selectedFile);
-            this.handler.readImage(f, true).then(i_data => {
-                this.data = i_data.data;
-                this._saveRegions(this.data, regions, this.options, overwriteImage);
+            this.fileManager.asFile(this.selectedFile).then(f => {
+                this.handler.readImage(f, true).then(i_data => {
+                    this.data = i_data.data;
+                    this._saveRegions(this.data, regions, this.options, overwriteImage);
+                });
             });
+
         } else {
             this.logger.debug('Using cached data of the image');
             this._saveRegions(this.data, regions, this.options, overwriteImage);
@@ -222,13 +231,17 @@ export class MainPanel {
                     _.unset(match, 'exists');
                 }
             });
+        }).catch(e => {
+            this.logger.warn(e);
         });
 
     }
 
     _handleFolderSelected(folderName) {
         this.outputPath = folderName;
-        this.folders = this.fileManager.getFolders(this.outputPath);
+        this.fileManager.getFolders(this.outputPath).then(folders => {
+            this.folders = folders;
+        });
     }
 
     boxesChanged() {
@@ -254,8 +267,10 @@ export class MainPanel {
     selectedFileChanged() {
         this.clear();
         if (this.selectedFile) {
-            let f = this.fileManager.asFile(this.selectedFile);
-            this._processFile(f);
+            this.fileManager.asFile(this.selectedFile).then(f => {
+                this._processFile(f);
+            });
+
         }
     }
 
@@ -273,25 +288,27 @@ export class MainPanel {
             showBusy: true
         });
 
-        let mime = this.fileManager.getMimeType(file.path);
-        _.set(this.options, 'mimeType', mime);
-        this.handler.readImage(file, false).then(dataURI => {
-            this.dataURI = dataURI;
-            this.image = this.handler.toObjectUrl(dataURI, this.options);
-            this.processing = false;
-            this.eventAggregator.publish(EventNames.STATUS_MESSAGE, {
-                message:  this.i18n.tr('messages.loading-done'),
-                showBusy: false,
-                dismiss:  true
-            });
-            _.delay(() => { // defer till event processing is complete
+        this.fileManager.getMimeType(file.path).then(mime => {
+            _.set(this.options, 'mimeType', mime);
+            this.handler.readImage(file, false).then(dataURI => {
+                this.dataURI = dataURI;
+                this.image = this.handler.toObjectUrl(dataURI, this.options);
+                this.processing = false;
                 this.eventAggregator.publish(EventNames.STATUS_MESSAGE, {
                     message:  this.i18n.tr('messages.loading-done'),
                     showBusy: false,
                     dismiss:  true
                 });
-            }, 500);
+                _.delay(() => { // defer till event processing is complete
+                    this.eventAggregator.publish(EventNames.STATUS_MESSAGE, {
+                        message:  this.i18n.tr('messages.loading-done'),
+                        showBusy: false,
+                        dismiss:  true
+                    });
+                }, 500);
+            });
         });
+
     }
 
     changeDpiIfNeeded(dataURI, options) {

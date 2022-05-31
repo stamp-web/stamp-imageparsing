@@ -15,7 +15,15 @@
  */
 
 // Modules to control application life and create native browser window
-const {app, Menu, BrowserWindow, globalShortcut} = require('electron');
+const {app, Menu, BrowserWindow, globalShortcut, ipcMain} = require('electron');
+
+const remoteMain = require('@electron/remote/main');
+const _ = require('lodash');
+
+const electronUtililities = require('./platform/electron-utilities');
+const processHandler = require('./platform/process-handler');
+const fileUtilities = require('./platform/file-utilities');
+const imageProcessor = require('./platform/image-processing');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -30,6 +38,7 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 function createWindow() {
+    remoteMain.initialize();
     // Create the browser window.
     mainWindow = new BrowserWindow({
         backgroundColor: '#fff',
@@ -37,11 +46,11 @@ function createWindow() {
         show:            false,
         title:           'Stamp Image Parser',
         webPreferences:  {
-              enableRemoteModule: true,
               contextIsolation: false,
               nodeIntegration: true
         }
     });
+    remoteMain.enable(mainWindow.webContents);
 
     createMenu(mainWindow);
     mainWindow.maximize();
@@ -59,8 +68,68 @@ function createWindow() {
     mainWindow.once('ready-to-show', () => {
         mainWindow.show();
     });
+
+    setupProcessHandler();
+    setupFileUtilities();
+    setupImageProcessor();
+    setupFileDialog();
 };
 
+function setupFileDialog() {
+    ipcMain.handle('showFileDialog', async (event, options) => {
+        const result = await electronUtililities.showFileDialog(options);
+        return result;
+    })
+};
+
+function setupImageProcessor() {
+    ipcMain.handle('imageProcessing-readImage', (event, file, asBuffer) => {
+       return imageProcessor.readImage(file, asBuffer);
+    });
+    ipcMain.handle('imageProcessing-getDataUrlFromImage', (event, filePath, fileName) => {
+        return imageProcessor.getDataUrlFromImage(filePath, fileName);
+    });
+    ipcMain.handle('imageProcess-saveImages', async (event, data, regions, options, overwrite) => {
+       const result = await imageProcessor.saveImages(data, regions, options, overwrite);
+       return result;
+    });
+};
+
+function setupFileUtilities( ) {
+    ipcMain.handle('fileUtil-asFile', (event, file) => {
+        return fileUtilities.asFile(file);
+    });
+    ipcMain.handle('fileUtil-getMimeType', async (event, file) => {
+        const result = await fileUtilities.getMimeType(file);
+        return result;
+    });
+    ipcMain.handle('fileUtil-getPathSeparator', (event) => {
+       return fileUtilities.getPathSeparator();
+    });
+    ipcMain.handle('fileUtil-exists', (event, path) => {
+        return fileUtilities.exists(path);
+    });
+    ipcMain.handle('fileUtil-getFolders', (event, path) => {
+        return fileUtilities.getFolders(path);
+    });
+    ipcMain.handle('fileUtil-createFolder', (event, path) => {
+        return fileUtilities.createFolder(path);
+    });
+};
+
+function setupProcessHandler( ) {
+    ipcMain.handle('processHandler-start', (event, uuid, serverPort, options) => {
+        processHandler.start(uuid, serverPort, options, (status, opts) => {
+            event.sender.send('processHandler-status', status, opts);
+        });
+    });
+    ipcMain.handle('processHandler-stop', (event, pid) => {
+       processHandler.stop(pid);
+    });
+    ipcMain.handle('processHandler-checkJava', (event, opts) => {
+        return processHandler.checkJava(opts);
+    });
+};
 
 function createMenu(win) {
 

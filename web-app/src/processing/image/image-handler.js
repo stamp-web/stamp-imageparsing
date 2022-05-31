@@ -1,5 +1,5 @@
 /*
- Copyright 2019 Jason Drake (jadrake75@gmail.com)
+ Copyright 2022 Jason Drake (jadrake75@gmail.com)
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import {ImageProcessor} from './image-processor';
 import {ImageBounds} from '../../model/image-bounds';
 import {EventNames} from 'util/constants';
 import _ from 'lodash';
-import {remote} from "electron";
 
 
 export class ImageHandler {
@@ -34,12 +33,8 @@ export class ImageHandler {
         this.logger = LogManager.getLogger('image-handler');
     }
 
-    get remoteImageProcessor( ) {
-        return remote.require('./platform/image-processing');
-    }
-
     readImage(file, asBuffer = false) {
-        return this.remoteImageProcessor.readImage(file, asBuffer);
+        return ipcRenderer.invoke('imageProcessing-readImage', file, asBuffer);
     }
 
     toObjectUrl(dataURI, options = {}) {
@@ -90,7 +85,7 @@ export class ImageHandler {
     }
 
     asDataUrlFromFile(filePath, filename) {
-        return this.remoteImageProcessor.getDataUrlFromImage(filePath, filename);
+        return ipcRenderer.invoke('imageProcessing-getDataUrlFromImage', filePath, filename);
     }
 
     saveRegions(data, regions, options, overwrite = false) {
@@ -99,7 +94,8 @@ export class ImageHandler {
                 showBusy: true
         });
         return new Promise((resolve, reject) => {
-            this.remoteImageProcessor.saveImages(data, regions, options, overwrite).then(results => {
+            let reg = _.cloneDeep(regions);
+            ipcRenderer.invoke('imageProcess-saveImages', data, reg, options, overwrite).then(results => {
                 let duplicateRegions = this._processSavedRegions(regions, results);
                 let hasDuplicates = _.size(duplicateRegions) > 0;
                 _.defer(() => { // ensure messages are sent

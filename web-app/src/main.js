@@ -14,7 +14,7 @@
  limitations under the License.
  */
 import environment from './environment';
-import {remote} from 'electron';
+
 import {I18N, TCustomAttribute} from 'aurelia-i18n';
 import Backend from 'i18next-xhr-backend';
 import {PLATFORM, LogManager} from 'aurelia-framework';
@@ -25,6 +25,7 @@ import 'bootstrap';
 LogManager.setLevel(LogManager.logLevel.debug);
 
 export function configure(aurelia) {
+
     require(['jquery'], jquery => {
        window.jQuery = jquery;
        require(['bootstrap'], bs => {
@@ -66,9 +67,13 @@ function _initAurelia(aurelia) {
     if (environment.testing) {
         aurelia.use.plugin('aurelia-testing');
     }
-
-    aurelia.start().then(() => {
-        remote.getCurrentWebContents().on('menu-about', () => { console.log('contents');});
-        aurelia.setRoot();
+    require(['@electron/remote'], BrowserWindow => {
+        window.BrowserWindow = BrowserWindow;
+        aurelia.start().then(() => {
+            aurelia.setRoot();
+        });
     });
+
+
+
 }

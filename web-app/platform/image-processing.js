@@ -74,7 +74,7 @@ module.exports = function () {
                         break;
                 }
                 img.toBuffer().then(buf => {
-                    let basePath = (region.folder.path || __dirname);
+                    let basePath = (_.get(region, 'folder.path') || __dirname);
                     let fullPath = region.altPath ? path.join(basePath, region.altPath) : basePath;
                     let filename = path.join(fullPath, region.filePath);
                     _.set(region, 'saved', false);

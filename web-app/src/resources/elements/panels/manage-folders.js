@@ -79,7 +79,9 @@ export class ManageFolders{
     }
 
     _refreshFolders() {
-        this.folders = this.fileManager.getFolders(this.selectedFolder);
+        this.fileManager.getFolders(this.selectedFolder).then(folders => {
+            this.folders = folders;
+        });
     }
 
 }

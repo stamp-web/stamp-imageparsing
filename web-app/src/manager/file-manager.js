@@ -1,5 +1,5 @@
 /*
- Copyright 2020 Jason Drake (jadrake75@gmail.com)
+ Copyright 2022 Jason Drake (jadrake75@gmail.com)
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -13,13 +13,12 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-import {remote} from 'electron';
+import {ipcRenderer} from "electron";
 
 
 export class FileManager {
 
     constructor() {
-        this.folderHandler = remote.require('./platform/file-utilities');
     }
 
     /**
@@ -28,7 +27,7 @@ export class FileManager {
      * @returns {*|Array}
      */
     getFolders(path) {
-        return this.folderHandler.getFolders(path);
+        return ipcRenderer.invoke('fileUtil-getFolders', path);
     }
 
     /**
@@ -40,8 +39,11 @@ export class FileManager {
      * @return promise of the create folder operation
      */
     createFolder(parent, path) {
-        let totalPath = [parent, path].join(this.getPathSeparator());
-        return this.folderHandler.createFolder(totalPath);
+        return this.getPathSeparator().then(sep => {
+            let totalPath = [parent, path].join(sep);
+            return ipcRenderer.invoke('fileUtil-createFolder', totalPath);
+        })
+
     }
 
     /**
@@ -51,7 +53,7 @@ export class FileManager {
      * @returns {*}
      */
     exists(path) {
-        return this.folderHandler.exists(path);
+        return ipcRenderer.invoke('fileUtil-exists');
     }
 
     /**
@@ -60,14 +62,15 @@ export class FileManager {
      * @returns {"\" | "/"}
      */
     getPathSeparator() {
-        return this.folderHandler.getPathSeparator();
+        return ipcRenderer.invoke('fileUtil-getPathSeparator');
     }
 
     getMimeType(path) {
-        return this.folderHandler.getMimeType(path);
+       return ipcRenderer.invoke('fileUtil-getMimeType', path);
+
     }
 
     asFile(path) {
-        return this.folderHandler.asFile(path);
+        return ipcRenderer.invoke('fileUtil-asFile', path);
     }
 }

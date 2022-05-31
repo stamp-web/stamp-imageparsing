@@ -26,7 +26,7 @@ describe('DuplicateResolveDialog', () => {
         fileManagerSpy = jasmine.createSpyObj('fileManager', ['getPathSeparator']);
         let _dialog = new DuplicateResolveDialog(dialogControllerSpy, imageHandlerSpy, fileManagerSpy);
 
-        fileManagerSpy.getPathSeparator.and.returnValue('/');
+        fileManagerSpy.getPathSeparator.and.returnValue(Promise.resolve('/'));
         return _dialog;
     };
 
