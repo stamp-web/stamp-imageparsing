@@ -13,11 +13,11 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-import uuid from 'uuid/v1';
+import v1 from 'uuid';
 
 export class IdentityHelper {
 
     static generateUUIDKey() {
-        return uuid();
+        return v1();
     }
 }

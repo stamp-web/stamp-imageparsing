@@ -14,7 +14,7 @@
  limitations under the License.
  */
 import {LogManager, inject, observable} from 'aurelia-framework';
-import {remote} from 'electron';
+import {ipcRenderer} from 'electron';
 import {ChannelNames, PublishAPI} from 'util/constants';
 import {ConnectionManager} from './connection-manager';
 import {ServerConfig} from './server-config';
@@ -41,7 +41,7 @@ export class ProcessManager {
     }
 
     checkJava(options = {}) {
-        return this.processHandler.checkJava(options);
+        return ipcRenderer.invoke('processHandler-checkJava', options);
     }
 
     start(restart=false, options = {}) {
@@ -50,11 +50,12 @@ export class ProcessManager {
         }
         if (!this.running) {
             let uuid = this.serverConfig.getApplicationKey();
+            this.serverConfig.setApplicationKey(uuid);
             let serverPort = this.serverConfig.getPort();
             _.set(options, 'jvmPath', this.serverConfig.getJvmPath());
             this.logger.info('UUID for application key is ', uuid);
             this.logger.info(`Using the following jvmPath ${options.jvmPath}`);
-            this.processHandler.start(uuid, serverPort, options, this._handleProcessStatus.bind(this));
+            ipcRenderer.invoke('processHandler-start', uuid, serverPort, options);
         }
         if (!this.connectionManager.isConnected()) {
             this.connectionManager.connect();
@@ -63,7 +64,7 @@ export class ProcessManager {
 
     stop() {
         if (this.pid) {
-            this.processHandler.stop(this.pid);
+            ipcRenderer.invoke('processHandler-stop', this.pid);
             this.running = false;
         }
     }
@@ -79,16 +80,14 @@ export class ProcessManager {
         }
     }
 
-    _importProcessHandler() {
-        this.processHandler = remote.require('./platform/process-handler');
-    }
-
     _initialize() {
-        this._importProcessHandler();
+        this.connectionManager.addSubscriber(ChannelNames.MEMORY_STATS, this._handleMemoryStats.bind(this));
         this.connectionManager.addSubscriber(ChannelNames.MEMORY_STATS, this._handleMemoryStats.bind(this));
         _.defer(() => {
             this._getMemoryStats();
         });
+
+        ipcRenderer.on('processHandler-status', this._handleProcessStatus.bind(this));
     }
 
     _getMemoryStats() {
@@ -108,7 +107,7 @@ export class ProcessManager {
         this.logger.info(this.memoryStats);
     }
 
-    _handleProcessStatus(status, opts) {
+    _handleProcessStatus(event, status, opts) {
         switch(status) {
             case 'exit':
                 this.running = false;

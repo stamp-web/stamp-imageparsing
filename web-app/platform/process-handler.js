@@ -54,9 +54,15 @@ let processHandler = function () {
 
             process.on('exit', code => {
                 _.unset(this.processes, process.pid);
-                callback('exit');
+                if(callback) {
+                    callback('exit');
+                }
+
             });
-            callback('started', {pid: process.pid});
+            if(callback) {
+                callback('started', {pid: process.pid});
+            }
+
         },
 
         stop(pid) {

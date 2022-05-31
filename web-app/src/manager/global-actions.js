@@ -1,5 +1,5 @@
 /*
- Copyright 2021 Jason Drake (jadrake75@gmail.com)
+ Copyright 2022 Jason Drake (jadrake75@gmail.com)
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -13,31 +13,31 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-import {remote} from 'electron';
+import {remote} from '@electron/remote';
 
 const reload = () => {
-    remote.getCurrentWindow().reload();
+    window.BrowserWindow.getCurrentWindow().reload();
 }
 
 const unregister = () => {
-    remote.globalShortcut.unregister('F5', reload);
-    remote.globalShortcut.unregister('CommandOrControl+R', reload);
+    window.BrowserWindow.globalShortcut.unregister('F5', reload);
+    window.BrowserWindow.globalShortcut.unregister('CommandOrControl+R', reload);
 }
 
 const unregisterWindow = () => {
-    if(remote.getCurrentWindow().isVisible()) {
+    if(window.BrowserWindow.getCurrentWindow().isVisible()) {
         unregister();
     }
 }
 
 const register = () => {
-    remote.globalShortcut.register('F5', reload);
-    remote.globalShortcut.register('CommandOrControl+R', reload);
+    window.BrowserWindow.globalShortcut.register('F5', reload);
+    window.BrowserWindow.globalShortcut.register('CommandOrControl+R', reload);
 }
 
 const beforeUnload = () => {
     // we need to remove listener on window prior to unregistering globals
-    remote.getCurrentWindow().removeListener('blur', unregisterWindow);
+    window.BrowserWindow.getCurrentWindow().removeListener('blur', unregisterWindow);
     unregister();
 }
 
@@ -50,7 +50,7 @@ export class GlobalActions {
         window.addEventListener('focus', register);
         window.addEventListener('blur', unregister);
         window.addEventListener('beforeunload', beforeUnload);
-        remote.getCurrentWindow().on('blur', unregisterWindow);
+        window.BrowserWindow.getCurrentWindow().on('blur', unregisterWindow);
     }
 
     unregister() {

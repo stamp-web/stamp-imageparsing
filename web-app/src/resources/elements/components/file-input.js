@@ -18,9 +18,7 @@ import {customElement, bindable, computedFrom, bindingMode, inject} from 'aureli
 import {EventAggregator} from 'aurelia-event-aggregator';
 import _ from 'lodash';
 import {I18N} from 'aurelia-i18n';
-import {Router} from "aurelia-router";
 import {EventNames} from '../../../util/constants';
-import {remote} from 'electron';
 
 @customElement('file-input')
 @inject(Element, I18N, EventAggregator)
@@ -56,11 +54,13 @@ export class FileInput {
         if(this.value) {
             _.set(this.options, 'defaultPath', this.value);
         }
-        this.selectedFiles = remote.require('./platform/electron-utilities').showFileDialog(this.options);
-        if (this.callback) {
-            this.callback(this.selectedFiles);
-        }
-        this.value = _.head(this.selectedFiles);
+        ipcRenderer.invoke('showFileDialog', this.options).then(selectedFiles => {
+           this.selectedFiles = selectedFiles;
+            if (this.callback) {
+                this.callback(this.selectedFiles);
+            }
+            this.value = _.head(this.selectedFiles);
+        });
     }
 
     detached() {

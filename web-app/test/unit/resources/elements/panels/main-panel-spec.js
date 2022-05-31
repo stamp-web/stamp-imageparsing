@@ -29,7 +29,10 @@ describe('WelcomePanel', () => {
     let fileManager = jasmine.createSpyObj('fileManager', ['getMimeType']);
 
     beforeEach(() => {
+        fileManager.getMimeType.and.returnValue(Promise.resolve('image/tiff'));
         mainpanel = new MainPanel(elementSpy, i18nSpy, routerSpy, undefined, undefined, fileManager /* Does not include others yet */);
+
+
     });
 
     describe('_handleMemoryStats', () => {
