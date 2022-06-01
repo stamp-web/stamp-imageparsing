@@ -9,3 +9,4 @@ src/main/resources/web-app
 target
 test/coverage
 
+web-app/test/junit
