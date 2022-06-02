@@ -15,6 +15,8 @@
  */
 import {ImageHandler} from 'processing/image/image-handler';
 import {ImageBounds} from 'model/image-bounds';
+import {EventAggregator} from 'aurelia-event-aggregator';
+import {createSpyObj} from 'jest-createspyobj';
 
 import _ from 'lodash';
 
@@ -23,12 +25,11 @@ describe('ImageHandler', () => {
 
     let imageHandler;
 
-    let i18nSpy = jasmine.createSpyObj('i18n', ['tr']);
-    let eventAggregatorSpy = jasmine.createSpy('eventAggregator');
-    let imageProcessorSpy = jasmine.createSpy('imageProcessor');
+    let i18nSpy = createSpyObj('i18n', ['tr']);
+    let imageProcessorSpy = createSpyObj('imageProcessor', ['process']);
 
     beforeEach(() => {
-       imageHandler = new ImageHandler(eventAggregatorSpy, i18nSpy, imageProcessorSpy);
+       imageHandler = new ImageHandler(new EventAggregator(), i18nSpy, imageProcessorSpy);
     });
 
     describe('_processSavedRegions', () => {

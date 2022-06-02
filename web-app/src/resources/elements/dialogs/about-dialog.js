@@ -15,13 +15,26 @@
  */
 
 import {DialogController} from "aurelia-dialog";
-import info from 'text!__dot_dot__/package.json';
+import {HttpClient} from 'aurelia-fetch-client';
 
 export class AboutDialog {
     static inject = [DialogController];
 
+    httpClient;
+
     constructor(dialogController) {
         this.controller = dialogController;
-        this.info = JSON.parse(info);
+        this.httpClient = new HttpClient();
+    }
+
+    attached() {
+        return this.httpClient.get('package.json').then(resp => {
+            resp.json().then(content => {
+                this.info = content;
+            })
+
+        }).catch (err => {
+            console.log('Unexpected error reading from package.json', err);
+        });
     }
 }

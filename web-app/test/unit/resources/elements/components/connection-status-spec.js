@@ -14,14 +14,15 @@
  limitations under the License.
  */
 import {ConnectionStatus} from 'resources/elements/components/connection-status';
+import {createSpyObj} from 'jest-createspyobj';
 
 describe('ConnectionStatus', () => {
 
+    let element = {};
     let connectionStatus;
-    let elementSpy = jasmine.createSpy('element');
 
     beforeEach(() => {
-        connectionStatus = new ConnectionStatus(elementSpy);
+        connectionStatus = new ConnectionStatus(element);
     });
 
     describe('constructor', () => {

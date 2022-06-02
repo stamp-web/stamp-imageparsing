@@ -16,21 +16,21 @@
 import {MainPanel} from 'resources/elements/panels/main-panel';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import _ from 'lodash';
-
+import {createSpyObj} from 'jest-createspyobj';
 
 describe('WelcomePanel', () => {
 
 
     let mainpanel;
 
-    let elementSpy = jasmine.createSpy('element');
-    let i18nSpy = jasmine.createSpyObj('i18n', ['tr']);
-    let routerSpy = jasmine.createSpyObj('router', ['navigate']);
-    let fileManager = jasmine.createSpyObj('fileManager', ['getMimeType']);
+    let i18nSpy = createSpyObj('i18n', ['tr']);
+    let routerSpy = createSpyObj('router', ['navigate']);
+    let fileManager = createSpyObj('fileManager', ['getMimeType']);
+    let element = {};
 
     beforeEach(() => {
-        fileManager.getMimeType.and.returnValue(Promise.resolve('image/tiff'));
-        mainpanel = new MainPanel(elementSpy, i18nSpy, routerSpy, undefined, undefined, fileManager /* Does not include others yet */);
+        fileManager.getMimeType.mockResolvedValue('image/tiff');
+        mainpanel = new MainPanel(element, i18nSpy, routerSpy, undefined, undefined, fileManager /* Does not include others yet */);
 
 
     });

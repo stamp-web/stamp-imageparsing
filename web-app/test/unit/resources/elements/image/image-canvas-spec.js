@@ -16,17 +16,17 @@
 import {ImageCanvas} from 'resources/elements/image/image-canvas';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {BindingEngine} from 'aurelia-framework';
+import {createSpyObj} from 'jest-createspyobj';
+import $ from 'jquery';
 
 describe('ImageCanvas', () => {
 
     let imageCanvas;
-
-    let elementSpy = jasmine.createSpy('element');
-    let eventAggregatorSpy = jasmine.createSpy('eventAggregator');
-    let bindingEngineSpy = jasmine.createSpy('bindingEngine');
+    let element = $('<image-canvas></image-canvas>')[0];
+    let bindingEngineSpy = createSpyObj('bindingEngine', ['collectionObserver', 'propertyObserver']);
 
     beforeEach(() => {
-        imageCanvas = new ImageCanvas(elementSpy, eventAggregatorSpy, bindingEngineSpy);
+        imageCanvas = new ImageCanvas(element, new EventAggregator(), bindingEngineSpy);
     });
 
     describe('_isSelectionWithin', () => {

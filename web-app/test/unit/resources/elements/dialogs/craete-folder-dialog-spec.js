@@ -15,13 +15,14 @@
  */
 import {CreateFolderDialog} from 'resources/elements/dialogs/create-folder-dialog';
 import _ from 'lodash';
+import {createSpyObj} from 'jest-createspyobj';
 
 describe('CreateFolderDialog', () => {
 
     let dialog;
 
     let createComponent = () => {
-        let dialogControllerSpy = jasmine.createSpy('dialogController');
+        let dialogControllerSpy = createSpyObj('dialogController', []);
         return new CreateFolderDialog(dialogControllerSpy);
     };
 

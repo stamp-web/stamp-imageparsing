@@ -15,13 +15,14 @@
  */
 import {RegionDefaultsDialog} from 'resources/elements/dialogs/region-defaults-dialog';
 import _ from 'lodash';
+import {createSpyObj} from 'jest-createspyobj';
 
 describe('RegionDefaultsDialog', () => {
 
     let dialog;
 
     let createComponent = () => {
-        let dialogControllerSpy = jasmine.createSpy('dialogController');
+        let dialogControllerSpy = createSpyObj('dialogController', []);
         return new RegionDefaultsDialog(dialogControllerSpy);
     };
 

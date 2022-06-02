@@ -14,13 +14,14 @@
  limitations under the License.
  */
 import {MessagePromptDialog} from 'resources/elements/dialogs/message-prompt-dialog';
+import {createSpyObj} from 'jest-createspyobj';
 
 describe('MessagePromptDialog', () => {
 
     let dialog;
 
     let createComponent = () => {
-        let dialogControllerSpy = jasmine.createSpy('dialogController');
+        let dialogControllerSpy = createSpyObj('dialogController', []);
         return new MessagePromptDialog(dialogControllerSpy);
     };
 

@@ -14,14 +14,15 @@
  limitations under the License.
  */
 import {StringListView} from 'resources/elements/components/string-list-view';
+import _ from 'lodash';
 
 describe('StringListView', () => {
 
     let stringListView;
-    let elementSpy = jasmine.createSpy('element');
+    let element = {};
 
     beforeEach(() => {
-        stringListView = new StringListView(elementSpy);
+        stringListView = new StringListView(element);
     });
 
     describe('addText', () => {
