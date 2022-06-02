@@ -16,32 +16,33 @@
 import {WelcomePanel} from 'resources/elements/panels/welcome-panel';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import _ from 'lodash';
-
+import {createSpyObj} from 'jest-createspyobj';
 
 describe('WelcomePanel', () => {
 
     let defaultActionsCount = 0;
     let welcomepanel;
 
-    let elementSpy = jasmine.createSpy('element');
-    let i18nSpy = jasmine.createSpyObj('i18n', ['tr']);
-    let routerSpy = jasmine.createSpyObj('router', ['navigate']);
-    let processManagerSpy = jasmine.createSpyObj('processManager', ['start', 'checkJava']);
-    let connectionManagerSpy = jasmine.createSpyObj('connectionManager', ['isConnected']);
-    let serverConfigSpy = jasmine.createSpyObj('serverConfig', ['getJvmPath']);
+    let element = {};
+    let i18nSpy = createSpyObj('i18n', ['tr']);
+    let routerSpy = createSpyObj('router', ['navigate']);
+    let processManagerSpy = createSpyObj('processManager', ['start', 'checkJava']);
+    let connectionManagerSpy = createSpyObj('connectionManager', ['isConnected']);
+    let serverConfigSpy = createSpyObj('serverConfig', ['getJvmPath']);
 
     let createInstance = () => {
-        welcomepanel = new WelcomePanel(elementSpy, i18nSpy, routerSpy, processManagerSpy, connectionManagerSpy, serverConfigSpy);
+        welcomepanel = new WelcomePanel(element, i18nSpy, routerSpy, processManagerSpy, connectionManagerSpy, serverConfigSpy);
         defaultActionsCount = welcomepanel.cardActions.length;
-
-        routerSpy.navigate.calls.reset();
-        processManagerSpy.start.calls.reset();
     };
 
     describe('activate', () => {
 
         beforeEach(() => {
             createInstance();
+        });
+
+        afterEach(() => {
+            jest.clearAllMocks();
         });
 
         it('verify a valid route is inserted and welcome is ignored', () => {
@@ -58,7 +59,7 @@ describe('WelcomePanel', () => {
                     route: 'image-manage',
                     name:  'image-manage'
                 }];
-            welcomepanel.processManager.checkJava.and.returnValue(Promise.resolve(true));
+            welcomepanel.processManager.checkJava.mockResolvedValue(true);
             welcomepanel.activate();
             expect(welcomepanel.cardActions.length).toBe(defaultActionsCount + 1);
             expect(welcomepanel.cardActions[0].name).toBe('image-manage');
@@ -75,7 +76,7 @@ describe('WelcomePanel', () => {
                     name:  'manage-folders'
                 }
             ];
-
+            welcomepanel.processManager.checkJava.mockResolvedValue(true);
             welcomepanel.activate();
             expect(welcomepanel.cardActions.length).toBe(defaultActionsCount + 2);
             expect(welcomepanel.cardActions[0].name).toBe('image-manage');
@@ -87,11 +88,15 @@ describe('WelcomePanel', () => {
             createInstance();
         });
 
+        afterEach(() => {
+            jest.clearAllMocks();
+        });
+
         it('state is false', (done) => {
             let panel = {
                 disabled: true
             };
-            welcomepanel.processManager.checkJava.and.returnValue(Promise.resolve(false));
+            welcomepanel.processManager.checkJava.mockResolvedValue(false);
             welcomepanel._checkJavaState(panel).then(() => {
                 expect(panel.disabled).toBe(true);
                 expect(welcomepanel.i18n.tr).toHaveBeenCalledWith('messages.image-processor-unavailable');
@@ -103,7 +108,7 @@ describe('WelcomePanel', () => {
             let panel = {
                 disabled: true
             };
-            welcomepanel.processManager.checkJava.and.returnValue(Promise.resolve(true));
+            welcomepanel.processManager.checkJava.mockResolvedValue(true);
             welcomepanel._checkJavaState(panel).then(() => {
                 expect(panel.disabled).toBe(false);
                 expect(welcomepanel.i18n.tr).toHaveBeenCalledWith('messages.image-processor-available');
@@ -118,6 +123,10 @@ describe('WelcomePanel', () => {
 
         beforeEach(() => {
             createInstance();
+        });
+
+        afterEach(() => {
+            jest.clearAllMocks();
         });
 
         it('route action is routed', () => {
@@ -157,6 +166,10 @@ describe('WelcomePanel', () => {
             createInstance();
         });
 
+        afterEach(() => {
+            jest.clearAllMocks();
+        });
+
         it('message with errorMessage', () => {
             expect(welcomepanel.hasMessage).toBe(false);
             welcomepanel.errorMessage = 'some message';
@@ -174,6 +187,10 @@ describe('WelcomePanel', () => {
 
         beforeEach(() => {
             createInstance();
+        });
+
+        afterEach(() => {
+            jest.clearAllMocks();
         });
 
         it('message with errorMessage', () => {

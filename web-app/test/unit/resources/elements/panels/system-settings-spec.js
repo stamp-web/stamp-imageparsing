@@ -15,6 +15,7 @@
  */
 import {SystemSettings} from 'resources/elements/panels/system-settings';
 import {IdentityHelper} from 'util/identity-helper';
+import {createSpyObj} from 'jest-createspyobj';
 
 import {EventAggregator} from 'aurelia-event-aggregator';
 import _ from 'lodash';
@@ -24,16 +25,16 @@ describe('SystemSettings', () => {
 
     let settings;
 
-    let elementSpy = jasmine.createSpy('element');
-    let i18nSpy = jasmine.createSpyObj('i18n', ['tr']);
-    let processManagerSpy = jasmine.createSpyObj('processManager', ['checkJava']);
-    let serverConfigSpy = jasmine.createSpyObj('serverConfig', [
+    let element = {};
+    let i18nSpy = createSpyObj('i18n', ['tr']);
+    let processManagerSpy = createSpyObj('processManager', ['checkJava']);
+    let serverConfigSpy = createSpyObj('serverConfig', [
         'getPort', 'getHostname', 'getApplicationKey', 'getJvmPath', 'reset',
         'setPort', 'setHostname', 'setApplicationKey', 'setJvmPath', 'save']);
-    let altPathsSpy = jasmine.createSpyObj('altPaths', ['getPaths', 'setPaths', 'save']);
+    let altPathsSpy = createSpyObj('altPaths', ['getPaths', 'setPaths', 'save']);
 
     let createInstance = () => {
-        settings = new SystemSettings(elementSpy, i18nSpy, processManagerSpy, serverConfigSpy, altPathsSpy);
+        settings = new SystemSettings(element, i18nSpy, processManagerSpy, serverConfigSpy, altPathsSpy);
     };
 
     describe('_checkPath', () => {
@@ -42,7 +43,7 @@ describe('SystemSettings', () => {
         });
 
         it('result is valid', done => {
-            settings.processManager.checkJava.and.returnValue(Promise.resolve(true));
+            settings.processManager.checkJava.mockResolvedValue(true);
             settings.jvmValid = false;
 
             settings._checkPath({jvmPath: 'c:/test/some-path'}).then(() => {
@@ -53,7 +54,7 @@ describe('SystemSettings', () => {
         });
 
         it('result is invalid', done => {
-            settings.processManager.checkJava.and.returnValue(Promise.resolve(false));
+            settings.processManager.checkJava.mockResolvedValue(false);
             settings.jvmValid = false;
 
             settings._checkPath({jvmPath: 'some-invalid'}).then(() => {
@@ -70,14 +71,18 @@ describe('SystemSettings', () => {
             createInstance();
         });
 
+        afterEach(() => {
+            jest.clearAllMocks();
+        });
+
         it('value is undefined', () => {
-            spyOn(settings, '_checkPath');
+            settings._checkPath = jest.fn();
             settings.jvmPathChanged();
             expect(settings._checkPath).not.toHaveBeenCalled();
         });
 
         it('value is defined', () => {
-            spyOn(settings, '_checkPath');
+            settings._checkPath = jest.fn();
             settings.jvmPath = 'c:/test/path';
             settings.jvmPathChanged();
             expect(settings._checkPath).toHaveBeenCalled();
@@ -106,7 +111,8 @@ describe('SystemSettings', () => {
         });
 
         it('configs are reset', () => {
-            spyOn(settings, 'initialize');
+            jest.spyOn(settings, 'initialize');
+            jest.spyOn(settings.serverConfig, 'reset');
             settings.reset();
             expect(settings.serverConfig.reset).toHaveBeenCalled();
             expect(settings.initialize).toHaveBeenCalled();
@@ -118,7 +124,13 @@ describe('SystemSettings', () => {
             createInstance();
         });
 
+        afterEach(() => {
+            jest.clearAllMocks();
+        });
+
         it('configs are set', () => {
+            settings.processManager.checkJava.mockResolvedValue(false);
+
             settings.port = 9000;
             settings.hostname = 'test-hostname';
             settings.applicationKey = 'aaaa-bbbb';
@@ -139,7 +151,8 @@ describe('SystemSettings', () => {
         });
 
         it('generates key', () => {
-            spyOn(IdentityHelper, 'generateUUIDKey').and.returnValue('aaaa-bbbb');
+            IdentityHelper.generateUUIDKey = jest.fn();
+            IdentityHelper.generateUUIDKey.mockReturnValue('aaaa-bbbb');
             settings.generateSecurityKey();
             expect(settings.applicationKey).toBe('aaaa-bbbb')
         });

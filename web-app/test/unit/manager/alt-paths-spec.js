@@ -17,6 +17,8 @@
 
 import {AltPaths} from 'manager/alt-paths';
 import {StorageKeys} from 'util/constants';
+import _ from 'lodash';
+import {createSpyObj} from 'jest-createspyobj';
 
 describe('AltPaths', () => {
     let altPaths;
@@ -31,7 +33,7 @@ describe('AltPaths', () => {
             localStorage.setItem(StorageKeys.ALTERNATE_PATHS, JSON.stringify(['test']));
             expect(localStorage.getItem(StorageKeys.ALTERNATE_PATHS)).toBe(JSON.stringify(['test']));
             altPaths.reset();
-            expect(localStorage.getItem(StorageKeys.ALTERNATE_PATHS)).not.toBeDefined();
+            expect(localStorage.getItem(StorageKeys.ALTERNATE_PATHS)).toBeNull();
         });
     });
 
@@ -56,7 +58,8 @@ describe('AltPaths', () => {
 
         it('do not load if loaded', () => {
             altPaths.loaded = true;
-            spyOn(window.localStorage, 'getItem');
+            // need to set it on the prototype
+            jest.spyOn(window.localStorage.__proto__, 'getItem');
             altPaths._ensureLoaded();
             expect(window.localStorage.getItem).not.toHaveBeenCalled();
         });

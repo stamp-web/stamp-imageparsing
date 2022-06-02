@@ -15,13 +15,14 @@
  */
 import {StatusDialog} from 'resources/elements/dialogs/status-dialog';
 import _ from 'lodash';
+import {createSpyObj} from 'jest-createspyobj';
 
 describe('StatusDialog', () => {
 
     let dialog;
 
     let createComponent = () => {
-        let dialogControllerSpy = jasmine.createSpy('dialogController');
+        let dialogControllerSpy = createSpyObj('dialogController', []);
         return new StatusDialog(dialogControllerSpy);
     };
 

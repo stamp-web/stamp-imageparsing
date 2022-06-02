@@ -15,18 +15,19 @@
  */
 import {DuplicateResolveDialog, ToggleButton} from 'resources/elements/dialogs/duplicate-resolve-dialog';
 import _ from 'lodash';
+import {createSpyObj} from 'jest-createspyobj';
 
 describe('DuplicateResolveDialog', () => {
 
     let dialog, imageHandlerSpy, fileManagerSpy;
 
     let createComponent = () => {
-        let dialogControllerSpy = jasmine.createSpy('dialogController');
-        imageHandlerSpy = jasmine.createSpyObj('imageHandler', ['asDataUrlFromFile']);
-        fileManagerSpy = jasmine.createSpyObj('fileManager', ['getPathSeparator']);
+        let dialogControllerSpy = createSpyObj('dialogController', []);
+        imageHandlerSpy = createSpyObj('imageHandler', ['asDataUrlFromFile']);
+        fileManagerSpy = createSpyObj('fileManager', ['getPathSeparator']);
         let _dialog = new DuplicateResolveDialog(dialogControllerSpy, imageHandlerSpy, fileManagerSpy);
 
-        fileManagerSpy.getPathSeparator.and.returnValue(Promise.resolve('/'));
+        fileManagerSpy.getPathSeparator.mockReturnValue(Promise.resolve('/'));
         return _dialog;
     };
 
@@ -36,7 +37,12 @@ describe('DuplicateResolveDialog', () => {
             dialog = createComponent();
         });
 
+        afterEach(() => {
+            jest.clearAllMocks();
+        });
+
         it('standard activation', () => {
+            let data = 'data:image/png;base64,012345ABCDEFABCDEF';
             let duplicate = {
                 folder: {
                     path: 'c:/test'
@@ -46,27 +52,31 @@ describe('DuplicateResolveDialog', () => {
             let model = {
                 duplicates: [duplicate]
             };
-
+            imageHandlerSpy.asDataUrlFromFile.mockResolvedValue(data);
             dialog.activate(model);
             expect(_.size(dialog.duplicates)).toBe(1);
         });
     });
 
     describe('getImage', () => {
+        let data = 'data:image/png;base64,012345ABCDEFABCDEF';
 
         beforeEach(() => {
             dialog = createComponent();
+            imageHandlerSpy.asDataUrlFromFile.mockResolvedValue(data);
+        });
+
+        afterEach(() => {
+            jest.clearAllMocks();
         });
 
         it('returns dataURL', done => {
-            let data = 'data:image/png;base64,012345ABCDEFABCDEF';
             let duplicate = {
                 folder: {
                     path: 'c:/test'
                 },
                 filePath: 'image1.png'
             };
-            imageHandlerSpy.asDataUrlFromFile.and.returnValue(Promise.resolve(data));
             dialog.getImage(duplicate).then(() => {
                 expect(imageHandlerSpy.asDataUrlFromFile).toHaveBeenCalled();
                 expect(duplicate.duplicateImage).toBe(data);
@@ -76,7 +86,6 @@ describe('DuplicateResolveDialog', () => {
 
 
         it('returns dataURL with altPath', done => {
-            let data = 'data:image/png;base64,012345ABCDEFABCDEF';
             let duplicate = {
                 folder: {
                     path: 'c:/images'
@@ -84,7 +93,7 @@ describe('DuplicateResolveDialog', () => {
                 altPath:  'used',
                 filePath: '123-stamp.png'
             };
-            imageHandlerSpy.asDataUrlFromFile.and.returnValue(Promise.resolve(data));
+
             dialog.getImage(duplicate).then(() => {
                 expect(imageHandlerSpy.asDataUrlFromFile).toHaveBeenCalledWith('c:/images/used', '123-stamp.png');
                 expect(duplicate.duplicateImage).toBe(data);

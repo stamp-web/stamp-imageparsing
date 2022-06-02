@@ -13,20 +13,21 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-
+import {EventAggregator} from 'aurelia-event-aggregator';
 import {SidePanel} from "resources/elements/panels/side-panel";
+import {createSpyObj} from 'jest-createspyobj';
+import _ from 'lodash';
 
 describe('SidePanel', () => {
 
     let defaultActionsCount = 0;
     let sidepanel;
 
-    let eventAggregatorSpy = jasmine.createSpy('eventAggregator');
-    let bindingEngineSpy = jasmine.createSpy('bindingEngine');
-    let dialogServiceSpy = jasmine.createSpy('dialogServiceSpy');
+    let bindingEngineSpy = createSpyObj('bindingEngine', []);
+    let dialogServiceSpy = createSpyObj('dialogServiceSpy', []);
 
     beforeEach(() => {
-        sidepanel = new SidePanel(eventAggregatorSpy, bindingEngineSpy, dialogServiceSpy);
+        sidepanel = new SidePanel(new EventAggregator(), bindingEngineSpy, dialogServiceSpy);
     });
 
     describe('filteredRegions', () => {

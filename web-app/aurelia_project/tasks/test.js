@@ -1,39 +1,19 @@
-import gulp from 'gulp';
-import {Server as Karma} from 'karma';
+import {runCLI} from '@jest/core';
+import path from 'path';
 import {CLIOptions} from 'aurelia-cli';
-import build from './build';
-import {watch} from './run';
 
-function log(message) {
-  console.log(message); //eslint-disable-line no-console
-}
+export default (cb) => {
+    let options = {};
 
-function onChange(path) {
-  log(`File Changed: ${path}`);
-}
+    if (CLIOptions.hasFlag('watch')) {
+        Object.assign(options, { watchAll: true});
+    }
 
-let karma = done => {
-  new Karma({
-    configFile: __dirname + '/../../karma.conf.js',
-    singleRun: !CLIOptions.hasFlag('watch')
-  }, done).start();
+    runCLI(options, [path.resolve(__dirname, '../../')]).then(({ results }) => {
+        if (results.numFailedTests || results.numFailedTestSuites) {
+            cb('Tests Failed');
+        } else {
+            cb();
+        }
+    });
 };
-
-let unit;
-
-if (CLIOptions.hasFlag('watch')) {
-  unit = gulp.series(
-    build,
-    gulp.parallel(
-      watch(build, onChange),
-      karma
-    )
-  );
-} else {
-  unit = gulp.series(
-    build,
-    karma
-  );
-}
-
-export default unit;

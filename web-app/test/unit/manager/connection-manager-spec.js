@@ -16,6 +16,7 @@
 import {ConnectionManager} from 'manager/connection-manager';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import _ from 'lodash';
+import {createSpyObj} from 'jest-createspyobj';
 
 describe('ConnectionManager', () => {
 
@@ -44,7 +45,7 @@ describe('ConnectionManager', () => {
         });
 
         it('verify stomp subscriber bound', () => {
-            let stompSpy = jasmine.createSpyObj('stompClient', ['subscribe']);
+            let stompSpy = createSpyObj('stompClient', ['subscribe']);
             let fn = () => { };
             stompSpy.connected = true;
             connectionMgr.connected = true;

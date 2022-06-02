@@ -15,13 +15,14 @@
  */
 import {AboutDialog} from 'resources/elements/dialogs/about-dialog';
 import _ from 'lodash';
+import {createSpyObj} from 'jest-createspyobj';
 
 describe('AboutDialog', () => {
 
     let dialog;
 
     let createComponent = () => {
-        let dialogControllerSpy = jasmine.createSpy('dialogController');
+        let dialogControllerSpy = createSpyObj('dialogController', []);
         return new AboutDialog(dialogControllerSpy);
     };
 
@@ -30,9 +31,38 @@ describe('AboutDialog', () => {
             dialog = createComponent();
         });
 
-        it('package json is read', () => {
-            expect(dialog.info).not.toBeUndefined();
-            expect(dialog.info.productName).toBe('Stamp Image Bursting Application');
+        afterEach(() => {
+            jest.resetAllMocks();
+        })
+
+        it('package json is read', done => {
+            let json = {
+                productName: 'Stamp Image Bursting Application'
+            };
+            dialog.httpClient.get = jest.fn(() => {
+                let resp = {};
+                resp.json = jest.fn(content => {
+                    return Promise.resolve(json);
+                });
+                return Promise.resolve(resp);
+            });
+            dialog.attached().then(() => {
+                expect(dialog.info).not.toBeUndefined();
+                expect(dialog.info.productName).toBe('Stamp Image Bursting Application');
+                done();
+            });
+        });
+
+        it('package json has failure', done => {
+            dialog.httpClient.get = jest.fn(() => {
+                return Promise.reject("something went wrong");
+            });
+            dialog.attached().then(() => {
+                expect(dialog.info).toBeUndefined();
+                done();
+            });
+
+
         });
     });
 
