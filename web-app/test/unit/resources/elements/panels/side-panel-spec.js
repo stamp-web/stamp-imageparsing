@@ -118,5 +118,21 @@ describe('SidePanel', () => {
                 expect(region.altPath).toBe('used');
             });
         });
+
+        it('options is cleared', () => {
+            sidepanel.defaultConfig = {
+                folder:  'Canada',
+                altPath: ''
+            };
+            sidepanel.boundRegions = [];
+            sidepanel.boundRegions.push({folder: 'test', altPath: 'used'});
+            sidepanel.boundRegions.push({});
+
+            sidepanel._setDefaultValues();
+            _.forEach(sidepanel.boundRegions, region => {
+                expect(region.folder).toBe('Canada');
+                expect(region.altPath).toBe('');
+            });
+        });
     });
 });

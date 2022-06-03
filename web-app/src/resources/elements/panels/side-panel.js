@@ -207,12 +207,12 @@ export class SidePanel {
     _setDefaultValues() {
         let folder = _.get(this.defaultConfig, 'folder');
         let altPath = _.get(this.defaultConfig, 'altPath');
-        if (folder || altPath) {
+        if (folder || !_.isNil(altPath)) {
             _.each(this.boundRegions, region => {
                 if (folder) {
                     region.folder = folder;
                 }
-                if (altPath) {
+                if (!_.isNil(altPath)) {
                     region.altPath = altPath;
                 }
             });
