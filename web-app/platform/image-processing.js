@@ -18,7 +18,7 @@ const path = require('path');
 const sharp = require('sharp');
 const _ = require('lodash');
 const fs = require('fs');
-const mime = require('mime-types');
+const mime = require('mime/lite');
 const FileReader = require('filereader');
 const fileUtilities = require('./file-utilities');
 
@@ -35,7 +35,7 @@ module.exports = function () {
             return new Promise((resolve, reject) => {
                 let img = new sharp(fullPath);
                 img.png().toBuffer().then(buf => {
-                    resolve('data:' + mime.lookup('png') + ';base64,' + buf.toString('base64'));
+                    resolve('data:' + mime.getType('png') + ';base64,' + buf.toString('base64'));
                 }).catch(err => {
                     reject(err);
                 });
@@ -63,13 +63,13 @@ module.exports = function () {
                     img = img.rotate(region.rotate);
                 }
                 switch(mimeType) {
-                    case mime.lookup('tiff'):
+                    case mime.getType('tiff'):
                         img = this.processTIFF(img, options);
                         break;
-                    case mime.lookup('jpeg'):
+                    case mime.getType('jpeg'):
                         img = this.processJPEG(img, options);
                         break;
-                    case mime.lookup('png'):
+                    case mime.getType('png'):
                         img = this.procesPNG(img, options);
                         break;
                 }

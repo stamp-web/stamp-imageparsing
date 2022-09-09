@@ -15,7 +15,7 @@
  */
 
 const fs = require('fs');
-const mime = require('mime');
+const mime = require('mime/lite');
 const path = require('path');
 const _ = require('lodash');
 const File = require('file-api').File;
@@ -95,8 +95,7 @@ let folderUtilities = function () {
 
         getMimeType: path => {
             let extension =_.last(path.split('.'));
-            // this is from mime@1.4.x versions.  With 2.0.x it is type() but this is not compatible with other libraries
-            return mime.lookup(extension);
+            return mime.getType(extension);
         },
 
         asFile: path => {
