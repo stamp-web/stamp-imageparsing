@@ -1,8 +1,4 @@
 import gulp from 'gulp';
-import browserSync from 'browser-sync';
-import proxy from 'http-proxy-middleware';
-import proxySettings from './proxy-settings.json';
-import historyApiFallback from 'connect-history-api-fallback/lib';
 import project from '../aurelia.json';
 import build from './build';
 import {CLIOptions} from 'aurelia-cli';
@@ -16,40 +12,11 @@ function onChange(path) {
 }
 
 function reload(done) {
-  browserSync.reload();
   done();
 }
 
-var apiProxy = proxy('/api', {
-    target:       proxySettings['server'],
-    changeOrigin: true,
-    logLevel:     'debug',
-    secure:       false
-});
-
 let serve = gulp.series(
-  build,
-  done => {
-    browserSync({
-      online: false,
-      open: false,
-      port: 9080,
-      logLevel: 'silent',
-      server: {
-        baseDir: ['.'],
-        middleware: [apiProxy, historyApiFallback(), function(req, res, next) {
-          res.setHeader('Access-Control-Allow-Origin', '*');
-          next();
-        }]
-      }
-    }, function(err, bs) {
-      let urls = bs.options.get('urls').toJS();
-      log(`Proxying /api requests At: ${proxySettings.server}`);
-      log(`Application Available At:  ${urls.local}`);
-      log(`BrowserSync Available At:  ${urls.ui}`);
-      done();
-    });
-  }
+  build
 );
 
 let refresh = gulp.series(

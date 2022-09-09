@@ -427,13 +427,14 @@ export class ImageCanvas {
             let img = new Image();
             img.onload = () => {
                 if( this.lastScalingFactor !== this.scalingFactor) {
-                    let cvs = this._getCanvas();
-                    // We need to set the HTML attributes of the Canvas vs. using CSS since the CSS properties are for the
-                    // visible size only
-                    cvs.attr('width', this._toScaledSize(img.width));
-                    cvs.attr('height', this._toScaledSize(img.height));
+
                     this.lastScalingFactor = this.scalingFactor;
                 }
+                let cvs = this._getCanvas();
+                // We need to set the HTML attributes of the Canvas vs. using CSS since the CSS properties are for the
+                // visible size only
+                cvs.attr('width', this._toScaledSize(img.width));
+                cvs.attr('height', this._toScaledSize(img.height));
 
                 this._getContext().lineWidth = 1.0;
                 this._getContext().drawImage(img, 0, 0, img.width, img.height, 0, 0,
