@@ -436,6 +436,14 @@ export class ImageCanvas {
                 cvs.attr('width', this._toScaledSize(img.width));
                 cvs.attr('height', this._toScaledSize(img.height));
 
+                // If scaling factor is 1, we want to use CSS properties to fit the entire image onto the canvas
+                // by width.  
+                if (this.scalingFactor == 1) {
+                    cvs.attr('style', 'width: 100%' );
+                } else {
+                    cvs.attr('style', '' );
+                }
+
                 this._getContext().lineWidth = 1.0;
                 this._getContext().drawImage(img, 0, 0, img.width, img.height, 0, 0,
                     this._toScaledSize(img.width), this._toScaledSize(img.height));

@@ -267,6 +267,10 @@ export class MainPanel {
     selectedFileChanged() {
         this.clear();
         if (this.selectedFile) {
+
+            // when we open up a new image, always open up with a scale factor of 1.
+            this.scalingFactor = 1;
+
             this.fileManager.asFile(this.selectedFile).then(f => {
                 this._processFile(f);
             });
