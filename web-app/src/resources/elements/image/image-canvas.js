@@ -427,7 +427,6 @@ export class ImageCanvas {
             let img = new Image();
             img.onload = () => {
                 if( this.lastScalingFactor !== this.scalingFactor) {
-
                     this.lastScalingFactor = this.scalingFactor;
                 }
                 let cvs = this._getCanvas();
@@ -436,20 +435,14 @@ export class ImageCanvas {
                 cvs.attr('width', this._toScaledSize(img.width));
                 cvs.attr('height', this._toScaledSize(img.height));
 
-                // If scaling factor is 1, we want to use CSS properties to fit the entire image onto the canvas
-                // by width.  
-                if (this.scalingFactor == 1) {
-                    cvs.attr('style', 'width: 100%' );
-                } else {
-                    cvs.attr('style', '' );
-                }
-
                 this._getContext().lineWidth = 1.0;
                 this._getContext().drawImage(img, 0, 0, img.width, img.height, 0, 0,
                     this._toScaledSize(img.width), this._toScaledSize(img.height));
             }
             img.src = newImage;
             this._image = img;
+
+            alert("DEV 002: scaling factor in paint image = " + this.scalingFactor);
         } else {
             let canvas = this._getCanvas();
             let ctx = this._getContext();

@@ -267,14 +267,25 @@ export class MainPanel {
     selectedFileChanged() {
         this.clear();
         if (this.selectedFile) {
-
-            // when we open up a new image, always open up with a scale factor of 1.
-            this.scalingFactor = 1;
-
             this.fileManager.asFile(this.selectedFile).then(f => {
                 this._processFile(f);
             });
+        }
+    }
 
+    setScalingFactor() {
+        if (this.dataURI) {
+            let img = new Image();
+            img.onload = () => {
+                if (false) {
+                    if ( img.width > img.height) {
+                        this.scalingFactor = this.element.offsetWidth / img.width;
+                    } else {
+                        this.scalingFactor = this.element.offsetHeight / img.height;
+                    }
+                }
+            }
+            img.src = this.dataURI;
         }
     }
 
@@ -296,6 +307,7 @@ export class MainPanel {
             _.set(this.options, 'mimeType', mime);
             this.handler.readImage(file, false).then(dataURI => {
                 this.dataURI = dataURI;
+                this.setScalingFactor();
                 this.image = this.handler.toObjectUrl(dataURI, this.options);
                 this.processing = false;
                 this.eventAggregator.publish(EventNames.STATUS_MESSAGE, {
