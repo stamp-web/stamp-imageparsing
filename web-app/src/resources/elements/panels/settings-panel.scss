@@ -26,6 +26,18 @@ settings-panel {
         padding-left: 3rem;
     }
 
+    .left-div {
+        width: 40%;
+        float: left;
+    }
+
+    .right-div {
+        width: 60%;
+        float:right;
+        text-align: right;
+        padding: 20px 0;
+    }
+
     .range-slider {
         display:        flex;
         flex-direction: row;

@@ -67,6 +67,7 @@
         "alt-path": "Alternative path values",
         "box-padding": "Box padding",
         "default-image-type": "Default Image Type",
+        "fit-image-to-window": "Open new image to fit window",
         "default-folder-path": "Default Folder",
         "dilation-count": "Filter Pass Count",
         "dpi-default-usage": "Default DPI Usage",

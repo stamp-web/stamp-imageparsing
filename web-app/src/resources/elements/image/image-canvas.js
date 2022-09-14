@@ -441,8 +441,6 @@ export class ImageCanvas {
             }
             img.src = newImage;
             this._image = img;
-
-            alert("DEV 002: scaling factor in paint image = " + this.scalingFactor);
         } else {
             let canvas = this._getCanvas();
             let ctx = this._getContext();
