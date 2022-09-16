@@ -214,7 +214,6 @@ export class MainPanel {
                     this._saveRegions(this.data, regions, this.options, overwriteImage);
                 });
             });
-
         } else {
             this.logger.debug('Using cached data of the image');
             this._saveRegions(this.data, regions, this.options, overwriteImage);
@@ -240,7 +239,11 @@ export class MainPanel {
     _handleFolderSelected(folderName) {
         this.outputPath = folderName;
         this.fileManager.getFolders(this.outputPath).then(folders => {
-            this.folders = folders;
+            if (folders.length > 0) {
+                this.folders = folders;
+            } else {
+                this.folders = [{name:"", path:folderName}];
+            }
         });
     }
 
