@@ -243,6 +243,9 @@ export class MainPanel {
                 this.folders = folders;
             } else {
                 this.folders = [{name:"", path:folderName}];
+                _.each(this.boundRegions, region => {
+                    region.folder = {name:"", path:folderName};
+                });
             }
         });
     }
