@@ -236,16 +236,12 @@ export class MainPanel {
 
     }
 
-    _handleFolderSelected(folderName) {
-        this.outputPath = folderName;
+    _handleFolderSelected(folderPath) {
+        this.outputPath = folderPath;
         this.fileManager.getFolders(this.outputPath).then(folders => {
+            this.folders = [{name: this.i18n.tr('placeholders.currentFolder'), path: folderPath}];
             if (folders.length > 0) {
-                this.folders = folders;
-            } else {
-                this.folders = [{name:"", path:folderName}];
-                _.each(this.boundRegions, region => {
-                    region.folder = {name:"", path:folderName};
-                });
+                this.folders = this.folders.concat(folders);
             }
         });
     }

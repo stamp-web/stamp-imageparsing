@@ -25,7 +25,7 @@ describe('WelcomePanel', () => {
 
     let i18nSpy = createSpyObj('i18n', ['tr']);
     let routerSpy = createSpyObj('router', ['navigate']);
-    let fileManager = createSpyObj('fileManager', ['getMimeType']);
+    const fileManager = createSpyObj('fileManager', ['getMimeType', 'getFolders']);
     let element = {};
 
     beforeEach(() => {
@@ -77,6 +77,37 @@ describe('WelcomePanel', () => {
             expect(_.size(mainpanel.memoryStats)).toBe(10);
             expect(_.head(mainpanel.memoryStats)).toBe(0.2);
             expect(_.last(mainpanel.memoryStats)).toBeCloseTo(percentage, 2);
+        });
+    });
+
+    describe('handleFolderSelected', () => {
+        const TARGET_FOLDER = '<Target Folder>';
+
+        beforeEach(() => {
+            i18nSpy.tr.mockReturnValue(TARGET_FOLDER);
+        });
+
+        it('verify no child folders', async () => {
+            mainpanel.fileManager.getFolders.mockResolvedValue([]);
+            mainpanel._handleFolderSelected('c:\\temp');
+            await new Promise(process.nextTick);
+            expect(mainpanel.outputPath).toBe('c:\\temp');
+            expect(mainpanel.folders.length).toBe(1);
+            expect(mainpanel.folders[0].name).toBe(TARGET_FOLDER);
+        });
+
+        it('verify all folders with parent', async () => {
+            let folders = [
+                {name:'temp', path: 'c:\\temp'},
+                {name:'pictures', path: 'c:\\pictures'}
+            ];
+            mainpanel.fileManager.getFolders.mockResolvedValue(folders);
+            mainpanel._handleFolderSelected('c:\\test-path');
+            await new Promise(process.nextTick);
+            expect(mainpanel.outputPath).toBe('c:\\test-path');
+            expect(mainpanel.folders.length).toBe(3);
+            expect(mainpanel.folders[0].name).toBe(TARGET_FOLDER);
+            expect(mainpanel.folders[2]).toStrictEqual(folders[1]);
         });
     });
 });
