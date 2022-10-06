@@ -18,7 +18,7 @@ import {EventAggregator} from 'aurelia-event-aggregator';
 import _ from 'lodash';
 import {createSpyObj} from 'jest-createspyobj';
 
-describe('WelcomePanel', () => {
+describe('MainPanel', () => {
 
 
     let mainpanel;
@@ -31,8 +31,6 @@ describe('WelcomePanel', () => {
     beforeEach(() => {
         fileManager.getMimeType.mockResolvedValue('image/tiff');
         mainpanel = new MainPanel(element, i18nSpy, routerSpy, undefined, undefined, fileManager /* Does not include others yet */);
-
-
     });
 
     describe('_handleMemoryStats', () => {
@@ -85,12 +83,16 @@ describe('WelcomePanel', () => {
 
         beforeEach(() => {
             i18nSpy.tr.mockReturnValue(TARGET_FOLDER);
+            // since _.defer will cause the execution to be deferred in the event loop, we want to immediately call it to execute contents.
+            const deferSpy = jest.spyOn(_, 'defer');
+            deferSpy.mockImplementation(f => f());
         });
 
         it('verify no child folders', async () => {
             mainpanel.fileManager.getFolders.mockResolvedValue([]);
             mainpanel._handleFolderSelected('c:\\temp');
             await new Promise(process.nextTick);
+
             expect(mainpanel.outputPath).toBe('c:\\temp');
             expect(mainpanel.folders.length).toBe(1);
             expect(mainpanel.folders[0].name).toBe(TARGET_FOLDER);
