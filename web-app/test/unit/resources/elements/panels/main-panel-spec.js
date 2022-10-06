@@ -84,8 +84,7 @@ describe('MainPanel', () => {
         beforeEach(() => {
             i18nSpy.tr.mockReturnValue(TARGET_FOLDER);
             // since _.defer will cause the execution to be deferred in the event loop, we want to immediately call it to execute contents.
-            const deferSpy = jest.spyOn(_, 'defer');
-            deferSpy.mockImplementation(f => f());
+            jest.spyOn(_, 'defer').mockImplementation(f => f());
         });
 
         it('verify no child folders', async () => {
