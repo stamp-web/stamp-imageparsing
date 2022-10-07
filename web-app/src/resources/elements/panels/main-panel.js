@@ -214,7 +214,6 @@ export class MainPanel {
                     this._saveRegions(this.data, regions, this.options, overwriteImage);
                 });
             });
-
         } else {
             this.logger.debug('Using cached data of the image');
             this._saveRegions(this.data, regions, this.options, overwriteImage);
@@ -237,10 +236,16 @@ export class MainPanel {
 
     }
 
-    _handleFolderSelected(folderName) {
-        this.outputPath = folderName;
+    _handleFolderSelected(folderPath) {
+        this.outputPath = folderPath;
         this.fileManager.getFolders(this.outputPath).then(folders => {
-            this.folders = folders;
+            this.folders = [];
+            _.defer(() => { // tickle the property update on the array
+                this.folders = [{name: this.i18n.tr('placeholders.currentFolder'), path: folderPath}];
+                if (folders.length > 0) {
+                    this.folders = this.folders.concat(folders);
+                }
+            });
         });
     }
 
