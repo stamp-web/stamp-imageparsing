@@ -111,6 +111,7 @@
 
     "placeholders": {
         "altPath": "Select path",
-        "addItem": "Add new..."
+        "addItem": "Add new...",
+        "currentFolder": "<Target Folder>"
     }
 }
