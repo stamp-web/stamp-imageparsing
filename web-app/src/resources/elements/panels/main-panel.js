@@ -287,10 +287,23 @@ export class MainPanel {
             let img = new Image();
             img.onload = () => {
                 if (this.options.image.fitImageToWindow) {
-                    if ( img.width > img.height) {
-                        this.scalingFactor = this.element.offsetWidth / img.width;
+
+                    let calculatedScalingFactor = 1;
+
+                    if ( (this.element.offsetWidth / img.width) < (this.element.offsetHeight / img.height)) {
+                        calculatedScalingFactor = this.element.offsetWidth / img.width;
                     } else {
-                        this.scalingFactor = this.element.offsetHeight / img.height;
+                        calculatedScalingFactor = this.element.offsetHeight / img.height;
+                    }
+
+                    if (calculatedScalingFactor < 0.25) {
+                        this.scalingFactor = 0.125;
+                    } else if (calculatedScalingFactor < 0.5) {
+                        this.scalingFactor = 0.25;
+                    } else if (calculatedScalingFactor < 1) {
+                        this.scalingFactor = 0.5;
+                    } else {
+                        this.scalingFactor = 1;
                     }
                 }
             }
