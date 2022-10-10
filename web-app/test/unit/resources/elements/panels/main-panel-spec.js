@@ -111,4 +111,37 @@ describe('MainPanel', () => {
             expect(mainpanel.folders[2]).toStrictEqual(folders[1]);
         });
     });
+
+    describe('setScalingFactor', () => {
+
+        beforeEach(() => {
+            // need to mock the config setting: this.options.image.fitImageToWindow
+            mainpanel.offsetWidth = 100;
+            mainpanel.offsetHeight = 100;
+        });
+
+        it('verify minimum zoom of 0.125', async () => {
+            // mock image dimension
+            mainpanel.setScalingFactor();
+            expect(mainpanel.scalingFactor).toBe(0.125);
+        });
+
+        it('verify maximum zoom of 1', async () => {
+            // mock image dimension
+            mainpanel.setScalingFactor();
+            expect(mainpanel.scalingFactor).toBe(1);
+        });
+
+        it('verify zoom to fit wide image', async () => {
+            // mock image dimension
+            mainpanel.setScalingFactor();
+            expect(mainpanel.scalingFactor).toBe(0.25);
+        });
+
+        it('verify zoom to fit tall image', async () => {
+            // mock image dimension
+            mainpanel.setScalingFactor();
+            expect(mainpanel.scalingFactor).toBe(0.5);
+        });
+    });
 });
