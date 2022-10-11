@@ -16,6 +16,21 @@ pipeline {
                 }
             }
         }
+		stage('UI Setup') {
+		    steps {
+			   sh 'cd web-app && npm install'
+			}
+		}
+		stage('UI Test') {
+		    steps {
+			   sh 'cd web-app/test/unit && au test --coverage'
+			}
+			post {
+                success {
+                    junit 'web-app/test/junit/*.xml' 
+                }
+            }
+		}
         stage('Deploy') {
             steps {
                 echo 'Deploying....'
