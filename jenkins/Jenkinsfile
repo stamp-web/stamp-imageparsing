@@ -46,9 +46,8 @@ pipeline {
 		stage('Prepare Installer') {
 		    steps {
 				echo 'version is ${MICROSERVICE_VERSION} ${MICROSERVICE_IMAGE}'
-				def MICROSERVICE_VERSION2 = readMavenPom().getVersion();
-				def MICROSERVICE_IMAGE2 = readMavenPom().getArtifactId();
-				echo 'version is ${MICROSERVICE_VERSION2} ${MICROSERVICE_IMAGE2}'
+				MICROSERVICE_VERSION2 = sh 'mvn help:evaluate -Dexpression=project.version -q -DforceStdout'
+				echo 'version is ${MICROSERVICE_VERSION2}'
 			    sh 'cp "target/stamp-imageparsing-3.0.0-SNAPSHOT.jar" "web-app/lib"'
 			}
 		}
