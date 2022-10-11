@@ -49,8 +49,9 @@ pipeline {
 				    pom = readMavenPom(file: 'pom.xml')
 				    projectArtifactId = pom.getArtifactId();
 					projectVersion = pom.getVersion();
+					
 				}
-				echo 'version is ${projectArtifactId} ${projectVersion}'
+				echo 'version is ${projectArtifactId} ${projectVersion} and ${POM_ARTIFACTID}:${POM_VERSION} '
 			    sh 'cp "target/stamp-imageparsing-3.0.0-SNAPSHOT.jar" "web-app/lib"'
 			}
 		}
