@@ -7,9 +7,6 @@ pipeline {
 	}
 	
 	environment {
-		//Will require Pipeline Utilities Steps Plugin
-		MICROSERVICE_VERSION = readMavenPom().getVersion();
-		MICROSERVICE_IMAGE = readMavenPom().getArtifactId();
 	}
     
 	stages {
@@ -45,22 +42,18 @@ pipeline {
 		}
 		stage('Prepare Installer') {
 		    environment {
-			   projectVersion = sh (returnStdout: true, script: "mvn help:evaluate -Dexpression=project.version -q -DforceStdout").trim();
-			   projectArtifactId = sh (returnStdout: true, script: "mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout").trim();
+			   PROJECT_VERSION = sh (returnStdout: true, script: "mvn help:evaluate -Dexpression=project.version -q -DforceStdout").trim();
+			   PROJECT_ARTIFACT = sh (returnStdout: true, script: "mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout").trim();
 			}
 		    steps {
-			    script {
-				    pom = readMavenPom(file: 'pom.xml')
-				    projectArtifactId = pom.getArtifactId();
-					echo 'TTTT version is ${projectArtifactId} and ${POM_ARTIFACTID}:${POM_VERSION} '
-				}
-				echo 'version is ${projectArtifactId} ${projectVersion} and $projectArtifactId:$projectVersion'
+				echo 'version is $PROJECT_ARTIFACT:$PROJECT_VERSION'
 			    sh 'cp "target/stamp-imageparsing-3.0.0-SNAPSHOT.jar" "web-app/lib"'
 			}
 		}
-        stage('Deploy') {
+        stage('Build Installer') {
             steps {
-                echo 'Deploying....'
+               // sh 'cd web-app && npm run win32'
+			   echo 'Not Currently Supported'
             }
         }
     }
