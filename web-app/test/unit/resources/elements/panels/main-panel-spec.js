@@ -111,4 +111,83 @@ describe('MainPanel', () => {
             expect(mainpanel.folders[2]).toStrictEqual(folders[1]);
         });
     });
+
+    describe('setScalingFactor', () => {
+
+        const dataUri = 'data:image/jpeg;base64,R0lGODlhkAGQAfcAAAQCBJKDLJSSlExGHNS/NNTOtFRSVCckFGxjJPjgXMzKzHyCfKuqpDMxNPzu0fXaJGxqZLikLEdCPBQSDDQyFOvq7H90LL6PlFxOw==';
+
+        const mockImage = {
+            src: null,
+            onload: () => {}
+        };
+
+        const realImage = global.Image;
+
+        beforeAll(() => {
+            global.Image = () => { return mockImage; };
+        });
+
+        afterAll(() => {
+            global.Image = realImage;
+        })
+
+        beforeEach(() => {
+            mainpanel.scalingFactor = 2.0; // dummy factor
+            mainpanel.options = {};
+            mainpanel.dataURI = dataUri;
+        });
+
+        it('verify no scaling calculation without option set', () => {
+            mainpanel.setScalingFactor();
+            mockImage.onload();
+            expect(mainpanel.scalingFactor).toBeCloseTo(2.0, 2);
+        });
+
+        it('scaling calculation run on image load with option set', () => {
+            mainpanel.imageCanvas = {offsetWidth: 400, offsetHeight: 400}; // current onscreen canvas size
+            _.set(mainpanel.options, 'image.fitImageToWindow', true);
+            mockImage.width = 700; // less than twice the size of the canvas
+            mockImage.height = 200;
+            mainpanel.setScalingFactor();
+            mockImage.onload(); // we need to ensure onload is called since src is not really triggering it
+
+            expect(mainpanel.scalingFactor).toBeCloseTo(0.5, 2);
+        });
+
+    });
+
+    describe('getScalingFactorFromImage', () => {
+
+        let elem = {};
+
+        beforeEach(() => {
+            elem.offsetWidth = 1024;
+            elem.offsetHeight = 1024;
+        });
+
+        it('verify minimum zoom of 0.125', () => {
+            // more than 8x the width
+            let image = {height: 2048, width: 8600};
+            let factor = mainpanel.getScalingFactorFromImage(elem, image);
+            expect(factor).toBeCloseTo(0.125, 4);
+        });
+
+        it('verify maximum zoom of 1', () => {
+            let image = {height: 600, width: 800};
+            let factor = mainpanel.getScalingFactorFromImage(elem, image);
+            expect(factor).toBeCloseTo(1.0, 4);
+        });
+
+        it('verify zoom to fit wide image', () => {
+            let image = {height: 1500, width: 4080};
+            let factor = mainpanel.getScalingFactorFromImage(elem, image);
+            expect(factor).toBeCloseTo(0.25, 4);
+        });
+
+        it('verify zoom to fit tall image', () => {
+            let image = {height: 2040, width: 1000};
+            let factor = mainpanel.getScalingFactorFromImage(elem, image);
+            expect(factor).toBeCloseTo(0.5, 4);
+        });
+    });
 });

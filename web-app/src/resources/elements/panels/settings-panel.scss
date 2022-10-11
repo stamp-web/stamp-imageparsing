@@ -6,6 +6,10 @@ settings-panel {
     height:         100%;
     margin-top:     $margin-med;
 
+    fieldset {
+        padding: $padding-med $padding-x-thick;
+    }
+
     .form-control {
         font-size: 1.1rem;
     }

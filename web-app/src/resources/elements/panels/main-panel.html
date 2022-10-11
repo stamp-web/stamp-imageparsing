@@ -32,6 +32,7 @@
         <settings-panel if.bind="showSettings" options.bind="options"></settings-panel>
         <image-canvas class="${imagePanelClassnames}"
                       image.bind="dataURI"
+                      ref="imageCanvas"
                       bound-regions.bind="boundRegions"
                       selected-region.bind="selectedRegion"
                       scaling-factor.bind="scalingFactor"></image-canvas>

@@ -19,7 +19,8 @@ export const TIFFCompression = ['lzw', 'jpeg', 'deflate'];
 
 export const DefaultOptions = {
     image:       {
-        defaultType: ImageTypes[1]
+        defaultType:        ImageTypes[1],
+        fitImageToWindow:   false
     },
     dpi:         {
         mode:       'image',

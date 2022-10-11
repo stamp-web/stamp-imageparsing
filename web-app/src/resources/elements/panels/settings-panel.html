@@ -6,6 +6,18 @@
     <div class="panel container">
         <form>
             <fieldset>
+                <legend>${'titles.application-settings'|t}</legend>
+                <div class="form-group">
+                    <div class="form-check">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               name="fitImageToWindow"
+                               checked.bind="settings.image.fitImageToWindow">
+                        <label class="form-check-label">${'labels.fit-image-to-window'|t}</label>
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset>
                 <legend>${'titles.image-settings'|t}</legend>
                 <div class="form-group">
                     <label>${'labels.default-image-type'|t}</label>

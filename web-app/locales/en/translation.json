@@ -3,12 +3,13 @@
 
     "titles": {
         "add-folder": "Add Folder",
+        "application-settings": "Application Settings",
         "default-region": "Region Defaults",
         "dpi": "DPI Settings",
         "duplicates-detected": "Resolve Existing Images",
         "jpeg": "JPEG Settings",
         "bounding-box": "Bounding Box Configuration",
-        "image-settings": "Image Settings",
+        "image-settings": "Image Output Settings",
         "image-processing": "Image Processing Settings",
         "image-editing": "Image Editing",
         "manage-folders": "Manage Folders",
@@ -67,6 +68,7 @@
         "alt-path": "Alternative path values",
         "box-padding": "Box padding",
         "default-image-type": "Default Image Type",
+        "fit-image-to-window": "Open new image to fit window",
         "default-folder-path": "Default Folder",
         "dilation-count": "Filter Pass Count",
         "dpi-default-usage": "Default DPI Usage",

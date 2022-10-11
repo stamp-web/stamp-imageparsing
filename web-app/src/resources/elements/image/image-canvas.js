@@ -427,7 +427,6 @@ export class ImageCanvas {
             let img = new Image();
             img.onload = () => {
                 if( this.lastScalingFactor !== this.scalingFactor) {
-
                     this.lastScalingFactor = this.scalingFactor;
                 }
                 let cvs = this._getCanvas();
