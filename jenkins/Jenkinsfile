@@ -1,9 +1,24 @@
 pipeline {
-    agent any 
-    stages {
-        stage('Stage 1'){
+    agent any
+	tools {
+		maven "MAVEN"
+		jdk "JAVA"
+	}
+    
+	stages {
+        stage('Build Microservice') {
             steps {
-                echo 'Hello world!' 
+                sh 'mvn -Dmaven.test.failure.ignore=true install' 
+            }
+            post {
+                success {
+                    junit 'target/surefire-reports/**/*.xml' 
+                }
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying....'
             }
         }
     }
