@@ -44,12 +44,14 @@ pipeline {
 			}
 		}
 		stage('Prepare Installer') {
+		    environment {
+			   POM_VERSION = sh (returnStdout: true, script: "mvn help:evaluate -Dexpression=project.version -q -DforceStdout").trim();
+			}
 		    steps {
 			    script {
 				    pom = readMavenPom(file: 'pom.xml')
 				    projectArtifactId = pom.getArtifactId();
-					projectVersion = pom.getVersion();
-					echo 'TTTT version is ${projectArtifactId} ${projectVersion} and ${POM_ARTIFACTID}:${POM_VERSION} '
+					echo 'TTTT version is ${projectArtifactId} and ${POM_ARTIFACTID}:${POM_VERSION} '
 				}
 				echo 'version is ${projectArtifactId} ${projectVersion} and ${POM_ARTIFACTID}:${POM_VERSION} '
 			    sh 'cp "target/stamp-imageparsing-3.0.0-SNAPSHOT.jar" "web-app/lib"'
