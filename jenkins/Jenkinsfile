@@ -31,6 +31,18 @@ pipeline {
                 }
             }
 		}
+		stage('UI Build') {
+		    steps {
+			    sh 'cd web-app && au build --env prod'
+			}
+		}
+		stage('Prepare Installer') {
+		    steps {
+			    pom = raedMavenPom file: 'pom.xml'
+				echo 'version is ${pom.version}'
+			    sh 'cp "target/stamp-imageparsing-3.0.0-SNAPSHOT.jar" "web-app/lib"'
+			}
+		}
         stage('Deploy') {
             steps {
                 echo 'Deploying....'
