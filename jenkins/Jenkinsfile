@@ -1,0 +1,57 @@
+pipeline {
+    agent any
+
+	tools {
+		maven "MAVEN"
+		jdk "JAVA"
+	}
+	
+	stages {
+        stage('Build Microservice') {
+            steps {
+                sh 'mvn -Dmaven.test.failure.ignore=true install' 
+            }
+            post {
+                success {
+                    junit 'target/surefire-reports/**/*.xml' 
+                }
+            }
+        }
+		stage('UI Setup') {
+		    steps {
+			   sh 'cd web-app && npm install'
+			}
+		}
+		stage('UI Test') {
+		    steps {
+			   sh 'cd web-app/test/unit && au test --coverage'
+			}
+			post {
+                success {
+                    junit 'web-app/test/junit/*.xml' 
+                }
+            }
+		}
+		stage('UI Build') {
+		    steps {
+			    sh 'cd web-app && au build --env prod'
+			}
+		}
+		stage('Prepare Installer') {
+		    environment {
+			   PROJECT_VERSION = sh (returnStdout: true, script: "mvn help:evaluate -Dexpression=project.version -q -DforceStdout").trim();
+			   PROJECT_ARTIFACT = sh (returnStdout: true, script: "mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout").trim();
+			}
+		    steps {
+				echo 'version is $PROJECT_ARTIFACT:$PROJECT_VERSION'
+			    sh 'cp "target/stamp-imageparsing-3.0.0-SNAPSHOT.jar" "web-app/lib"'
+			}
+		}
+        stage('Build Installer') {
+            steps {
+               // sh 'cd web-app && npm run win32'
+			   echo 'Not Currently Supported'
+            }
+        }
+    }
+}
