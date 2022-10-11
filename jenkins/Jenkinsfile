@@ -6,9 +6,6 @@ pipeline {
 		jdk "JAVA"
 	}
 	
-	environment {
-	}
-    
 	stages {
         stage('Build Microservice') {
             steps {
