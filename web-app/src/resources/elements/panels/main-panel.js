@@ -286,29 +286,42 @@ export class MainPanel {
         if (this.dataURI) {
             let img = new Image();
             img.onload = () => {
-                if (this.options.image.fitImageToWindow) {
-
-                    let calculatedScalingFactor = 1;
-
-                    if ( (this.element.offsetWidth / img.width) < (this.element.offsetHeight / img.height)) {
-                        calculatedScalingFactor = this.element.offsetWidth / img.width;
-                    } else {
-                        calculatedScalingFactor = this.element.offsetHeight / img.height;
-                    }
-
-                    if (calculatedScalingFactor < 0.25) {
-                        this.scalingFactor = 0.125;
-                    } else if (calculatedScalingFactor < 0.5) {
-                        this.scalingFactor = 0.25;
-                    } else if (calculatedScalingFactor < 1) {
-                        this.scalingFactor = 0.5;
-                    } else {
-                        this.scalingFactor = 1;
-                    }
+                if (_.get(this.options, 'image.fitImageToWindow', false) && this.imageCanvas) {
+                    this.scalingFactor = this.getScalingFactorFromImage(this.imageCanvas, img);
                 }
             }
             img.src = this.dataURI;
         }
+    }
+
+    /**
+     * Retrieve the closest scaling factor based on the image width or height relative to the
+     * canvas offsetWidth or offsetHeight.  The smaller ratio will be used for comparison.  The final scaling
+     * factor must match one of the predefined scaling factors or will be set to 1.0 (equivalent to 100% zoom)
+     *
+     * NOTE: This should be called after the image is loaded to ensure the dimensions are present
+     *
+     * @param elm   The on screen element to size to
+     * @param img   The image used for calculation of sizing
+     *
+     * @returns {number}
+     */
+    getScalingFactorFromImage(elm, img) {
+        let scaleFactor = 1.0;
+        if ((elm.offsetWidth / img.width) < (elm.offsetHeight / img.height)) {
+            scaleFactor = Math.min(elm.offsetWidth / img.width, 1.0);
+        } else {
+            scaleFactor = Math.min(elm.offsetHeight / img.height, 1.0);
+        }
+
+        if (scaleFactor < 0.25) {
+            scaleFactor = 0.125;
+        } else if (scaleFactor < 0.5) {
+            scaleFactor = 0.25;
+        } else if (scaleFactor < 1.0) {
+            scaleFactor = 0.5;
+        }
+        return scaleFactor;
     }
 
     /**

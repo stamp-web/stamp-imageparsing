@@ -3,12 +3,13 @@
 
     "titles": {
         "add-folder": "Add Folder",
+        "application-settings": "Application Settings",
         "default-region": "Region Defaults",
         "dpi": "DPI Settings",
         "duplicates-detected": "Resolve Existing Images",
         "jpeg": "JPEG Settings",
         "bounding-box": "Bounding Box Configuration",
-        "image-settings": "Image Settings",
+        "image-settings": "Image Output Settings",
         "image-processing": "Image Processing Settings",
         "image-editing": "Image Editing",
         "manage-folders": "Manage Folders",
