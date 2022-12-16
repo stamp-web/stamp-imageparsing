@@ -122,7 +122,7 @@
         "aurelia-pal-nodejs": "^3.0.0-rc.1",
         "aurelia-testing": "1.0.0",
         "babel-jest": "^28.1.0",
-        "electron": "20.0.0",
+        "electron": "22.0.0",
         "electron-builder": "^23.0.3",
         "electron-packager": "16.0.0",
         "electron-rebuild": "^3.2.7",
