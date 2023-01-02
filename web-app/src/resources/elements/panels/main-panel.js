@@ -344,7 +344,11 @@ export class MainPanel {
                 this.dataURI = dataURI;
                 this.setScalingFactor();
                 this.image = this.handler.toObjectUrl(dataURI, this.options);
-                this.processing = false;
+                // Have seen cases of the automatic image processing failing if it is clicked too quickly
+                // after image loading.  Delay the enablement of actions
+                _.delay(() => {
+                    this.processing = false;
+                }, 3000);
                 this.eventAggregator.publish(EventNames.STATUS_MESSAGE, {
                     message:  this.i18n.tr('messages.loading-done'),
                     showBusy: false,
