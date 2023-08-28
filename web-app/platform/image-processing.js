@@ -33,7 +33,7 @@ module.exports = function () {
         getDataUrlFromImage: function(folderPath, filename) {
             let fullPath = path.join((folderPath || __dirname), filename);
             return new Promise((resolve, reject) => {
-                let img = new sharp(fullPath);
+                let img = new sharp(fullPath, {failOnError: false});
                 img.png().toBuffer().then(buf => {
                     resolve('data:' + mime.getType('png') + ';base64,' + buf.toString('base64'));
                 }).catch(err => {
@@ -56,7 +56,7 @@ module.exports = function () {
         _saveImage: function (data, region, options = {}, overwrite = false) {
             let mimeType = options.mimeType;
             return new Promise((resolve, reject) => {
-                let img = new sharp(data).withMetadata();
+                let img = new sharp(data, {failOnError: false}).withMetadata();
                 let rect = region.rectangle;
                 img = img.extract({left: rect.x, top: rect.y, width: rect.width, height: rect.height});
                 if( region.rotate) {
