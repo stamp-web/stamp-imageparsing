@@ -1,8 +1,12 @@
 # Stamp Image Parsing Application
 
-## Build Status
+## Download Application
 
-![Build Status](https://drake-server.ddns.net:9443/build/stamp-imageparsing.svg)
+The application that is installable by end users is available for download from [www.drakeserver.com](http://www.drakeserver.com)
+
+## Usage Instructions
+
+A manual for installation and usage of the application is written in Google Docs and is available for viewing [here](https://docs.google.com/document/d/1NYskeZt9FIKIE1SduEA6yZRSdh3IpvNzU-tWamDJsBk/edit?usp=sharing)
 
 ## Progress Videos
 
