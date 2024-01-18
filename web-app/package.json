@@ -2,7 +2,7 @@
     "name": "stamp-imageparsing",
     "productName": "Stamp Image Bursting Application",
     "description": "Next-Generation Image Bursting Application",
-    "version": "3.0.5",
+    "version": "3.0.6",
     "copyright": "Copyright © 2022 Jason Drake.  All Rights Reserved.",
     "bugs": {
         "url": "https://github.com/jadrake75/stamp-imageparsing/issues"
@@ -122,7 +122,7 @@
         "aurelia-pal-nodejs": "^3.0.0-rc.1",
         "aurelia-testing": "1.0.0",
         "babel-jest": "^28.1.0",
-        "electron": "^26.6.6",
+        "electron": "^28.1.4",
         "electron-builder": "^24.11.0",
         "electron-packager": "^17.1.2",
         "electron-rebuild": "^3.2.9",
