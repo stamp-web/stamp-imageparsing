@@ -2,7 +2,7 @@
     "name": "stamp-imageparsing",
     "productName": "Stamp Image Bursting Application",
     "description": "Next-Generation Image Bursting Application",
-    "version": "3.0.4",
+    "version": "3.0.5",
     "copyright": "Copyright © 2022 Jason Drake.  All Rights Reserved.",
     "bugs": {
         "url": "https://github.com/jadrake75/stamp-imageparsing/issues"
@@ -99,7 +99,7 @@
         "lodash": "4.17.21",
         "mime": "3.0.0",
         "requirejs": "2.3.6",
-        "sharp": "0.31.3",
+        "sharp": "^0.33.2",
         "sockjs-client": "1.6.1",
         "text": "github:requirejs/text#latest",
         "uid-generator": "2.0.0"
