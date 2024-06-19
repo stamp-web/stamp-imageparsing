@@ -282,9 +282,11 @@ export class MainPanel {
      * User has the option to open up image to fit screen or to use the last zoom setting.  This is determined
      * by a global setting.
      */
-    setScalingFactor() {
+    setScalingFactor(img) {
         if (this.dataURI) {
-            let img = new Image();
+            if(!img) {
+                img = new Image();
+            }
             img.onload = () => {
                 if (_.get(this.options, 'image.fitImageToWindow', false) && this.imageCanvas) {
                     this.scalingFactor = this.getScalingFactorFromImage(this.imageCanvas, img);

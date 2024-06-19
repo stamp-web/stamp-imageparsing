@@ -269,24 +269,26 @@ export class ImageCanvas {
     _handleResizePositionByCursor(region, e_x, e_y, cursor) {
         region.allowResizeX = true;
         region.allowResizeY = true;
+        let x,y,w = 0
+
         switch(cursor) {
             case 'ns-resize':
                 region.allowResizeX = false;
-                let y = this._toScaledSize(_.get(region, 'rectangle.y'));
+                y = this._toScaledSize(_.get(region, 'rectangle.y'));
                 if (this._isSelectionWithin(0, y, 0, e_y, this._threshold)) {
                     _.set(region, 'rectangle.y', this._toActualSize(y) + _.get(region, 'rectangle.height'));
                 }
                 break;
             case 'ew-resize':
                 region.allowResizeY = false;
-                let x = this._toScaledSize(_.get(region, 'rectangle.x'));
+                x = this._toScaledSize(_.get(region, 'rectangle.x'));
                 if (this._isSelectionWithin(x, 0, e_x, 0, this._threshold)) {
                     _.set(region, 'rectangle.x', this._toActualSize(x) + _.get(region, 'rectangle.width'));
                 }
                 break;
             case 'nesw-resize':
                 x = _.get(region, 'rectangle.x');
-                let w = _.get(region, 'rectangle.width');
+                w = _.get(region, 'rectangle.width');
                 if (this._isSelectionWithin( this._toScaledSize(x) + this._toScaledSize(w), 0, e_x, 0, this._threshold)) {
                     _.set(region, 'rectangle.y', _.get(region, 'rectangle.y') + _.get(region, 'rectangle.height'));
                 } else if (this._isSelectionWithin( this._toScaledSize(x), 0, e_x, 0, this._threshold)) {

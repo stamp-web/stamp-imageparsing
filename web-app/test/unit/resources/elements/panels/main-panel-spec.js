@@ -117,19 +117,10 @@ describe('MainPanel', () => {
         const dataUri = 'data:image/jpeg;base64,R0lGODlhkAGQAfcAAAQCBJKDLJSSlExGHNS/NNTOtFRSVCckFGxjJPjgXMzKzHyCfKuqpDMxNPzu0fXaJGxqZLikLEdCPBQSDDQyFOvq7H90LL6PlFxOw==';
 
         const mockImage = {
+            constructor: () => {},
             src: null,
             onload: () => {}
         };
-
-        const realImage = global.Image;
-
-        beforeAll(() => {
-            global.Image = () => { return mockImage; };
-        });
-
-        afterAll(() => {
-            global.Image = realImage;
-        })
 
         beforeEach(() => {
             mainpanel.scalingFactor = 2.0; // dummy factor
@@ -138,7 +129,7 @@ describe('MainPanel', () => {
         });
 
         it('verify no scaling calculation without option set', () => {
-            mainpanel.setScalingFactor();
+            mainpanel.setScalingFactor(mockImage);
             mockImage.onload();
             expect(mainpanel.scalingFactor).toBeCloseTo(2.0, 2);
         });
@@ -148,7 +139,7 @@ describe('MainPanel', () => {
             _.set(mainpanel.options, 'image.fitImageToWindow', true);
             mockImage.width = 700; // less than twice the size of the canvas
             mockImage.height = 200;
-            mainpanel.setScalingFactor();
+            mainpanel.setScalingFactor(mockImage);
             mockImage.onload(); // we need to ensure onload is called since src is not really triggering it
 
             expect(mainpanel.scalingFactor).toBeCloseTo(0.5, 2);
