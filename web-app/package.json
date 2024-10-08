@@ -98,7 +98,7 @@
         "filereader": "0.10.3",
         "lodash": "4.17.21",
         "mime": "3.0.0",
-        "requirejs": "2.3.6",
+        "requirejs": "^2.3.7",
         "sharp": "^0.33.2",
         "sockjs-client": "1.6.1",
         "text": "github:requirejs/text#latest",
