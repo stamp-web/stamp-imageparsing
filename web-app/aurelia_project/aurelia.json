@@ -47,6 +47,7 @@
     "paths": {
         "stage": "lib",
         "root": "src",
+        "libFile": "stamp-imageparsing-3.0.0-SNAPSHOT.jar",
         "resources": "resources",
         "elements": "resources/elements",
         "attributes": "resources/attributes",

@@ -3,15 +3,8 @@ import project from "../aurelia";
 const fs   = require('fs');
 
 let stage = () => {
-    let dir = project.paths.stage;
-    if(!fs.existsSync(dir)) {
-        fs.mkdirSync(dir);
-        console.log('📁 folder created:', dir);
-    }
-    return gulp.src([
-            `../target/stamp-imageparsing-*.jar`
-        ])
-        .pipe(gulp.dest(dir));
+    console.log('Copying library files from Java Project')
+    fs.copyFileSync(`../target/${project.paths.libFile}`, `${project.paths.stage}/${project.paths.libFile}`);
 };
 
 export { stage as default };
