@@ -35,7 +35,7 @@ pipeline {
             }
         }
         
-        stage('Build ElectronJS') {
+        stage('Test JavaScript') {
  			steps {
         		// Install dependencies in web-app
         		dir('web-app') {
