@@ -6,7 +6,7 @@ pipeline {
     }
 
 	tools {
-        jdk 'JDK'
+        java 'JDK'
         maven 'MAVEN'   // Name of Maven installation configured in Jenkins global tools
     }
 
