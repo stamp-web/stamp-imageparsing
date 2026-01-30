@@ -5,10 +5,16 @@ pipeline {
         cron('H/15 * * * *')
     }
 
-    tools {
+	tools {
+        jdk 'JDK'
         maven 'MAVEN'   // Name of Maven installation configured in Jenkins global tools
     }
 
+    environment {
+        JAVA_HOME = tool 'JDK11'
+        PATH = "${JAVA_HOME}/bin:${env.PATH}"
+    }
+    
     stages {
         stage('Checkout') {
             steps {
