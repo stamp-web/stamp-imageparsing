@@ -6,12 +6,12 @@ pipeline {
     }
 
 	tools {
-        java 'JDK'
+        jdk 'JAVA'
         maven 'MAVEN'   // Name of Maven installation configured in Jenkins global tools
     }
 
     environment {
-        JAVA_HOME = tool 'JDK'
+        JAVA_HOME = tool 'JAVA'
         PATH = "${JAVA_HOME}/bin:${env.PATH}"
     }
     
