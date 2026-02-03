@@ -1,12 +1,11 @@
 package com.drakeserver.image.processing;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.junit.Before;
-import org.junit.Test;
 
 import com.drakeserver.image.model.BoundingBox;
 
@@ -16,7 +15,7 @@ public class ImageProcessorServiceTest {
 
 	ImageProcessorService service;
 	
-	@Before
+	@BeforeEach
 	public void setup() {
 		service = new ImageProcessorService();
 	}

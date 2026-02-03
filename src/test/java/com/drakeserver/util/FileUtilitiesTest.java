@@ -15,9 +15,8 @@ limitations under the License.
 */
 package com.drakeserver.util;
 
-import static org.junit.Assert.assertNull;
-
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 public class FileUtilitiesTest {
 
@@ -29,9 +28,9 @@ public class FileUtilitiesTest {
 	public void getNetworkMapping_C_DriveHandled() {
 		if (FileUtilities.isWindows()) {
 			String value = FileUtilities.getNetworkMapping("c:");
-			assertNull("Lowecase c value", value);
+			assertNull(value, "Lowecase c value" );
 			value = FileUtilities.getNetworkMapping("C:");
-			assertNull("Capital C failed", value);	
+			assertNull(value, "Capital C failed");	
 		}
 	}
 

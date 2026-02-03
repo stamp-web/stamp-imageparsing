@@ -15,24 +15,24 @@ limitations under the License.
 */
 package com.drakeserver.ws.config;
 
-import static org.junit.Assert.*;
+import jakarta.servlet.http.HttpServletRequest;
 
-import javax.servlet.http.HttpServletRequest;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.drakeserver.net.HttpConstants;
 import com.drakeserver.net.ServerSettings;
+import com.drakeserver.stamp.imageparsing.StampImageParsingApplication;
 
-@RunWith(SpringRunner.class)
+@SpringBootTest(classes = StampImageParsingApplication.class)
 public class WebSocketAuthorizerTests {
 
 	@MockBean
@@ -43,7 +43,7 @@ public class WebSocketAuthorizerTests {
 	
 	WebSocketAuthorizer authorizer;
 	
-	@Before
+	@BeforeEach
 	public void setup() {
 		authorizer = new WebSocketAuthorizer();
 	}
@@ -55,7 +55,7 @@ public class WebSocketAuthorizerTests {
 		Mockito.when(settings.getApplicationKey()).thenReturn("b17e0a7a-010e-4c70-a02c-824cf71b0868");
 		
 		authorizer.settings = settings;
-		assertTrue("unAuthorized matching apiKeys", authorizer.beforeHandshake(request, null, null, null));
+		assertTrue(authorizer.beforeHandshake(request, null, null, null), "unAuthorized matching apiKeys" );
 	}
 	
 	@Test 
@@ -65,7 +65,7 @@ public class WebSocketAuthorizerTests {
 		Mockito.when(settings.getApplicationKey()).thenReturn("ABC");
 		
 		authorizer.settings = settings;
-		assertFalse("Authorized non-matching apiKeys", authorizer.beforeHandshake(request, null, null, null));
+		assertFalse(authorizer.beforeHandshake(request, null, null, null), "Authorized non-matching apiKeys");
 	}
 	
 	@Test 
@@ -74,7 +74,7 @@ public class WebSocketAuthorizerTests {
 		try {
 			authorizer.afterHandshake(request, null, null, null);
 		} catch (Exception e) {
-			Assert.fail("Exception was incorrectly thrown"); 
+			fail("Exception was incorrectly thrown"); 
 		}
 	}
 		
@@ -84,7 +84,7 @@ public class WebSocketAuthorizerTests {
 		Mockito.when(settings.getApplicationKey()).thenReturn("ABC");
 		authorizer.settings = settings;
 		boolean matches = authorizer.isApiKeyMatch("ABC");
-		assertTrue("Authorization did not match", matches);
+		assertTrue(matches, "Authorization did not match");
 	}
 	
 	@Test
@@ -92,12 +92,12 @@ public class WebSocketAuthorizerTests {
 		Mockito.when(settings.getApplicationKey()).thenReturn("XYZ");
 		authorizer.settings = settings;
 		boolean matches = authorizer.isApiKeyMatch("ABC");
-		assertFalse("Authorization did match incorrectly", matches);
+		assertFalse(matches, "Authorization did match incorrectly");
 	}
 	
 	@Test
 	public void isApiKeyMatch_NullKey() {
 		boolean matches = authorizer.isApiKeyMatch(null);
-		assertFalse("Authorization did match incorrectly", matches);
+		assertFalse(matches, "Authorization did match incorrectly");
 	}
 }

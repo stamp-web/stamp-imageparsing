@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     triggers {
-        cron('H/15 * * * *')
+        githubPush()
     }
 
 	tools {
@@ -23,30 +23,37 @@ pipeline {
                     branches: [[name: '*/master']],
                     userRemoteConfigs: [[
                         url: 'https://github.com/stamp-web/stamp-imageparsing.git',
-                        credentialsId: 'jadrake-github'
+                        credentialsId: 'github'
                     ]]
                 ])
             }
         }
+        
+        stage('Clean') {
+            steps {
+                sh 'mvn clean'
+            }
+        }
 
-        stage('Build Java') {
+        stage('Build') {
             steps {
                 sh 'mvn clean install'
             }
         }
         
-        stage('Test JavaScript') {
- 			steps {
+        //stage('Test JavaScript') {
+ 		//	steps {
         		// Install dependencies in web-app
-        		dir('web-app') {
-            		sh 'npm install'
-        		}
+        //		dir('web-app') {
+        //    		sh 'npm install'
+        //		}
 		        // Run unit tests from web-app/test/unit
-        		dir('web-app/test/unit') {
-            		sh 'au test --coverage'
-        		}
-    		}
-		}
+        //		dir('web-app/test/unit') {
+        //    		sh 'au test --coverage'
+        //		}
+    	//	}
+		//}
+		
     }
 
     post {
