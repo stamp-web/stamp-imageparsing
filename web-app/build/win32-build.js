@@ -3,7 +3,7 @@ const shell = require('gulp-shell');
 const electronInstaller = require('electron-winstaller');
 
 gulp.task('windows.build', shell.task([
-        'electron-packager . "stamp-imageparsing" --overwrite --platform=win32 --arch=x64 --icon=assets/icons/win/icon.ico --overwrite --out="release-builds" --version-string.CompanyName="drakesever.com" --version-string.FileDescription=CE --version-string.ProductVersion="3.0.0" --version-string.FileVersion="0.0.0.1" --version-string.ProductName=\"Stamp Image Bursting Application\"'],
+        'electron-packager . "stamp-imageparsing" --overwrite --platform=win32 --arch=x64 --icon=assets/icons/win/icon.ico --overwrite --out="release-builds" --version-string.CompanyName="drakesever.com" --version-string.FileDescription=CE --version-string.ProductVersion="3.1.0" --version-string.FileVersion="0.0.0.1" --version-string.ProductName=\"Stamp Image Bursting Application\"'],
         {ignoreErrors: false})
 );
 
@@ -20,7 +20,7 @@ gulp.task('windows.setup', gulp.series('windows.build', 'stage.files'), (done) =
         appDirectory: './release-builds/stamp-imageparsing-win32-x64',
         outputDirectory: './installers/win32-x64',
         authors: 'Jason Drake',
-        version: '3.0.0',
+        version: '3.1.0',
         exe: 'stamp-imageparsing.exe',
         setupExe: 'setup.exe'
     });

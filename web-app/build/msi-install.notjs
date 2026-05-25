@@ -7,7 +7,7 @@ const msiCreator = new MSICreator.MSICreator({
     exe: 'stamp-imageparsing-install',
     name: 'testIt',
     manufacturer: 'drakeserver.com',
-    version: '3.0.0',
+    version: '3.1.0',
     outputDirectory: 'installers/win32-x64'
 });
 
