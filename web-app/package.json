@@ -168,5 +168,10 @@
     "browserslist": [
         ">0.2%",
         "not dead"
-    ]
+    ],
+    "allowScripts": {
+        "sharp@0.33.5": true,
+        "electron-winstaller@5.4.0": true,
+        "es5-ext@0.10.64": true
+    }
 }
