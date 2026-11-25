@@ -16,7 +16,7 @@
 	<properties>
 		<java.version>21</java.version>
 		<!-- Override Spring Boot 3.2.2 defaults for newer Java runtime compatibility -->
-		<lombok.version>1.18.36</lombok.version>
+		<lombok.version>1.18.40</lombok.version>
 		<byte-buddy.version>1.15.11</byte-buddy.version>
 		<mockito.version>5.14.2</mockito.version>
 	</properties>
